@@ -18,13 +18,15 @@ public class ExecuteScript extends Command {
 
     /**
      * Создание экземпляра команды {@code execute_script}.
+     *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
     public ExecuteScript(CollectionManager manager) {
         super(manager);
     }
 
-    public ExecuteScript() {}
+    public ExecuteScript() {
+    }
 
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
@@ -32,11 +34,12 @@ public class ExecuteScript extends Command {
     public void execute() {
         try {
             validate();
-            getManager().executeScript((String)getArgs()[0].getValue());
-        } catch (InvalidInputException e){
+            getManager().executeScript((String) getArgs()[0].getValue());
+        } catch (InvalidInputException e) {
             System.out.println(e.getMessage());
         }
     }
+
     /**
      * Валидация аргументов команды.
      *

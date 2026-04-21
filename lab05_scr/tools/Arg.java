@@ -20,7 +20,8 @@ public class Arg {
     )
     private Object value;
 
-    public Arg() {}
+    public Arg() {
+    }
 
     /**
      * Создает экземпляр аргумента.
@@ -31,17 +32,23 @@ public class Arg {
 
     /**
      * Преобразует массив {@code Object} в массив {@code Arg}.
+     *
      * @param list массив {@code Object}.
      * @return масиив {@code Arg}.
      */
-    public static Arg[] toArgList(Object[] list){
+    public static Arg[] toArgList(Object[] list) {
         Arg[] argList = new Arg[list.length];
-        for(int i=0;i< list.length;i++){
+        for (int i = 0; i < list.length; i++) {
             argList[i] = new Arg(list[i]);
         }
         return argList;
     }
 
-    public Object getValue() { return value; }
-    public void setValue(Object value) { this.value = value; }
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

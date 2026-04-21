@@ -10,13 +10,15 @@ import tools.CollectionManager;
 public class PrintUniqueWeight extends Command {
     /**
      * Создание экземпляра команды {@code print_unique_weight}.
+     *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
     public PrintUniqueWeight(CollectionManager manager) {
         super(manager);
     }
 
-    public PrintUniqueWeight() {}
+    public PrintUniqueWeight() {
+    }
 
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.

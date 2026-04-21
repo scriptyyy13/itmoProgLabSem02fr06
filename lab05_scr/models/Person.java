@@ -45,12 +45,13 @@ public class Person {
     @JacksonXmlProperty
     private Location location;
 
-    public Person(){}
+    public Person() {
+    }
 
     /**
      * Созданике экземпляра {@code Person}.
      */
-    public Person(String name, Date birthday, String passportID, Country nationality, Location location){
+    public Person(String name, Date birthday, String passportID, Country nationality, Location location) {
         this.name = name;
         this.birthday = birthday;
         this.passportID = passportID;
@@ -59,30 +60,32 @@ public class Person {
     }
 
     @Override
-    public String toString(){
-        if(this.name == null) return "null\n";
-        return "Person: " +"\n"+
+    public String toString() {
+        if (this.name == null) return "null\n";
+        return "Person: " + "\n" +
                 "name = " + this.name + "\n" +
                 "birthday = " + (new SimpleDateFormat("dd.MM.yyyy")).format(this.birthday) + "\n" +
                 "passportID = " + this.passportID + "\n" +
                 "nationality = " + this.nationality + "\n" +
-                "location = {" + (this.location == null ? "null": (this.location).toString()) + "}\n" ;
+                "location = {" + (this.location == null ? "null" : (this.location).toString()) + "}\n";
     }
+
     /**
      * Валидация полей {@code Person}
+     *
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
-    public void validate() throws InvalidInputException{
-        if(name.isEmpty()|| birthday==null || passportID == null) throw new InvalidInputException("Неверный формат в элементе");
-
+    public void validate() throws InvalidInputException {
+        if (name.isEmpty() || birthday == null || passportID == null)
+            throw new InvalidInputException("Неверный формат в элементе");
     }
 
     /**
      * Проверяет поля на null.
      */
     @JsonIgnore
-    public boolean isEmpty(){
-        return name ==null && birthday == null && passportID ==null && location ==null && nationality==null;
+    public boolean isEmpty() {
+        return name == null && birthday == null && passportID == null && location == null && nationality == null;
     }
 
 }

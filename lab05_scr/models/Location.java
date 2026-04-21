@@ -35,12 +35,13 @@ public class Location {
     @JacksonXmlProperty
     private String name;
 
-    public Location(){}
+    public Location() {
+    }
 
     /**
      * Создание экземпляра {@code Location}.
      */
-    public Location(int x, int y, int z, String name){
+    public Location(int x, int y, int z, String name) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -48,8 +49,8 @@ public class Location {
     }
 
     @Override
-    public String toString(){
-        if(isEmpty()) return "null";
+    public String toString() {
+        if (isEmpty()) return "null";
         return "Location : \n" +
                 "x = " + this.x + "\n" +
                 "y = " + this.y + "\n" +
@@ -59,18 +60,19 @@ public class Location {
 
     /**
      * Валидация полей {@code Location}
+     *
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
-    public void validate() throws InvalidInputException{
-        if(x==null || y==null || z==null|| name.isEmpty()) throw new InvalidInputException("Неверный формат в элементе");
+    public void validate() throws InvalidInputException {
+        if (x == null || y == null || z == null || name.isEmpty())
+            throw new InvalidInputException("Неверный формат в элементе");
     }
 
     /**
      * Проверяет поля на null.
      */
     @JsonIgnore
-    public boolean isEmpty(){
-        return x==null && y==null && z == null && name == null;
+    public boolean isEmpty() {
+        return x == null && y == null && z == null && name == null;
     }
-
 }

@@ -14,6 +14,7 @@ public class ApplicationContext {
      * Время инициализации коллекции.
      */
     public static Date creationTime = new Date();
+
     /**
      * Путь до файла коллекции.
      */

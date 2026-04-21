@@ -23,17 +23,18 @@ public class XMLReader {
 
     /**
      * Читает XML-файл коллекции.
+     *
      * @param path путь до файла.
      * @return прочитанная коллекция.
      */
-    public ArrayDeque<Dragon> readXmlCollection(String path){
+    public ArrayDeque<Dragon> readXmlCollection(String path) {
         try {
             String xml = Files.readString(Paths.get(path));
             Pattern pattern = Pattern.compile("<Dragon>(.*?)</Dragon>");
             Matcher matcher = pattern.matcher(xml);
             XmlMapper xmlMapper = new XmlMapper();
             ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
-            while(matcher.find()){
+            while (matcher.find()) {
                 try {
                     collection.add(xmlMapper.readValue(matcher.group(), Dragon.class));
                 } catch (Exception e) {
@@ -47,17 +48,19 @@ public class XMLReader {
         }
 
     }
+
     /**
      * Читает XML-файл журнала команд..
+     *
      * @param path путь до файла.
      * @return прочитанный журнал.
      */
-    public CommandList readXmlJournal(String path){
+    public CommandList readXmlJournal(String path) {
         try {
             String xml = Files.readString(Paths.get(path));
             XmlMapper xmlMapper = new XmlMapper();
             return xmlMapper.readValue(xml, CommandList.class);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new XmlReadingException("Не удалось прочитать журнал");
         }
     }

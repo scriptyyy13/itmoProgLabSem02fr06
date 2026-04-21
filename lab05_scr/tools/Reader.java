@@ -19,9 +19,10 @@ public class Reader {
     /**
      * Создание экземпляра {@code Reader} для стандартного потока ввода.
      */
-    public Reader(){
+    public Reader() {
         inputReader = new BufferedReader(new InputStreamReader(System.in));
     }
+
     /**
      * Создание экземпляра {@code Reader} для чтения из скрипта.
      */
@@ -32,9 +33,10 @@ public class Reader {
 
     /**
      * Читает строку ввода.
+     *
      * @return вводимая строка.
      */
-    public String getLine(){
+    public String getLine() {
 
         try {
             return inputReader.readLine();

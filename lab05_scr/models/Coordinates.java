@@ -9,13 +9,13 @@ import exceptions.InvalidInputException;
  */
 @JacksonXmlRootElement
 public class Coordinates {
-
     /**
      * Координата x.
      * Поле не может быть null.
      */
     @JacksonXmlProperty
     private Float x;
+
     /**
      * Координата y.
      * Значение поля должно быть больше -433, Поле не может быть null
@@ -23,29 +23,31 @@ public class Coordinates {
     @JacksonXmlProperty
     private Double y;
 
-    public Coordinates(){}
+    public Coordinates() {
+    }
 
     /**
      * Создает экземпляр {@code Coordinates}.
      */
-    public Coordinates(Float x, Double y ){
+    public Coordinates(Float x, Double y) {
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public String toString(){
-        return "Coordinates: " + "\n"+
-                "X = " +this.x + "\n" +
+    public String toString() {
+        return "Coordinates: " + "\n" +
+                "X = " + this.x + "\n" +
                 "Y = " + this.y + "\n";
     }
 
     /**
      * Валидация полей экземпляра.
+     *
      * @throws InvalidInputException Выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if(x==null) throw new InvalidInputException("Неверный формат в элементе");
-        if(y==null || y<=-433) throw new InvalidInputException("Неверный формат в элементе");
+        if (x == null) throw new InvalidInputException("Неверный формат в элементе");
+        if (y == null || y <= -433) throw new InvalidInputException("Неверный формат в элементе");
     }
 }

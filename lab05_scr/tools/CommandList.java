@@ -22,9 +22,19 @@ public class CommandList {
     /**
      * Создание экземпляра {@code CommandList}
      */
-    public CommandList(ArrayList<Command> list){this.commands = list;}
-    public CommandList(){this.commands = new ArrayList<Command>();}
+    public CommandList(ArrayList<Command> list) {
+        this.commands = list;
+    }
 
-    public ArrayList<Command> getCommands(){return commands;}
-    public void setCommands(ArrayList<Command> list){commands = list;}
+    public CommandList() {
+        this.commands = new ArrayList<Command>();
+    }
+
+    public ArrayList<Command> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(ArrayList<Command> list) {
+        commands = list;
+    }
 }

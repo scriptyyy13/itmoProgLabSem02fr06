@@ -16,9 +16,14 @@ public class CollectionWrapper {
     @JacksonXmlProperty(localName = "Dragon")
     private ArrayDeque<Dragon> collection;
 
-    public CollectionWrapper(){}
+    public CollectionWrapper() {
+    }
 
-    public CollectionWrapper(ArrayDeque<Dragon> collection){this.collection = collection;}
+    public CollectionWrapper(ArrayDeque<Dragon> collection) {
+        this.collection = collection;
+    }
 
-    public ArrayDeque<Dragon> getCollection(){return this.collection;}
+    public ArrayDeque<Dragon> getCollection() {
+        return this.collection;
+    }
 }

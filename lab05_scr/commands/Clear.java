@@ -13,13 +13,15 @@ import tools.CollectionManager;
 public class Clear extends Command {
     /**
      * Создание экземпляра команды {@code clear}.
+     *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
     public Clear(CollectionManager manager) {
         super(manager);
     }
 
-    public Clear() {}
+    public Clear() {
+    }
 
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.

@@ -19,31 +19,34 @@ public class JournalManager {
     /**
      * Создание экземпляра {@code JournalManager}
      */
-    public JournalManager(){journal = new CommandList();}
+    public JournalManager() {
+        journal = new CommandList();
+    }
 
     /**
      * Добавляет команду в журнал.
+     *
      * @param command добавляемая команда.
      */
-    public void addCommand(Command command){
+    public void addCommand(Command command) {
         journal.getCommands().add(command);
     }
 
     /**
      * Очищает журнал.
      */
-    public void clearJournal(){
+    public void clearJournal() {
         journal.getCommands().clear();
     }
 
     /**
      * Записывает журнал в файл.
      */
-    public void saveJournal(){
+    public void saveJournal() {
         try {
             XMLWriter xmlWriter = new XMLWriter();
             xmlWriter.journalToXML(journal);
-        }catch (XmlSaveException e){
+        } catch (XmlSaveException e) {
             System.out.println(e.getMessage());
         }
 
@@ -52,7 +55,7 @@ public class JournalManager {
     /**
      * Читает журнал из файла.
      */
-    public void readJournal(){
+    public void readJournal() {
         try {
             XMLReader xmlReader = new XMLReader();
             journal = xmlReader.readXmlJournal("journal.xml");
@@ -61,7 +64,7 @@ public class JournalManager {
         }
     }
 
-    public CommandList getJournal(){
+    public CommandList getJournal() {
         return journal;
     }
 

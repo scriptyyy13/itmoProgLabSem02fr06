@@ -10,13 +10,15 @@ import tools.CollectionManager;
 public class Info extends Command {
     /**
      * Создание экземпляра команды {@code info}.
+     *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
     public Info(CollectionManager manager) {
         super(manager);
     }
 
-    public Info() {}
+    public Info() {
+    }
 
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.

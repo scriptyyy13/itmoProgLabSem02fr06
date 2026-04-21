@@ -19,29 +19,32 @@ import java.util.regex.Pattern;
 public class XMLWriter {
     /**
      * Реализует запись коллекции в XML-файл.
+     *
      * @param collection сохраняемая коллекция.
-     * @param path путь до сохраняемого файла.
+     * @param path       путь до сохраняемого файла.
      */
-    public void dequeToXML(ArrayDeque<Dragon> collection,String path){
-        try (FileWriter writer = new FileWriter(path)){
+    public void dequeToXML(ArrayDeque<Dragon> collection, String path) {
+        try (FileWriter writer = new FileWriter(path)) {
             XmlMapper xmlMapper = new XmlMapper();
-            String xml = xmlMapper.writeValueAsString( new CollectionWrapper(collection));
+            String xml = xmlMapper.writeValueAsString(new CollectionWrapper(collection));
             writer.write(xml);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new XmlSaveException("Не удалось сохранить коллекцию");
         }
 
     }
+
     /**
      * Реализует запись журнала команд в XML-файл.
+     *
      * @param journal сохраняемый журнал.
      */
-    public void journalToXML(CommandList journal){
-        try (FileWriter writer = new FileWriter("journal.xml")){
+    public void journalToXML(CommandList journal) {
+        try (FileWriter writer = new FileWriter("journal.xml")) {
             XmlMapper xmlMapper = new XmlMapper();
             String xml = xmlMapper.writeValueAsString(journal);
             writer.write(xml);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new XmlSaveException("Не удалось сохранить журнал");
         }
 
