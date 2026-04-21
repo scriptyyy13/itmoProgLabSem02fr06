@@ -299,7 +299,6 @@ public class CollectionManager {
                     System.out.println(ex.getMessage());
                 }
             }
-
         }
         collection = vCollection;
     }

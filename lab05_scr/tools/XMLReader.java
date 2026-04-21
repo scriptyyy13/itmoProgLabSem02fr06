@@ -46,7 +46,6 @@ public class XMLReader {
             System.out.println("Ошибка чтения файла, возвращена пустая коллекция");
             return new ArrayDeque<Dragon>();
         }
-
     }
 
     /**

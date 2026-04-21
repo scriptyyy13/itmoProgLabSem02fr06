@@ -99,7 +99,6 @@ public class CommandManager {
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.out.println("Неверный формат");
             }
-
         }
     }
 
@@ -133,5 +132,4 @@ public class CommandManager {
             }
         }
     }
-
 }

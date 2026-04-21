@@ -87,5 +87,4 @@ public class Person {
     public boolean isEmpty() {
         return name == null && birthday == null && passportID == null && location == null && nationality == null;
     }
-
 }

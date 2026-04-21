@@ -30,7 +30,6 @@ public class FilterLessThanAge extends Command {
         } catch (InvalidInputException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     /**

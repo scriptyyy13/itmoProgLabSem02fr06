@@ -31,7 +31,6 @@ public class XMLWriter {
         } catch (Exception e) {
             throw new XmlSaveException("Не удалось сохранить коллекцию");
         }
-
     }
 
     /**
@@ -47,7 +46,6 @@ public class XMLWriter {
         } catch (Exception e) {
             throw new XmlSaveException("Не удалось сохранить журнал");
         }
-
     }
 }
 

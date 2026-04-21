@@ -322,7 +322,5 @@ public class InputManager {
         System.out.print("Введите person (не обязательное поле) : ");
         killer = inputPerson(reader, true);
         return new Dragon(-1, name, coordinates, new Date(), age, weight, speaking, color, killer);
-
     }
-
 }

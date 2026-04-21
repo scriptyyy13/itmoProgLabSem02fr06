@@ -49,7 +49,6 @@ public class JournalManager {
         } catch (XmlSaveException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     /**
@@ -67,5 +66,4 @@ public class JournalManager {
     public CommandList getJournal() {
         return journal;
     }
-
 }
