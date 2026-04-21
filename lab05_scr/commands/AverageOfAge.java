@@ -13,13 +13,16 @@ public class AverageOfAge extends Command {
      * Создание экземпляра команды {@code average_of_age }.
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public AverageOfAge(CollectionManager manager){super(manager);}
-    public AverageOfAge(){}
+    public AverageOfAge(CollectionManager manager) {
+        super(manager);
+    }
+
+    public AverageOfAge() {}
+
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
      */
-    public void execute(){
+    public void execute() {
         getManager().averageOfAge();
     }
-
 }

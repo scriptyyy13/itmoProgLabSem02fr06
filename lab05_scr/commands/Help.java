@@ -10,13 +10,16 @@ public class Help extends Command {
      * Создание экземпляра команды {@code help}.
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public Help(CollectionManager manager){super(manager);}
-    public Help(){}
+    public Help(CollectionManager manager) {
+        super(manager);
+    }
+
+    public Help() {}
+
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
      */
-    public void execute(){
+    public void execute() {
         getManager().help();
     }
-
 }

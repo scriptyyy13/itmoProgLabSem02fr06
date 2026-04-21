@@ -11,13 +11,16 @@ public class RemoveHead extends Command {
      * Создание экземпляра команды {@code remove_head}.
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public RemoveHead(CollectionManager manager){super(manager);}
-    public RemoveHead(){}
+    public RemoveHead(CollectionManager manager) {
+        super(manager);
+    }
+
+    public RemoveHead() {}
+
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
      */
-    public void execute(){
+    public void execute() {
         getManager().removeHead();
     }
-
 }

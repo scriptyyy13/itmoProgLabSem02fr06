@@ -12,12 +12,16 @@ public class AddIfMin extends Command {
      * Создание экземпляра команды {@code add_if_min}.
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public AddIfMin(CollectionManager manager){super(manager);}
-    public AddIfMin(){}
+    public AddIfMin(CollectionManager manager) {
+        super(manager);
+    }
+
+    public AddIfMin() {}
+
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
      */
-    public void execute(){
+    public void execute() {
         try {
             validate();
             getManager().addIfMin((Dragon) getArgs()[0].getValue());
@@ -31,7 +35,6 @@ public class AddIfMin extends Command {
      * @throws InvalidInputException исключение, выбрасываемое в случае неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if(! (getArgs()[0].getValue() instanceof Dragon)) throw new InvalidInputException("Неверный формат");
+        if (! (getArgs()[0].getValue() instanceof Dragon)) throw new InvalidInputException("Неверный формат");
     }
-
 }

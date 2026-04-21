@@ -40,26 +40,36 @@ public abstract class Command {
      * Создание экземпляра команды
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public Command(CollectionManager manager){
+    public Command(CollectionManager manager) {
         this.manager = manager;
     }
-    public Command(){}
+
+    public Command() {}
 
     /**
      * Исполнение команды.
      */
-    public void execute(){
-    }
+    public void execute() {}
+
     /**
      * Валидация аргументов команды.
      *
      * @throws InvalidInputException исключение, выбрасываемое в случае неуспешной валидации.
      */
-    public void validate() throws InvalidInputException{}
+    public void validate() throws InvalidInputException {}
 
-    public CollectionManager getManager() {return manager;}
-    public Arg[] getArgs(){return args;}
+    public CollectionManager getManager() {
+        return manager;
+    }
 
-    public void setArgs(Arg... args) {this.args = args;}
-    public void setManager(CollectionManager manager){this.manager = manager;}
+    public Arg[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(Arg... args) {
+        this.args = args;
+    }
+    public void setManager(CollectionManager manager) {
+        this.manager = manager;
+    }
 }
