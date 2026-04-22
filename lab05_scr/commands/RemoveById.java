@@ -3,6 +3,7 @@ package commands;
 
 import exceptions.InvalidInputException;
 import tools.CollectionManager;
+import tools.OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
@@ -28,7 +29,7 @@ public class RemoveById extends Command {
             validate();
             getManager().removeById(Long.parseLong((String) getArgs()[0].getValue()));
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

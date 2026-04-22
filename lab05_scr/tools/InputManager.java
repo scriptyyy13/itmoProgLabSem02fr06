@@ -28,7 +28,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Integer.parseInt(str);
             } catch (InvalidInputException | NumberFormatException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -48,7 +48,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Long.parseLong(str);
             } catch (InvalidInputException | NumberFormatException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -68,7 +68,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Float.parseFloat(str);
             } catch (InvalidInputException | NumberFormatException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -88,7 +88,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Double.parseDouble(str);
             } catch (InvalidInputException | NumberFormatException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -108,7 +108,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return str;
             } catch (InvalidInputException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -128,7 +128,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Boolean.parseBoolean(str);
             } catch (InvalidInputException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -149,7 +149,7 @@ public class InputManager {
                 SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
                 return format.parse(str);
             } catch (InvalidInputException | ParseException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -169,7 +169,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Color.valueOf(str);
             } catch (InvalidInputException | IllegalArgumentException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -189,7 +189,7 @@ public class InputManager {
                 if (str.isEmpty()) throw new InvalidInputException("");
                 return Country.valueOf(str);
             } catch (InvalidInputException | IllegalArgumentException e) {
-                System.out.println("Неправильный формат");
+                OutputManager.println("Неправильный формат");
             }
         }
     }
@@ -212,7 +212,7 @@ public class InputManager {
                 if (y <= -433) throw new InvalidInputException("Число вне диапозона");
                 break;
             } catch (InvalidInputException e) {
-                System.out.println(e.getMessage());
+                OutputManager.println(e.getMessage());
             }
         }
         return new Coordinates(x, y);
@@ -292,7 +292,7 @@ public class InputManager {
         Person killer;
         System.out.print("Введите name : ");
         name = inputString(reader, false);
-        System.out.println("Введите coordinates : ");
+        OutputManager.println("Введите coordinates : ");
         coordinates = inputCoordinates(reader);
         while (true) {
             System.out.print("Введите age (>0) : ");
@@ -301,7 +301,7 @@ public class InputManager {
                 if (age <= 0) throw new InvalidInputException("");
                 break;
             } catch (InvalidInputException e) {
-                System.out.println("Неверный формат");
+                OutputManager.println("Неверный формат");
             }
         }
         while (true) {
@@ -312,7 +312,7 @@ public class InputManager {
                 if (weight <= 0) throw new InvalidInputException("");
                 break;
             } catch (InvalidInputException e) {
-                System.out.println("Неверный формат");
+                OutputManager.println("Неверный формат");
             }
         }
         System.out.print("Введите speaking (false/true) : ");

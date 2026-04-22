@@ -3,6 +3,7 @@ package commands;
 import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.OutputManager;
 
 import java.util.ArrayDeque;
 
@@ -31,7 +32,7 @@ public class Add extends Command {
             validate();
             getManager().add((Dragon) getArgs()[0].getValue());
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

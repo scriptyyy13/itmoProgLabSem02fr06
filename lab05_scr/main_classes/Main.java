@@ -25,8 +25,8 @@ public class Main {
             XMLReader xmlReader = new XMLReader();
             collection = xmlReader.readXmlCollection(ApplicationContext.collectionPath);
         } catch (XmlReadingException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Коллекция пуста");
+            OutputManager.println(e.getMessage());
+            OutputManager.println("Коллекция пуста");
         }
         Reader reader = new Reader();
         CollectionManager collectionManager = new CollectionManager(collection);

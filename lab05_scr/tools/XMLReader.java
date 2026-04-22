@@ -38,12 +38,12 @@ public class XMLReader {
                 try {
                     collection.add(xmlMapper.readValue(matcher.group(), Dragon.class));
                 } catch (Exception e) {
-                    System.out.println("Ошибка в чтении элемента коллекции, пропущен");
+                    OutputManager.println("Ошибка в чтении элемента коллекции, пропущен");
                 }
             }
             return collection;
         } catch (Exception e) {
-            System.out.println("Ошибка чтения файла, возвращена пустая коллекция");
+            OutputManager.println("Ошибка чтения файла, возвращена пустая коллекция");
             return new ArrayDeque<Dragon>();
         }
     }

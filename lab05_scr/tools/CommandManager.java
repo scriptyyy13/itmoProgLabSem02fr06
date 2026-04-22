@@ -95,9 +95,9 @@ public class CommandManager {
                 command.execute();
                 if (isHavingJournal) updateJournal(command);
             } catch (InvalidInputException e) {
-                System.out.println(e.getMessage());
+                OutputManager.println(e.getMessage());
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Неверный формат");
+                OutputManager.println("Неверный формат");
             }
         }
     }
@@ -123,7 +123,7 @@ public class CommandManager {
         journalManager.readJournal();
         CommandList oldJournal = journalManager.getJournal();
         if (!oldJournal.getCommands().isEmpty()) {
-            System.out.println("Найдены несохраненные изменения. Восстановить? (true/false)");
+            OutputManager.println("Найдены несохраненные изменения. Восстановить? (true/false)");
             if (InputManager.inputBool(reader, false)) {
                 for (Command command : oldJournal.getCommands()) {
                     command.setManager(collectionManager);

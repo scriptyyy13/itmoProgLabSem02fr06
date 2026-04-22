@@ -3,6 +3,7 @@ package commands;
 import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
@@ -28,7 +29,7 @@ public class FilterLessThanAge extends Command {
             validate();
             getManager().filterLessThanAge(Long.parseLong((String) getArgs()[0].getValue()));
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

@@ -37,7 +37,7 @@ public class CollectionManager {
     public void add(Dragon elem) {
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
-        System.out.println("Элемент добавлен");
+        OutputManager.println("Элемент добавлен");
     }
 
     /**
@@ -53,9 +53,9 @@ public class CollectionManager {
         }
         if (isMax) {
             collection.addLast(newDragon);
-            System.out.println("Элемент добавлен");
+            OutputManager.println("Элемент добавлен");
         } else {
-            System.out.println("Элемент не максимальный");
+            OutputManager.println("Элемент не максимальный");
         }
     }
 
@@ -72,9 +72,9 @@ public class CollectionManager {
         }
         if (isMin) {
             collection.addLast(newDragon);
-            System.out.println("Элемент добавлен");
+            OutputManager.println("Элемент добавлен");
         } else {
-            System.out.println("Элемент не минимальный");
+            OutputManager.println("Элемент не минимальный");
         }
     }
 
@@ -89,9 +89,9 @@ public class CollectionManager {
                 sum += (float) elem.getAge();
             }
             Float average = sum / (float) collection.size();
-            System.out.println(average);
+            OutputManager.println(String.valueOf(average));
         } catch (EmptyDequeException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ public class CollectionManager {
      */
     public void clear() {
         collection.clear();
-        System.out.println("Коллекция очищена");
+        OutputManager.println("Коллекция очищена");
     }
 
     /**
@@ -117,9 +117,9 @@ public class CollectionManager {
             commandManager.startManage();
             ExecuteScript.runningScripts -= 1;
         } catch (FileNotFoundException e) {
-            System.out.println("Файл не найден");
+            OutputManager.println("Файл не найден");
         } catch (RecursionLimitException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public class CollectionManager {
         for (var elem : collection) {
             if (elem.getAge() < age) filtredCollection += elem.toString();
         }
-        System.out.println(filtredCollection);
+        OutputManager.println(filtredCollection);
     }
 
     /**
@@ -167,7 +167,7 @@ public class CollectionManager {
                 filter_less_than_age age - вывести элементы, значение поля age которых меньше заданного
                 print_unique_weight - вывести уникальные значения поля weight всех элементов в коллекции
                 """;
-        System.out.println(helpMessage);
+        OutputManager.println(helpMessage);
     }
 
     /**
@@ -181,7 +181,7 @@ public class CollectionManager {
                 Дата инициализации: %s
                 Количество элементов: %d
                 """, ApplicationContext.creationTime, collection.size());
-        System.out.println(info);
+        OutputManager.println(info);
     }
 
     /**
@@ -192,7 +192,7 @@ public class CollectionManager {
         for (var elem : collection) {
             set.add(elem.getWeight());
         }
-        System.out.println(set.toString());
+        OutputManager.println(set.toString());
     }
 
     /**
@@ -204,11 +204,11 @@ public class CollectionManager {
         for (var elem : collection) {
             if (elem.getId() == id) {
                 collection.remove(elem);
-                System.out.println("Элемент удалён");
+                OutputManager.println("Элемент удалён");
                 return;
             }
         }
-        System.out.println("Элемент не найден");
+        OutputManager.println("Элемент не найден");
     }
 
     /**
@@ -217,9 +217,9 @@ public class CollectionManager {
     public void removeHead() {
         try {
             if (collection.isEmpty()) throw new EmptyDequeException("Коллекция пуста");
-            System.out.println(collection.poll().toString());
+            OutputManager.println(collection.poll().toString());
         } catch (EmptyDequeException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
@@ -230,9 +230,9 @@ public class CollectionManager {
         XMLWriter xmlWriter = new XMLWriter();
         try {
             xmlWriter.dequeToXML(collection, ApplicationContext.collectionPath);
-            System.out.println("Запись файла прошла успешно");
+            OutputManager.println("Запись файла прошла успешно");
         } catch (XmlSaveException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
@@ -241,7 +241,7 @@ public class CollectionManager {
      */
     public void show() {
         for (var elem : collection) {
-            System.out.println(elem);
+            OutputManager.println(String.valueOf(elem));
         }
     }
 
@@ -260,11 +260,11 @@ public class CollectionManager {
                 array[i].setId(id);
                 array[i].setCreationDate(date);
                 collection = new ArrayDeque<>(Arrays.asList(array));
-                System.out.println("Элемент обновлён");
+                OutputManager.println("Элемент обновлён");
                 return;
             }
         }
-        System.out.println("Элемент не найден");
+        OutputManager.println("Элемент не найден");
     }
 
     /**
@@ -289,14 +289,14 @@ public class CollectionManager {
         ArrayDeque<Dragon> vCollection = new ArrayDeque<Dragon>();
         for (var e : collection) {
             if (ids.contains(e.getId())) {
-                System.out.println("Обнаружен повтор id, элемент пропущен");
+                OutputManager.println("Обнаружен повтор id, элемент пропущен");
             } else {
                 ids.add(e.getId());
                 try {
                     e.validate();
                     vCollection.add(e);
                 } catch (InvalidInputException ex) {
-                    System.out.println(ex.getMessage());
+                    OutputManager.println(ex.getMessage());
                 }
             }
         }

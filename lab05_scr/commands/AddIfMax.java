@@ -3,6 +3,7 @@ package commands;
 import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code add_if_max}.
@@ -28,7 +29,7 @@ public class AddIfMax extends Command {
             validate();
             getManager().addIfMax((Dragon) getArgs()[0].getValue());
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

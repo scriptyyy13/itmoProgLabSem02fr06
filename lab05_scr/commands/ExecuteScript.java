@@ -4,6 +4,7 @@ import exceptions.InvalidInputException;
 import exceptions.RecursionLimitException;
 import tools.CollectionManager;
 import tools.InputManager;
+import tools.OutputManager;
 
 import java.io.FileNotFoundException;
 
@@ -36,7 +37,7 @@ public class ExecuteScript extends Command {
             validate();
             getManager().executeScript((String) getArgs()[0].getValue());
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

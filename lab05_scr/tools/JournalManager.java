@@ -47,7 +47,7 @@ public class JournalManager {
             XMLWriter xmlWriter = new XMLWriter();
             xmlWriter.journalToXML(journal);
         } catch (XmlSaveException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class JournalManager {
             XMLReader xmlReader = new XMLReader();
             journal = xmlReader.readXmlJournal("journal.xml");
         } catch (XmlReadingException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 

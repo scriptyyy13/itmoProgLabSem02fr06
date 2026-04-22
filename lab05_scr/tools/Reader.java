@@ -41,8 +41,8 @@ public class Reader {
         try {
             return inputReader.readLine();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Не удалось прочесть строку");
+            OutputManager.println(e.getMessage());
+            OutputManager.println("Не удалось прочесть строку");
         }
         return null;
     }

@@ -3,6 +3,7 @@ package commands;
 import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code update}.
@@ -28,7 +29,7 @@ public class Update extends Command {
             validate();
             getManager().update(Long.parseLong((String) getArgs()[0].getValue()), (Dragon) getArgs()[1].getValue());
         } catch (InvalidInputException e) {
-            System.out.println(e.getMessage());
+            OutputManager.println(e.getMessage());
         }
     }
 
