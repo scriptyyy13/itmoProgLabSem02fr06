@@ -4,11 +4,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import exceptions.InvalidInputException;
 
+import java.io.Serializable;
+
 /**
  * Содержит информацию о экземпляре {@code Coordinates}
  */
 @JacksonXmlRootElement
-public class Coordinates {
+public class Coordinates implements Serializable {
     /**
      * Координата x.
      * Поле не может быть null.

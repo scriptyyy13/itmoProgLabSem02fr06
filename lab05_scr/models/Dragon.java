@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import exceptions.InvalidInputException;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
  * Представляет {@code Dragon} с описанием всех характеристик
  */
 @JacksonXmlRootElement(localName = "Dragon")
-public class Dragon implements Comparable<Dragon> {
+public class Dragon implements Comparable<Dragon>, Serializable {
     /**
      * Уникальный индефикатор {@code Dragon}.
      * Поле не может быть null, Значение поля должно быть больше 0.

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import exceptions.InvalidInputException;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,7 +17,7 @@ import java.util.Date;
  * Представялет {@code Person} co всеми характеристиками.
  */
 @JacksonXmlRootElement
-public class Person {
+public class Person implements Serializable {
     /**
      * Имя {@code Person}.
      */
