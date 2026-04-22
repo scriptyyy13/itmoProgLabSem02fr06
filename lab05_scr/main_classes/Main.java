@@ -30,7 +30,7 @@ public class Main {
         }
         Reader reader = new Reader();
         CollectionManager collectionManager = new CollectionManager(collection);
-        CommandManager commandManager = new CommandManager(collectionManager, reader, true);
+        CommandManager commandManager = new CommandManager(collectionManager, reader);
         commandManager.startManage();
     }
 }

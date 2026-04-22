@@ -33,19 +33,5 @@ public class XMLWriter {
         }
     }
 
-    /**
-     * Реализует запись журнала команд в XML-файл.
-     *
-     * @param journal сохраняемый журнал.
-     */
-    public void journalToXML(CommandList journal) {
-        try (FileWriter writer = new FileWriter("journal.xml")) {
-            XmlMapper xmlMapper = new XmlMapper();
-            String xml = xmlMapper.writeValueAsString(journal);
-            writer.write(xml);
-        } catch (Exception e) {
-            throw new XmlSaveException("Не удалось сохранить журнал");
-        }
-    }
 }
 

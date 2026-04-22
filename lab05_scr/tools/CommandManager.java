@@ -5,6 +5,9 @@ import exceptions.InvalidInputException;
 import main_classes.ApplicationContext;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,25 +32,14 @@ public class CommandManager {
      */
     private HashMap<String, Command> commands;
 
-    /**
-     * Менеджер, управляющий журналом команд.
-     */
-    private JournalManager journalManager;
-
-    /**
-     * Флаг, имеет ли экземпляр журнал.
-     */
-    private Boolean isHavingJournal;
 
     /**
      * Создание экземепляра {@code CommandManager}.
      */
-    public CommandManager(CollectionManager collectionManager, Reader reader, Boolean isHavingJournal) {
+    public CommandManager(CollectionManager collectionManager, Reader reader) {
         this.reader = reader;
         this.collectionManager = collectionManager;
         commands = new HashMap<String, Command>();
-        this.isHavingJournal = isHavingJournal;
-        journalManager = new JournalManager();
         commands.put("help", new Help(collectionManager));
         commands.put("info", new Info(collectionManager));
         commands.put("show", new Show(collectionManager));
@@ -71,7 +63,6 @@ public class CommandManager {
      */
     public void startManage() {
         //здесь проверка на наличие журнала
-        if (isHavingJournal) checkOldJournal();
         while (true) {
             collectionManager.validate();
             try {
@@ -88,12 +79,18 @@ public class CommandManager {
                     case "update":
                         command.setArgs(new Arg(splittedStr[1]), new Arg(InputManager.inputDragon(reader)));
                         break;
+                    case "execute_script":
+                        try {
+                            command.setArgs(new Arg(Files.readString(Paths.get(splittedStr[1]))));
+                        }catch (IOException e){
+                            throw new InvalidInputException("Файл не найден");
+                        }
+                        break;
                     default:
                         command.setArgs(Arg.toArgList(Arrays.copyOfRange(splittedStr, 1, splittedStr.length)));
                         break;
                 }
                 command.execute();
-                if (isHavingJournal) updateJournal(command);
             } catch (InvalidInputException e) {
                 OutputManager.println(e.getMessage());
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -102,34 +99,5 @@ public class CommandManager {
         }
     }
 
-    /**
-     * Обновляет журнал после исполнения команды.
-     *
-     * @param command исполненная команда.
-     */
-    public void updateJournal(Command command) {
-        Class<?>[] pushableCommands = {Add.class, AddIfMin.class, AddIfMax.class, Clear.class, ExecuteScript.class, RemoveById.class, RemoveHead.class, Update.class};
-        for (var cls : pushableCommands) {
-            if (cls.isInstance(command)) journalManager.addCommand(command);
-        }
-        if (command instanceof Save) journalManager.clearJournal();
-        journalManager.saveJournal();
-    }
 
-    /**
-     * Проверяет, существует ли не пустой журнал. При необходимости выполняет все комманды из него.
-     */
-    public void checkOldJournal() {
-        journalManager.readJournal();
-        CommandList oldJournal = journalManager.getJournal();
-        if (!oldJournal.getCommands().isEmpty()) {
-            OutputManager.println("Найдены несохраненные изменения. Восстановить? (true/false)");
-            if (InputManager.inputBool(reader, false)) {
-                for (Command command : oldJournal.getCommands()) {
-                    command.setManager(collectionManager);
-                    command.execute();
-                }
-            }
-        }
-    }
 }

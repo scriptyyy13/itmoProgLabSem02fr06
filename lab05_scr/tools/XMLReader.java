@@ -48,19 +48,4 @@ public class XMLReader {
         }
     }
 
-    /**
-     * Читает XML-файл журнала команд..
-     *
-     * @param path путь до файла.
-     * @return прочитанный журнал.
-     */
-    public CommandList readXmlJournal(String path) {
-        try {
-            String xml = Files.readString(Paths.get(path));
-            XmlMapper xmlMapper = new XmlMapper();
-            return xmlMapper.readValue(xml, CommandList.class);
-        } catch (Exception e) {
-            throw new XmlReadingException("Не удалось прочитать журнал");
-        }
-    }
 }

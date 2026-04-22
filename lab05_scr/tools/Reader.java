@@ -11,10 +11,6 @@ public class Reader {
      * Реализует чтение текста.
      */
     private BufferedReader inputReader;
-    /**
-     * Путь до скрипта, если чтение идёт из него.
-     */
-    private String scriptPath;
 
     /**
      * Создание экземпляра {@code Reader} для стандартного потока ввода.
@@ -24,11 +20,10 @@ public class Reader {
     }
 
     /**
-     * Создание экземпляра {@code Reader} для чтения из скрипта.
+     * Создание экземпляра {@code Reader} для стандартного потока ввода.
      */
-    public Reader(String scriptPath) throws FileNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream(scriptPath);
-        inputReader = new BufferedReader(new InputStreamReader(fileInputStream));
+    public Reader(String inputText) {
+        inputReader = new BufferedReader(new StringReader(inputText));
     }
 
     /**
