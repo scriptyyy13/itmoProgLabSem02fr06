@@ -9,5 +9,5 @@ public enum Country implements Serializable {
     CHINA,
     INDIA,
     THAILAND,
-    NORTH_KOREA;
+    NORTH_KOREA
 }

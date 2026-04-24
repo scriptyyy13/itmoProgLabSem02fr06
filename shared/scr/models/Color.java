@@ -10,5 +10,5 @@ public enum Color implements Serializable {
     RED,
     BLACK,
     BLUE,
-    YELLOW;
+    YELLOW
 }
