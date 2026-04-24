@@ -2,16 +2,12 @@ package tools;
 
 import commands.*;
 import exceptions.InvalidInputException;
-import main_classes.ApplicationContext;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Stack;
 
 /**
  * Класс, управляющий вводом команд и их исполнением.

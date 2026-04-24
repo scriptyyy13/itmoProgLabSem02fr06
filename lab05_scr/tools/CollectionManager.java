@@ -1,6 +1,6 @@
 package tools;
 
-import commands.*;
+import commands.ExecuteScript;
 import exceptions.EmptyDequeException;
 import exceptions.InvalidInputException;
 import exceptions.RecursionLimitException;
@@ -8,7 +8,6 @@ import exceptions.XmlSaveException;
 import main_classes.ApplicationContext;
 import models.Dragon;
 
-import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
