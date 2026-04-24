@@ -10,7 +10,7 @@ public class Message {
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.CLASS,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "commandClass"
+            property = "class"
     )
     private Command command;
 
