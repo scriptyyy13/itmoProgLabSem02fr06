@@ -1,32 +1,25 @@
 package commands;
 
 import exceptions.InvalidInputException;
-import exceptions.RecursionLimitException;
+import models.Dragon;
 import tools.CollectionManager;
-import tools.InputManager;
 import tools.OutputManager;
 
-import java.io.FileNotFoundException;
-
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code execute_script}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code add}.
  */
-public class ExecuteScript extends Command {
-    /**
-     * Счетчик исполняемых в данный момент скриптов, необходим для {@link exceptions.RecursionLimitException}.
-     */
-    public static int runningScripts = 0;
 
+public class Add extends Command {
     /**
-     * Создание экземпляра команды {@code execute_script}.
+     * Создание экземпляра команды {@code add}.
      *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public ExecuteScript(CollectionManager manager) {
+    public Add(CollectionManager manager) {
         super(manager);
     }
 
-    public ExecuteScript() {
+    public Add() {
     }
 
     /**
@@ -35,7 +28,7 @@ public class ExecuteScript extends Command {
     public void execute() {
         try {
             validate();
-            getManager().executeScript((String) getArgs()[0].getValue());
+            getManager().add((Dragon) getArgs()[0].getValue());
         } catch (InvalidInputException e) {
             OutputManager.println(e.getMessage());
         }
@@ -47,6 +40,6 @@ public class ExecuteScript extends Command {
      * @throws InvalidInputException исключение, выбрасываемое в случае неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if (!(getArgs()[0].getValue() instanceof String)) throw new InvalidInputException("Неверный формат");
+        if (!(getArgs()[0].getValue() instanceof Dragon)) throw new InvalidInputException("Неверный формат");
     }
 }

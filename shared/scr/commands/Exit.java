@@ -1,29 +1,27 @@
 package commands;
 
-import exceptions.InvalidInputException;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code info}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code exit}.
  */
-public class Info extends Command {
+public class Exit extends Command {
     /**
-     * Создание экземпляра команды {@code info}.
+     * Создание экземпляра команды {@code exit}.
      *
      * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
      */
-    public Info(CollectionManager manager) {
+    public Exit(CollectionManager manager) {
         super(manager);
     }
 
-    public Info() {
+    public Exit() {
     }
 
     /**
      * Запуск соответствующего метода в {@link tools.CollectionManager}.
      */
     public void execute() {
-        getManager().info();
+        getManager().exit();
     }
 }

@@ -1,7 +1,6 @@
 package commands;
 
 import exceptions.InvalidInputException;
-import models.Dragon;
 import tools.CollectionManager;
 import tools.OutputManager;
 

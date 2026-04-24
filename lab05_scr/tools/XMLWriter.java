@@ -1,17 +1,12 @@
 package tools;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import commands.Command;
 import exceptions.XmlSaveException;
 import models.Dragon;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.regex.Pattern;
 
 /**
  * Класс, реализующий запись XML-файлов.
