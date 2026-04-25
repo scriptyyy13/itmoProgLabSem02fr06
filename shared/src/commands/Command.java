@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import exceptions.InvalidInputException;
 import tools.Arg;
-import CollectionManager;
 
 import java.io.Serializable;
 
@@ -29,11 +28,6 @@ import java.io.Serializable;
 })
 
 public abstract class Command implements Serializable {
-    @JsonIgnore
-    /**
-     * {@link CollectionManager}, в котором будет исполнена команда.
-     */
-    private CollectionManager manager;
     /**
      * Массив аргументов команды.
      */
@@ -42,20 +36,10 @@ public abstract class Command implements Serializable {
     /**
      * Создание экземпляра команды
      *
-     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
-    public Command(CollectionManager manager) {
-        this.manager = manager;
-    }
-
     public Command() {
     }
 
-    /**
-     * Исполнение команды.
-     */
-    public void execute() {
-    }
 
     /**
      * Валидация аргументов команды.
@@ -63,10 +47,6 @@ public abstract class Command implements Serializable {
      * @throws InvalidInputException исключение, выбрасываемое в случае неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-    }
-
-    public CollectionManager getManager() {
-        return manager;
     }
 
     public Arg[] getArgs() {
@@ -77,7 +57,4 @@ public abstract class Command implements Serializable {
         this.args = args;
     }
 
-    public void setManager(CollectionManager manager) {
-        this.manager = manager;
-    }
 }

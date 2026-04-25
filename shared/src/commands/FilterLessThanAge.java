@@ -1,8 +1,6 @@
 package commands;
 
 import exceptions.InvalidInputException;
-import CollectionManager;
-import OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
@@ -11,26 +9,11 @@ public class FilterLessThanAge extends Command {
     /**
      * Создание экземпляра команды {@code filter_less_than_age}.
      *
-     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
-    public FilterLessThanAge(CollectionManager manager) {
-        super(manager);
-    }
 
     public FilterLessThanAge() {
     }
 
-    /**
-     * Запуск соответствующего метода в {@link CollectionManager}.
-     */
-    public void execute() {
-        try {
-            validate();
-            getManager().filterLessThanAge(Long.parseLong((String) getArgs()[0].getValue()));
-        } catch (InvalidInputException e) {
-            OutputManager.println(e.getMessage());
-        }
-    }
 
     /**
      * Валидация аргументов команды.
