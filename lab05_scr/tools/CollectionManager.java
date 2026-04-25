@@ -1,6 +1,6 @@
 package tools;
 
-import commands.ExecuteScript;
+import commands.*;
 import exceptions.EmptyDequeException;
 import exceptions.InvalidInputException;
 import exceptions.RecursionLimitException;
@@ -8,6 +8,7 @@ import exceptions.XmlSaveException;
 import main_classes.ApplicationContext;
 import models.Dragon;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -19,12 +20,14 @@ public class CollectionManager {
      */
     private ArrayDeque<Dragon> collection;
 
+    private Date creationTime;
     /**
      * Создание экзмепляра {@code CollectionManager}.
      *
      * @param collection коллекция.
      */
     public CollectionManager(ArrayDeque<Dragon> collection) {
+        this.creationTime = new Date();
         this.collection = collection;
     }
 
@@ -181,7 +184,7 @@ public class CollectionManager {
                 Тип: ArrayDeque
                 Дата инициализации: %s
                 Количество элементов: %d
-                """, ApplicationContext.creationTime, collection.size());
+                """, creationTime, collection.size());
         OutputManager.println(info);
     }
 

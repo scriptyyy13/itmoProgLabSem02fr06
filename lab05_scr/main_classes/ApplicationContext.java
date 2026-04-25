@@ -1,20 +1,10 @@
 package main_classes;
 
-import models.Dragon;
-
-
-import java.util.ArrayDeque;
-import java.util.Date;
-
 /**
- * Содержит основные статичсекие поля приложения.
+ * Содержит основные статические поля приложения.
  */
-public class ApplicationContext {
-    /**
-     * Время инициализации коллекции.
-     */
-    public static Date creationTime = new Date();
 
+public class ApplicationContext {
     /**
      * Путь до файла коллекции.
      */

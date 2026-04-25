@@ -19,11 +19,10 @@ public class Main {
      * @param args аргументы командной строки.
      */
     public static void main(String[] args) {
-        ApplicationContext.collectionPath = "collection.xml";
         ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
         try {
             XMLReader xmlReader = new XMLReader();
-            collection = xmlReader.readXmlCollection(ApplicationContext.collectionPath);
+            collection = xmlReader.readXmlCollection(args[0]);
         } catch (XmlReadingException e) {
             OutputManager.println(e.getMessage());
             OutputManager.println("Коллекция пуста");
