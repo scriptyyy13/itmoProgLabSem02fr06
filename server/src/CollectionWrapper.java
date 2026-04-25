@@ -1,12 +1,9 @@
-package tools;
-
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import models.Dragon;
 
 import java.util.ArrayDeque;
-import java.util.Date;
 
 /**
  * Класс-обёртка для коллекции.

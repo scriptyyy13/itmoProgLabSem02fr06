@@ -2,8 +2,8 @@ package commands;
 
 
 import exceptions.InvalidInputException;
-import tools.CollectionManager;
-import tools.OutputManager;
+import CollectionManager;
+import OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
@@ -12,7 +12,7 @@ public class RemoveById extends Command {
     /**
      * Создание экземпляра команды {@code remove_by_id}.
      *
-     * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
+     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
     public RemoveById(CollectionManager manager) {
         super(manager);
@@ -22,7 +22,7 @@ public class RemoveById extends Command {
     }
 
     /**
-     * Запуск соответствующего метода в {@link tools.CollectionManager}.
+     * Запуск соответствующего метода в {@link CollectionManager}.
      */
     public void execute() {
         try {

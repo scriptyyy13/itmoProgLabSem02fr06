@@ -2,9 +2,6 @@
 import commands.*;
 import exceptions.InvalidInputException;
 import tools.Arg;
-import tools.CollectionManager;
-import tools.InputManager;
-import tools.Reader;
 
 import java.util.Arrays;
 import java.util.HashMap;

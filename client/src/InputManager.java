@@ -1,6 +1,3 @@
-package tools;
-
-
 import exceptions.InvalidInputException;
 import models.*;
 

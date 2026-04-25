@@ -2,8 +2,6 @@
 import commands.*;
 import exceptions.InvalidInputException;
 import tools.Arg;
-import tools.InputManager;
-import tools.Reader;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,8 +1,8 @@
 package commands;
 
 import exceptions.InvalidInputException;
-import tools.CollectionManager;
-import tools.OutputManager;
+import CollectionManager;
+import OutputManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code execute_script}.
@@ -16,7 +16,7 @@ public class ExecuteScript extends Command {
     /**
      * Создание экземпляра команды {@code execute_script}.
      *
-     * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
+     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
     public ExecuteScript(CollectionManager manager) {
         super(manager);
@@ -26,7 +26,7 @@ public class ExecuteScript extends Command {
     }
 
     /**
-     * Запуск соответствующего метода в {@link tools.CollectionManager}.
+     * Запуск соответствующего метода в {@link CollectionManager}.
      */
     public void execute() {
         try {

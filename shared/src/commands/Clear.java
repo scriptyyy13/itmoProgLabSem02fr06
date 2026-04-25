@@ -1,6 +1,6 @@
 package commands;
 
-import tools.CollectionManager;
+import CollectionManager;
 
 
 /**
@@ -10,7 +10,7 @@ public class Clear extends Command {
     /**
      * Создание экземпляра команды {@code clear}.
      *
-     * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
+     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
     public Clear(CollectionManager manager) {
         super(manager);
@@ -20,7 +20,7 @@ public class Clear extends Command {
     }
 
     /**
-     * Запуск соответствующего метода в {@link tools.CollectionManager}.
+     * Запуск соответствующего метода в {@link CollectionManager}.
      */
     public void execute() {
         getManager().clear();

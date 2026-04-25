@@ -1,7 +1,4 @@
-package tools;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import commands.Command;
 import exceptions.XmlSaveException;
 import models.Dragon;
 

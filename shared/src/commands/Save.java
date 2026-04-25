@@ -1,7 +1,7 @@
 package commands;
 
 
-import tools.CollectionManager;
+import CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code save}.
@@ -10,7 +10,7 @@ public class Save extends Command {
     /**
      * Создание экземпляра команды {@code save}.
      *
-     * @param manager {@link tools.CollectionManager}, в котором будет исполнена команда.
+     * @param manager {@link CollectionManager}, в котором будет исполнена команда.
      */
     public Save(CollectionManager manager) {
         super(manager);
@@ -20,7 +20,7 @@ public class Save extends Command {
     }
 
     /**
-     * Запуск соответствующего метода в {@link tools.CollectionManager}.
+     * Запуск соответствующего метода в {@link CollectionManager}.
      */
     public void execute() {
         getManager().save();

@@ -1,7 +1,4 @@
-package tools;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import commands.Command;
 import models.Dragon;
 
 import java.nio.file.Files;
