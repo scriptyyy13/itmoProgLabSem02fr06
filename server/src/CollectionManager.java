@@ -101,27 +101,6 @@ public class CollectionManager {
         OutputManager.println("Коллекция очищена");
     }
 
-    /**
-     * Реализация команды {@code execute_script}.
-     *
-     * @param path путь до скрипта.
-     */
-    /**
-     * Реализация команды {@code execute_script}.
-     * @param script выполняемые команды.
-     */
-    public void executeScript(String script){
-        try {
-            if (ExecuteScript.runningScripts >100) throw new RecursionLimitException("Превышен предел рекурсии");
-            Reader scriptReader =  new Reader(script);
-            CommandManager commandManager = new CommandManager(this,scriptReader);
-            ExecuteScript.runningScripts +=1;
-            commandManager.startManage();
-            ExecuteScript.runningScripts -=1;
-        }catch (RecursionLimitException e){
-            OutputManager.println(e.getMessage());
-        }
-    }
 
     /**
      * Реализация команды {@code exit}.
