@@ -8,6 +8,8 @@ import exceptions.InvalidInputException;
 import tools.Arg;
 import tools.CollectionManager;
 
+import java.io.Serializable;
+
 /**
  * Абстрактный класс-предок всех команд.
  */
@@ -26,7 +28,7 @@ import tools.CollectionManager;
         @JsonSubTypes.Type(value = Update.class, name = "Update"),
 })
 
-public abstract class Command {
+public abstract class Command implements Serializable {
     @JsonIgnore
     /**
      * {@link tools.CollectionManager}, в котором будет исполнена команда.

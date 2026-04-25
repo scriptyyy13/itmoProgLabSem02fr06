@@ -50,7 +50,6 @@ public class ClientCommandManager {
                     throw new InvalidInputException("Команда не найдена. Введите help для помощи.");
                 Command command = commands.get(splittedStr[0]);
                 Arg[] args = Arg.toArgList(Arrays.copyOfRange(splittedStr, 1, splittedStr.length));
-                System.out.println(args.length);
                 ArgSetter.setArgs(command, args,reader);
                 command.validate();
                 /*
