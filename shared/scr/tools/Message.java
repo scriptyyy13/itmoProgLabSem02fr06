@@ -7,11 +7,6 @@ import commands.Command;
  * Класс-оболочка для передачи команд и данных по сети.
  */
 public class Message {
-    @JsonTypeInfo(
-            use = JsonTypeInfo.Id.CLASS,
-            include = JsonTypeInfo.As.PROPERTY,
-            property = "class"
-    )
     private Command command;
 
     public Message() {
