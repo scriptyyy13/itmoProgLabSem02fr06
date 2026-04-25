@@ -79,6 +79,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="shared" />
     <orderEntry type="module" module-name="lab05_scr" />
   </component>
 </module>

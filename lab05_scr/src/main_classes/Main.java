@@ -4,8 +4,6 @@ import exceptions.XmlReadingException;
 import models.Dragon;
 import tools.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
 
 /**
@@ -23,7 +21,7 @@ public class Main {
         try {
             XMLReader xmlReader = new XMLReader();
             collection = xmlReader.readXmlCollection(args[0]);
-        } catch (XmlReadingException e) {
+        } catch (Exception e) {
             OutputManager.println(e.getMessage());
             OutputManager.println("Коллекция пуста");
         }
