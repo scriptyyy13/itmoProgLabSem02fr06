@@ -4,12 +4,14 @@ package tools;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
+import java.io.Serializable;
+
 
 /**
  * Представляет аргумент команды.
  */
 @JacksonXmlRootElement(localName = "arg")
-public class Arg {
+public class Arg implements Serializable {
     /**
      * Значение аргумента.
      */
