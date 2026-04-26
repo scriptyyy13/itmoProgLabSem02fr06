@@ -1,5 +1,6 @@
 import commands.*;
 import models.Dragon;
+import tools.Message;
 
 public class CommandExecutor {
     private CollectionManager collection;
@@ -8,52 +9,54 @@ public class CommandExecutor {
         this.collection = collection;
     }
 
-    public void executeCommand(Command command){
+    public Message executeCommand(Command command){
+        Message ans = new Message();
         switch (command){
             case Add a:
-                collection.add((Dragon) command.getArgs()[0].getValue());
+                ans =collection.add((Dragon) command.getArgs()[0].getValue());
                 break;
             case AddIfMin amn:
-                collection.addIfMin((Dragon) command.getArgs()[0].getValue());
+                ans = collection.addIfMin((Dragon) command.getArgs()[0].getValue());
                 break;
             case AddIfMax amx:
-                collection.addIfMax((Dragon) command.getArgs()[0].getValue());
+                ans = collection.addIfMax((Dragon) command.getArgs()[0].getValue());
                 break;
             case AverageOfAge avr:
-                collection.averageOfAge();
+                ans = collection.averageOfAge();
                 break;
             case Clear cl:
-                collection.clear();
+                ans = collection.clear();
                 break;
             case Exit ext:
                 collection.exit();
                 break;
             case FilterLessThanAge flt:
-                collection.filterLessThanAge((Long) command.getArgs()[0].getValue());
+                ans = collection.filterLessThanAge((Long) command.getArgs()[0].getValue());
                 break;
             case Help hlp:
-                collection.help();
+                ans = collection.help();
                 break;
             case Info inf:
-                collection.info();
+                ans = collection.info();
                 break;
             case PrintUniqueWeight puw:
-                collection.printUniqueWeight();
+                ans = collection.printUniqueWeight();
                 break;
             case RemoveById rbi:
-                collection.removeById((Long) command.getArgs()[0].getValue());
+                ans = collection.removeById((Long) command.getArgs()[0].getValue());
                 break;
             case RemoveHead a:
-                collection.removeHead();
+                ans = collection.removeHead();
                 break;
             case Show shw:
-                collection.show();
+                ans = collection.show();
                 break;
             case Update upd:
-                collection.update((Long) command.getArgs()[0].getValue(),(Dragon) command.getArgs()[1].getValue() );
+                ans = collection.update((Long) command.getArgs()[0].getValue(),(Dragon) command.getArgs()[1].getValue() );
                 break;
             default:
                 break;
         }
+        return ans;
     }
 }
