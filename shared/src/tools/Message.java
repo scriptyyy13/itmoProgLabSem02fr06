@@ -9,20 +9,20 @@ import java.io.Serializable;
  * Класс-оболочка для передачи команд и данных по сети.
  */
 public class Message implements Serializable {
-    private Command command;
+    private String text;
 
     public Message() {
     }
 
-    public Message(Command command) {
-        this.command = command;
+    public Message(String text) {
+        this.text = text;
     }
 
-    public Command getCommand() {
-        return command;
+    public String getText() {
+        return text;
     }
 
-    public void setCommand(Command command) {
-        this.command = command;
+    public void setText(Command command) {
+        this.text = text;
     }
 }
