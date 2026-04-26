@@ -33,10 +33,11 @@ public class CollectionManager {
      *
      * @param elem добавляемый {@code Dragon}.
      */
-    public void add(Dragon elem) {
+    public Message add(Dragon elem) {
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
-        OutputManager.println("Элемент добавлен");
+        Message ans =new Message("Элемент добавлен");
+        return ans;
     }
 
     /**
@@ -44,7 +45,8 @@ public class CollectionManager {
      *
      * @param newDragon добавляемый {@code Dragon}.
      */
-    public void addIfMax(Dragon newDragon) {
+    public Message addIfMax(Dragon newDragon) {
+        Message ans = new Message();
         newDragon.setId(getMaxId() + 1);
         Boolean isMax = true;
         for (var elem : collection) {
@@ -52,10 +54,11 @@ public class CollectionManager {
         }
         if (isMax) {
             collection.addLast(newDragon);
-            OutputManager.println("Элемент добавлен");
+            ans.setText("Элемент добавлен");
         } else {
-            OutputManager.println("Элемент не максимальный");
+            ans.setText("Элемент не максимальный");
         }
+        return ans;
     }
 
     /**
@@ -63,7 +66,8 @@ public class CollectionManager {
      *
      * @param newDragon добавляемый {@code Dragon}.
      */
-    public void addIfMin(Dragon newDragon) {
+    public Message addIfMin(Dragon newDragon) {
+        Message ans = new Message();
         newDragon.setId(getMaxId() + 1);
         Boolean isMin = true;
         for (var elem : collection) {
@@ -71,16 +75,17 @@ public class CollectionManager {
         }
         if (isMin) {
             collection.addLast(newDragon);
-            OutputManager.println("Элемент добавлен");
+            ans.setText("Элемент добавлен");
         } else {
-            OutputManager.println("Элемент не минимальный");
+            ans.setText("Элемент не минимальный");
         }
+        return ans;
     }
 
     /**
      * Реализация команды {@code average_of_age}.
      */
-    public void averageOfAge() {
+    public Message averageOfAge() {
         try {
             if (collection.isEmpty()) throw new EmptyDequeException("Коллекция пуста");
             Float sum = 0F;
@@ -88,18 +93,18 @@ public class CollectionManager {
                 sum += (float) elem.getAge();
             }
             Float average = sum / (float) collection.size();
-            OutputManager.println(String.valueOf(average));
+            return new Message(String.valueOf(average));
         } catch (EmptyDequeException e) {
-            OutputManager.println(e.getMessage());
+            return new Message(e.getMessage());
         }
     }
 
     /**
      * Реализация команды {@code clear}.
      */
-    public void clear() {
+    public Message clear() {
         collection.clear();
-        OutputManager.println("Коллекция очищена");
+        return new Message("Коллекция очищена");
     }
 
 
@@ -115,18 +120,18 @@ public class CollectionManager {
      *
      * @param age значение, по которому происходит фильтрация.
      */
-    public void filterLessThanAge(long age) {
+    public Message filterLessThanAge(long age) {
         String filtredCollection = "";
         for (var elem : collection) {
             if (elem.getAge() < age) filtredCollection += elem.toString();
         }
-        OutputManager.println(filtredCollection);
+        return new Message(filtredCollection);
     }
 
     /**
      * Реализация команды {@code help}.
      */
-    public void help() {
+    public Message help() {
         String helpMessage = """
                 Доступные команды:
                 
@@ -134,7 +139,7 @@ public class CollectionManager {
                 info - вывести информацию о коллекции
                 show - вывести все элементы коллекции
                 add - добавить новый элемент в коллекцию
-                update id - обновить значение элемента, id которого равен заданному 
+                update id - обновить значение элемента, id которого равен заданному
                 remove_by_id id - удалить элемент по id
                 clear - очистить коллекцию
                 save - сохранить коллекцию в файл
@@ -147,13 +152,13 @@ public class CollectionManager {
                 filter_less_than_age age - вывести элементы, значение поля age которых меньше заданного
                 print_unique_weight - вывести уникальные значения поля weight всех элементов в коллекции
                 """;
-        OutputManager.println(helpMessage);
+        return new Message(helpMessage);
     }
 
     /**
      * Реализация команды {@code info}.
      */
-    public void info() {
+    public Message info() {
         String info = String.format("""
                 Информация о коллекции:
                 
@@ -161,18 +166,18 @@ public class CollectionManager {
                 Дата инициализации: %s
                 Количество элементов: %d
                 """, creationTime, collection.size());
-        OutputManager.println(info);
+        return new Message(info);
     }
 
     /**
      * Реализация команды {@code print_unique_weight}.
      */
-    public void printUniqueWeight() {
+    public Message printUniqueWeight() {
         HashSet<Integer> set = new HashSet<>();
         for (var elem : collection) {
             set.add(elem.getWeight());
         }
-        OutputManager.println(set.toString());
+        return new Message(set.toString());
     }
 
     /**
@@ -180,26 +185,25 @@ public class CollectionManager {
      *
      * @param id id удаляемого объекта.
      */
-    public void removeById(long id) {
+    public Message removeById(long id) {
         for (var elem : collection) {
             if (elem.getId() == id) {
                 collection.remove(elem);
-                OutputManager.println("Элемент удалён");
-                return;
+                return new Message("Элемент удалён");
             }
         }
-        OutputManager.println("Элемент не найден");
+        return new Message("Элемент не найден");
     }
 
     /**
      * Реализация команды {@code remove_head}.
      */
-    public void removeHead() {
+    public Message removeHead() {
         try {
             if (collection.isEmpty()) throw new EmptyDequeException("Коллекция пуста");
-            OutputManager.println(collection.poll().toString());
+            return new Message(collection.poll().toString());
         } catch (EmptyDequeException e) {
-            OutputManager.println(e.getMessage());
+            return new Message(e.getMessage());
         }
     }
 
@@ -219,10 +223,13 @@ public class CollectionManager {
     /**
      * Реализация команды {@code show}.
      */
-    public void show() {
+    public Message show() {
+        StringBuilder ans = new StringBuilder();
         for (var elem : collection) {
-            OutputManager.println(String.valueOf(elem));
+            ans.append(String.valueOf(elem));
         }
+        return new Message(ans.toString());
+
     }
 
     /**
@@ -231,7 +238,7 @@ public class CollectionManager {
      * @param id        id обновляемого объекта.
      * @param updDragon новое значение обьекта.
      */
-    public void update(long id, Dragon updDragon) {
+    public Message update(long id, Dragon updDragon) {
         Dragon[] array = collection.toArray(new Dragon[0]);
         for (int i = 0; i < array.length; i++) {
             if (array[i].getId() == id) {
@@ -240,11 +247,10 @@ public class CollectionManager {
                 array[i].setId(id);
                 array[i].setCreationDate(date);
                 collection = new ArrayDeque<>(Arrays.asList(array));
-                OutputManager.println("Элемент обновлён");
-                return;
+                return new Message("Элемент обновлён");
             }
         }
-        OutputManager.println("Элемент не найден");
+        return new Message("Элемент не найден");
     }
 
     /**

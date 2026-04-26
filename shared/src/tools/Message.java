@@ -22,7 +22,7 @@ public class Message implements Serializable {
         return text;
     }
 
-    public void setText(Command command) {
+    public void setText(String text) {
         this.text = text;
     }
 }
