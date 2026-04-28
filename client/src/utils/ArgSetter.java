@@ -7,11 +7,17 @@ import tools.Arg;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class ArgSetter {
 
     public static void setArgs(Command command, Arg[] args, Reader reader) {
         if (command instanceof Add || command instanceof AddIfMax || command instanceof AddIfMin) {
+            InputManager.clearBuffer();
+            if (args.length > 0) {
+                String[] stringArgs = Arrays.stream(args).map(a -> a.getValue().toString()).toArray(String[]::new);
+                InputManager.loadArgs(stringArgs);
+            }
             command.setArgs(new Arg(InputManager.inputDragon(reader)));
         }
         else if (command instanceof Update) {
