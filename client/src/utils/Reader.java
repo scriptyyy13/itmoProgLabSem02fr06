@@ -1,3 +1,5 @@
+package utils;
+
 import java.io.*;
 
 
@@ -11,14 +13,14 @@ public class Reader {
     private BufferedReader inputReader;
 
     /**
-     * Создание экземпляра {@code Reader} для стандартного потока ввода.
+     * Создание экземпляра {@code utils.Reader} для стандартного потока ввода.
      */
     public Reader() {
         inputReader = new BufferedReader(new InputStreamReader(System.in));
     }
 
     /**
-     * Создание экземпляра {@code Reader} для стандартного потока ввода.
+     * Создание экземпляра {@code utils.Reader} для стандартного потока ввода.
      */
     public Reader(String inputText) {
         inputReader = new BufferedReader(new StringReader(inputText));

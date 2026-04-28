@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import models.Dragon;
+import utils.OutputManager;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

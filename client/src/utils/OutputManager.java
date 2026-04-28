@@ -1,3 +1,5 @@
+package utils;
+
 /**
  * Класс для вывода информации в консоль через единый интерфейс.
  *
@@ -6,7 +8,7 @@
  */
 public class OutputManager {
     /**
-     * Конструктор OutputManager.
+     * Конструктор utils.OutputManager.
      */
     private OutputManager() {}
 
