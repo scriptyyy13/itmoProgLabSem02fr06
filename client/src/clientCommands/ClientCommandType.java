@@ -1,3 +1,5 @@
+package clientCommands;
+
 import commands.*;
 
 public enum ClientCommandType {
