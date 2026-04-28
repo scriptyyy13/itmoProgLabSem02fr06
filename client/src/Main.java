@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 public class Main {
     public static void main(String[] args) {
         String host = "localhost";
-        int port = 8080;
+        int port = 8085;
 
         if (args.length > 0) { // возможность передать адрес и порт как аргумент при запуске в формате ADDRESS:PORT
             String[] parts = args[0].split(":");
@@ -20,8 +20,8 @@ public class Main {
                 try {
                     port = Integer.parseInt(parts[1]);
                 } catch (NumberFormatException e) {
-                    OutputManager.errPrintln("Порт должен быть числом! Используется дефолтный: 8080");
-                    port = 8080;
+                    OutputManager.errPrintln("Порт должен быть числом! Используется дефолтный: 8085");
+                    port = 8085;
                 }
             }
         }

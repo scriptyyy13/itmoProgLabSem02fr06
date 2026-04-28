@@ -27,9 +27,6 @@ public class CommandExecutor {
             case Clear cl:
                 ans = collection.clear();
                 break;
-            case Exit ext:
-                collection.exit();
-                break;
             case FilterLessThanAge flt:
                 ans = collection.filterLessThanAge((Long) command.getArgs()[0].getValue());
                 break;
@@ -59,4 +56,6 @@ public class CommandExecutor {
         }
         return ans;
     }
+
+    public CollectionManager getCollection(){return collection;}
 }

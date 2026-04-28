@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import exceptions.EmptyDequeException;
 import exceptions.InvalidInputException;
 import exceptions.XmlSaveException;
@@ -111,6 +112,7 @@ public class CollectionManager {
      * Реализация команды {@code exit}.
      */
     public void exit() {
+        save();
         System.exit(0);
     }
 
@@ -213,9 +215,9 @@ public class CollectionManager {
         XMLWriter xmlWriter = new XMLWriter();
         try {
             xmlWriter.dequeToXML(collection, ApplicationContext.collectionPath);
-            OutputManager.println("Запись файла прошла успешно");
+            System.out.println("Сохранения коллекции прошло успешно");
         } catch (XmlSaveException e) {
-            OutputManager.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
