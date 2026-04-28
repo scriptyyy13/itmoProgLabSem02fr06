@@ -7,6 +7,7 @@ import tools.Message;
 import utils.OutputManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Коллекция с методами для ней управления.
@@ -16,8 +17,8 @@ public class CollectionManager {
      * Коллекция.
      */
     private ArrayDeque<Dragon> collection;
-
     private Date creationTime;
+
     /**
      * Создание экзмепляра {@code CollectionManager}.
      *
@@ -36,7 +37,7 @@ public class CollectionManager {
     public Message add(Dragon elem) {
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
-        Message ans =new Message("Элемент добавлен");
+        Message ans = new Message("Элемент добавлен");
         return ans;
     }
 
@@ -46,19 +47,15 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public Message addIfMax(Dragon newDragon) {
-        Message ans = new Message();
-        newDragon.setId(getMaxId() + 1);
-        Boolean isMax = true;
-        for (var elem : collection) {
-            if (newDragon.compareTo(elem) < 0) isMax = false;
-        }
-        if (isMax) {
+        boolean isMax = collection.stream()
+                .allMatch(e -> newDragon.compareTo(e) > 0);
+
+        if (isMax || collection.isEmpty()) {
+            newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            ans.setText("Элемент добавлен");
-        } else {
-            ans.setText("Элемент не максимальный");
+            return new Message("Элемент добавлен (был максимальным)");
         }
-        return ans;
+        return new Message("Элемент не максимальный");
     }
 
     /**
@@ -67,35 +64,28 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public Message addIfMin(Dragon newDragon) {
-        Message ans = new Message();
-        newDragon.setId(getMaxId() + 1);
-        Boolean isMin = true;
-        for (var elem : collection) {
-            if (newDragon.compareTo(elem) > 0) isMin = false;
-        }
-        if (isMin) {
+        boolean isMin = collection.stream()
+                .allMatch(e -> newDragon.compareTo(e) < 0);
+
+        if (isMin || collection.isEmpty()) {
+            newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            ans.setText("Элемент добавлен");
-        } else {
-            ans.setText("Элемент не минимальный");
+            return new Message("Элемент добавлен (был минимальным)");
         }
-        return ans;
+        return new Message("Элемент не минимальный");
     }
 
     /**
      * Реализация команды {@code average_of_age}.
      */
     public Message averageOfAge() {
-        try {
-            if (collection.isEmpty()) throw new EmptyDequeException("Коллекция пуста");
-            Float sum = 0F;
-            for (var elem : collection) {
-                sum += (float) elem.getAge();
-            }
-            Float average = sum / (float) collection.size();
-            return new Message(String.valueOf(average));
-        } catch (EmptyDequeException e) {
-            return new Message(e.getMessage());
+        OptionalDouble average = collection.stream()
+                .mapToLong(Dragon::getAge)
+                .average();
+        if (average.isPresent()) {
+            return new Message(String.valueOf(average.getAsDouble()));
+        } else {
+            return new Message("Коллекция пуста");
         }
     }
 
@@ -107,26 +97,20 @@ public class CollectionManager {
         return new Message("Коллекция очищена");
     }
 
-
-    /**
-     * Реализация команды {@code exit}.
-     */
-    public void exit() {
-        save();
-        System.exit(0);
-    }
-
     /**
      * Реализация команды {@code filter_less_than_age}.
      *
      * @param age значение, по которому происходит фильтрация.
      */
     public Message filterLessThanAge(long age) {
-        String filtredCollection = "";
-        for (var elem : collection) {
-            if (elem.getAge() < age) filtredCollection += elem.toString();
-        }
-        return new Message(filtredCollection);
+        String result = collection.stream()
+                .filter(e -> e.getAge() < age)
+                .map(Dragon::toString)
+                .collect(Collectors.joining("\n"));
+
+        return result.isEmpty()
+                ? new Message("Нет элементов моложе " + age)
+                : new Message(result);
     }
 
     /**
@@ -174,11 +158,14 @@ public class CollectionManager {
      * Реализация команды {@code print_unique_weight}.
      */
     public Message printUniqueWeight() {
-        HashSet<Integer> set = new HashSet<>();
-        for (var elem : collection) {
-            set.add(elem.getWeight());
-        }
-        return new Message(set.toString());
+        String weights = collection.stream()
+                .map(Dragon::getWeight)
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
+
+        return new Message(weights);
     }
 
     /**
@@ -187,25 +174,18 @@ public class CollectionManager {
      * @param id id удаляемого объекта.
      */
     public Message removeById(long id) {
-        for (var elem : collection) {
-            if (elem.getId() == id) {
-                collection.remove(elem);
-                return new Message("Элемент удалён");
-            }
-        }
-        return new Message("Элемент не найден");
+        boolean removed = collection.removeIf(e -> e.getId() == id);
+        return removed ? new Message("Элемент удалён") : new Message("Элемент с таким ID не найден");
     }
 
     /**
      * Реализация команды {@code remove_head}.
      */
     public Message removeHead() {
-        try {
-            if (collection.isEmpty()) throw new EmptyDequeException("Коллекция пуста");
-            return new Message(collection.poll().toString());
-        } catch (EmptyDequeException e) {
-            return new Message(e.getMessage());
-        }
+        Dragon head = collection.poll();
+        return head != null
+                ? new Message("Удален элемент: " + head)
+                : new Message("Коллекция пуста");
     }
 
     /**
@@ -225,12 +205,14 @@ public class CollectionManager {
      * Реализация команды {@code show}.
      */
     public Message show() {
-        StringBuilder ans = new StringBuilder();
-        for (var elem : collection) {
-            ans.append(String.valueOf(elem));
-        }
-        return new Message(ans.toString());
+        if (collection.isEmpty()) return new Message("Коллекция пуста");
 
+        String result = collection.stream()
+                .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(Dragon::toString)
+                .collect(Collectors.joining("\n---------------\n"));
+
+        return new Message("Элементы коллекции:\n" + result);
     }
 
     /**
@@ -240,16 +222,17 @@ public class CollectionManager {
      * @param updDragon новое значение обьекта.
      */
     public Message update(long id, Dragon updDragon) {
-        Dragon[] array = collection.toArray(new Dragon[0]);
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].getId() == id) {
-                Date date = array[i].getCreationDate();
-                array[i] = updDragon;
-                array[i].setId(id);
-                array[i].setCreationDate(date);
-                collection = new ArrayDeque<>(Arrays.asList(array));
-                return new Message("Элемент обновлён");
-            }
+        Optional<Dragon> found = collection.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst();
+        if (found.isPresent()) {
+            Dragon old = found.get();
+            updDragon.setId(id);
+            updDragon.setCreationDate(old.getCreationDate());
+
+            collection.remove(old);
+            collection.add(updDragon);
+            return new Message("Элемент с ID " + id + " успешно обновлен");
         }
         return new Message("Элемент не найден");
     }
@@ -260,11 +243,10 @@ public class CollectionManager {
      * @return максимальный id.
      */
     public long getMaxId() {
-        long id = 0;
-        for (var e : collection) {
-            id = Math.max(id, e.getId());
-        }
-        return id;
+        return collection.stream()
+                .mapToLong(Dragon::getId)
+                .max()
+                .orElse(0L);
     }
 
     /**
@@ -272,21 +254,22 @@ public class CollectionManager {
      * Элементы, не прошедшие валидацию, удаляются из коллекции.
      */
     public void validate() {
-        HashSet<Long> ids = new HashSet<Long>();
-        ArrayDeque<Dragon> vCollection = new ArrayDeque<Dragon>();
-        for (var e : collection) {
-            if (ids.contains(e.getId())) {
-                OutputManager.println("Обнаружен повтор id, элемент пропущен");
-            } else {
-                ids.add(e.getId());
-                try {
-                    e.validate();
-                    vCollection.add(e);
-                } catch (InvalidInputException ex) {
-                    OutputManager.println(ex.getMessage());
-                }
-            }
-        }
-        collection = vCollection;
+        Set<Long> ids = new HashSet<>();
+        collection = collection.stream()
+                .filter(e -> {
+                    if (ids.contains(e.getId())) {
+                        OutputManager.errPrintln("Обнаружен повтор id, элемент пропущен: " + e.getId());
+                        return false;
+                    }
+                    try {
+                        e.validate();
+                        ids.add(e.getId());
+                        return true;
+                    } catch (InvalidInputException ex) {
+                        OutputManager.errPrintln("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toCollection(ArrayDeque::new));
     }
 }
