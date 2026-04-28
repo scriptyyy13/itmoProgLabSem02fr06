@@ -83,6 +83,7 @@ public class ServerCommandManager {
                                 serverCmdBuffer.flip();
                                 String command = StandardCharsets.UTF_8.decode(serverCmdBuffer).toString().trim();
                                 executeServerCommand(command);
+                                serverCmdBuffer.clear();
                             }else {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
                                 SocketAddress client = dc.receive(buffer);
@@ -93,6 +94,7 @@ public class ServerCommandManager {
                                 buffer.put(Serializer.serializeToBytes(ans));
                                 buffer.flip();
                                 dc.send(buffer, client);
+                                buffer.clear();
                             }
                         }
                     }
