@@ -34,7 +34,15 @@ public class ClientCommandManager {
                 }
 
                 if (command instanceof ExecuteScript) {
-                    handleScript(str);
+                    String[] parts = str.trim().split("\\s+");
+                    if (parts.length > 1) {
+                        List<Command> scriptCommands = scriptManager.processScript(parts[1]);
+                        if (scriptCommands != null) {
+                            for (Command cmd : scriptCommands) {
+                                sendAndReceive(cmd);
+                            }
+                        }
+                    }
                 } else {
                     sendAndReceive(command);
                 }
@@ -48,16 +56,25 @@ public class ClientCommandManager {
 
     private void handleScript(String inputLine) {
         String[] splitted = inputLine.trim().split("\\s+");
+
         if (splitted.length < 2) {
-            OutputManager.errPrintln("Не указан путь к скрипту.");
+            OutputManager.errPrintln("Ошибка: не указан путь к файлу скрипта.");
             return;
         }
+        String filePath = splitted[1];
 
-        List<Command> commands = scriptManager.processScript(splitted[1]);
+        List<Command> commands = scriptManager.processScript(filePath);
+
         if (commands != null) {
+            OutputManager.println("Выполнение скрипта: " + filePath);
             for (Command cmd : commands) {
-                if (!sendAndReceive(cmd)) break;
+                if (!sendAndReceive(cmd)) {
+                    OutputManager.errPrintln("Скрипт прерван из-за ошибки сети.");
+                    break;
+                }
             }
+        } else {
+            OutputManager.errPrintln("Выполнение скрипта отменено.");
         }
     }
 
