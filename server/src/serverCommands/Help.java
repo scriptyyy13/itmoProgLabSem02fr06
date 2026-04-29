@@ -1,13 +1,14 @@
 package serverCommands;
 
+import commands.CommandRequest;
 import commands.HelpRequest;
 import tools.CollectionManager;
 
-public class Help extends HelpRequest {
+public class Help extends Command {
     private CollectionManager collectionManager;
 
-    public Help(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public Help(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){

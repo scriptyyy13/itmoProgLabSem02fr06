@@ -25,7 +25,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = UpdateRequest.class, name = "Update"),
 })
 
-public abstract class Command implements Serializable {
+public abstract class CommandRequest implements Serializable {
     /**
      * Массив аргументов команды.
      */
@@ -35,10 +35,9 @@ public abstract class Command implements Serializable {
      * Создание экземпляра команды
      *
      */
-    public Command() {
+    public CommandRequest() {
     }
 
-    public String execute(){return null;}
 
     /**
      * Валидация аргументов команды.

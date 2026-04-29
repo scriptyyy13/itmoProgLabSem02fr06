@@ -31,15 +31,15 @@ public class ClientCommandManager {
                     break;
                 } else if (parts[0].equals("execute_script")) {
                     if (parts.length > 1) {
-                        List<Command> scriptCommands = scriptManager.processScript(parts[1]);
+                        List<CommandRequest> scriptCommands = scriptManager.processScript(parts[1]);
                         if (scriptCommands != null) {
-                            for (Command cmd : scriptCommands) {
+                            for (CommandRequest cmd : scriptCommands) {
                                 sendAndReceive(cmd);
                             }
                         }
                     }
                 } else {
-                    Command command = parser.parseCommand(str, consoleReader);
+                    CommandRequest command = parser.parseCommand(str, consoleReader);
                     if (command == null) continue;
                     sendAndReceive(command);
                 }
@@ -51,7 +51,7 @@ public class ClientCommandManager {
         }
     }
 
-    private void sendAndReceive(Command command) {
+    private void sendAndReceive(CommandRequest command) {
         try {
             udpClient.sendCommand(command);
             tools.Message response = udpClient.receiveResponse();

@@ -1,14 +1,14 @@
 package utils;
 
 import clientCommands.ClientCommandType;
-import commands.Command;
+import commands.CommandRequest;
 import exceptions.InvalidInputException;
 import tools.Arg;
 
 import java.util.Arrays;
 
 public class CommandParser {
-    public static Command parseCommand(String line, Reader currentReader) throws InvalidInputException {
+    public static CommandRequest parseCommand(String line, Reader currentReader) throws InvalidInputException {
         line = line.trim();
 
         String[] splittedStr = line.split("\\s+");
@@ -21,7 +21,7 @@ public class CommandParser {
         }
 
         // создаем новый экземпляр команды
-        Command command = type.create();
+        CommandRequest command = type.create();
 
         // парсим аргументы
         Arg[] args = Arg.toArgList(Arrays.copyOfRange(splittedStr, 1, splittedStr.length));

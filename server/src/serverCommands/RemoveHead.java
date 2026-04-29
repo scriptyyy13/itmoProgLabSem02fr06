@@ -1,22 +1,21 @@
 package serverCommands;
 
 
+import commands.CommandRequest;
 import commands.RemoveHeadRequest;
 import tools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code remove_head}.
  */
-public class RemoveHead extends RemoveHeadRequest {
-    private CollectionManager collectionManager;
+public class RemoveHead extends Command {
 
-    public RemoveHead(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public RemoveHead(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){
-        return collectionManager.removeHead();
+        return getCollectionManager().removeHead();
     }
-    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 
 }

@@ -1,17 +1,13 @@
 package utils;
 
 import commands.*;
-import exceptions.InvalidInputException;
 import tools.Arg;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class ArgSetter {
 
-    public static void setArgs(Command command, Arg[] args, Reader reader) {
+    public static void setArgs(CommandRequest command, Arg[] args, Reader reader) {
         if (command instanceof AddRequest || command instanceof AddIfMaxRequest || command instanceof AddIfMinRequest) {
             InputManager.clearBuffer();
             if (args.length > 0) {

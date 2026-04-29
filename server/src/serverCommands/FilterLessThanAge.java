@@ -1,20 +1,19 @@
 package serverCommands;
 
+import commands.CommandRequest;
 import commands.FilterLessThanAgeRequest;
 import tools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
  */
-public class FilterLessThanAge extends FilterLessThanAgeRequest {
-    private CollectionManager collectionManager;
+public class FilterLessThanAge extends Command {
 
-    public FilterLessThanAge(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public FilterLessThanAge(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){
-        return collectionManager.filterLessThanAge((long)getArgs()[0].getValue());
+        return getCollectionManager().filterLessThanAge((long)getArgs()[0].getValue());
     }
-    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

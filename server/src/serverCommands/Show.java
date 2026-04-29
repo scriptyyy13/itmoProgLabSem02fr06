@@ -1,21 +1,20 @@
 package serverCommands;
 
 
+import commands.CommandRequest;
 import commands.ShowRequest;
 import tools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code show}.
  */
-public class Show extends ShowRequest {
-    private CollectionManager collectionManager;
+public class Show extends Command {
 
-    public Show(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public Show(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){
-        return collectionManager.show();
+        return getCollectionManager().show();
     }
-    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

@@ -5,7 +5,7 @@ import exceptions.InvalidInputException;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
  */
-public class FilterLessThanAgeRequest extends Command {
+public class FilterLessThanAgeRequest extends CommandRequest {
     /**
      * Создание экземпляра команды {@code filter_less_than_age}.
      *

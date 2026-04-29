@@ -87,8 +87,8 @@ public class ServerCommandManager {
                             } else {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
                                 SocketAddress client = new RequestGetter(dc).getRequest(buffer);
-                                Command cmd = (Command) Deserializer.deserializeFromBytes(buffer.array());
-                                Message ans = new Message((wrapCommand(cmd)).execute());
+                                CommandRequest cmd = (CommandRequest) Deserializer.deserializeFromBytes(buffer.array());
+                                Message ans =  new Message( toCollectionCommand(cmd).execute() );
                                 new RequestMaker(dc).makeRequest(ans, client, buffer);
                             }
                         }
@@ -123,69 +123,20 @@ public class ServerCommandManager {
                 break;
         }
     }
-
-    public Command wrapCommand(Command command) {
-        if (command instanceof AddRequest) {
-            Add cmd = (Add) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof AddIfMinRequest) {
-            AddIfMin cmd = (AddIfMin) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof AddIfMaxRequest) {
-            AddIfMax cmd = (AddIfMax) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof AverageOfAgeRequest) {
-            AverageOfAge cmd = (AverageOfAge) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof ClearRequest) {
-            Clear cmd = (Clear) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof FilterLessThanAgeRequest) {
-            FilterLessThanAge cmd = (FilterLessThanAge) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof InfoRequest) {
-            Info cmd = (Info) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof PrintUniqueWeightRequest) {
-            PrintUniqueWeight cmd = (PrintUniqueWeight) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof RemoveByIdRequest) {
-            RemoveById cmd = (RemoveById) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof RemoveHeadRequest) {
-            RemoveHead cmd = (RemoveHead) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof ShowRequest) {
-            Show cmd = (Show) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
-        if (command instanceof UpdateRequest) {
-            Update cmd = (Update) command;
-            cmd.setCollectionManager(collectionManager);
-            return cmd;
-        }
+    public Command toCollectionCommand(CommandRequest cmd){
+        if(cmd instanceof AddRequest) return new Add(cmd,collectionManager);
+        if(cmd instanceof AddIfMinRequest) return new AddIfMin(cmd,collectionManager);
+        if(cmd instanceof AddIfMaxRequest) return new AddIfMax(cmd,collectionManager);
+        if(cmd instanceof AverageOfAgeRequest) return new AverageOfAge(cmd,collectionManager);
+        if(cmd instanceof ClearRequest) return new Clear(cmd,collectionManager);
+        if(cmd instanceof FilterLessThanAgeRequest) return new FilterLessThanAge(cmd,collectionManager);
+        if(cmd instanceof HelpRequest) return new Help(cmd,collectionManager);
+        if(cmd instanceof InfoRequest) return new Info(cmd,collectionManager);
+        if(cmd instanceof PrintUniqueWeightRequest) return new PrintUniqueWeight(cmd,collectionManager);
+        if(cmd instanceof RemoveByIdRequest) return new RemoveById(cmd,collectionManager);
+        if(cmd instanceof RemoveHeadRequest) return new RemoveHead(cmd,collectionManager);
+        if(cmd instanceof ShowRequest) return new Show(cmd,collectionManager);
+        if(cmd instanceof UpdateRequest) return new Update(cmd,collectionManager);
         return null;
-
     }
 }

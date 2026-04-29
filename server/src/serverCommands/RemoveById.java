@@ -1,21 +1,20 @@
 package serverCommands;
 
 
+import commands.CommandRequest;
 import commands.RemoveByIdRequest;
 import tools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
  */
-public class RemoveById extends RemoveByIdRequest {
-    private CollectionManager collectionManager;
+public class RemoveById extends Command {
 
-    public RemoveById(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public RemoveById(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){
-        return collectionManager.removeById((long)getArgs()[0].getValue());
+        return getCollectionManager().removeById((long)getArgs()[0].getValue());
     }
-    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

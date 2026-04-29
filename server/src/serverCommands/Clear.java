@@ -2,20 +2,19 @@ package serverCommands;
 
 
 import commands.ClearRequest;
+import commands.CommandRequest;
 import tools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code clear}.
  */
-public class Clear extends ClearRequest {
-    private CollectionManager collectionManager;
+public class Clear extends Command {
 
-    public Clear(CollectionManager collectionManager) {
-        this.collectionManager = collectionManager;
+    public Clear(CommandRequest cmd, CollectionManager collection) {
+        super(cmd,collection);
     }
 
     public String execute(){
-        return collectionManager.clear();
+        return getCollectionManager().clear();
     }
-    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }
