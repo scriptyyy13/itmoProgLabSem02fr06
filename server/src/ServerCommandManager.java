@@ -22,7 +22,7 @@ public class ServerCommandManager {
     private CommandExecutor commandExecutor;
     private Pipe pipe;
 
-    public ServerCommandManager(int port, CollectionManager collection){
+    public ServerCommandManager(int port, CollectionManager collection) {
         commandExecutor = new CommandExecutor(collection);
         try {
             inetSocketAddress = new InetSocketAddress(port);
@@ -31,10 +31,9 @@ public class ServerCommandManager {
             channel.configureBlocking(false);
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Не удалось открыть сервер");
         }
-
 
 
     }
@@ -73,18 +72,18 @@ public class ServerCommandManager {
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
-                    for (var iter = keys.iterator(); iter.hasNext();) {
+                    for (var iter = keys.iterator(); iter.hasNext(); ) {
                         SelectionKey key = iter.next();
                         iter.remove();
                         if (key.isReadable()) {
-                            if(key.channel() == source){
+                            if (key.channel() == source) {
                                 serverCmdBuffer.clear();
                                 source.read(serverCmdBuffer);
                                 serverCmdBuffer.flip();
                                 String command = StandardCharsets.UTF_8.decode(serverCmdBuffer).toString().trim();
                                 executeServerCommand(command);
                                 serverCmdBuffer.clear();
-                            }else {
+                            } else {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
                                 SocketAddress client = dc.receive(buffer);
                                 buffer.flip();
@@ -103,13 +102,13 @@ public class ServerCommandManager {
                 }
 
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void executeServerCommand(String cmd){
-        switch (cmd){
+    public void executeServerCommand(String cmd) {
+        switch (cmd) {
             case "exit":
                 System.exit(0);
                 break;
