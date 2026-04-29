@@ -25,16 +25,11 @@ public class ClientCommandManager {
                 String str = consoleReader.getLine();
                 if (str == null) break;
 
-                CommandRequest command = parser.parseCommand(str, consoleReader);
-                if (command == null) continue;
-
-                if (command instanceof Exit) {
+                String[] parts = str.trim().split("\\s+");
+                if (parts[0].equals("exit")) {
                     OutputManager.println("Завершение работы клиента...");
                     break;
-                }
-
-                if (command instanceof ExecuteScript) {
-                    String[] parts = str.trim().split("\\s+");
+                } else if (parts[0].equals("execute_script")) {
                     if (parts.length > 1) {
                         List<CommandRequest> scriptCommands = scriptManager.processScript(parts[1]);
                         if (scriptCommands != null) {
@@ -44,6 +39,8 @@ public class ClientCommandManager {
                         }
                     }
                 } else {
+                    CommandRequest command = parser.parseCommand(str, consoleReader);
+                    if (command == null) continue;
                     sendAndReceive(command);
                 }
             } catch (InvalidInputException e) {

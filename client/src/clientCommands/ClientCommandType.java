@@ -10,8 +10,6 @@ public enum ClientCommandType {
     UPDATE("update"),
     REMOVE_BY_ID("remove_by_id"),
     CLEAR("clear"),
-    EXECUTE_SCRIPT("execute_script"),
-    EXIT("exit"),
     REMOVE_HEAD("remove_head"),
     ADD_IF_MAX("add_if_max"),
     ADD_IF_MIN("add_if_min"),
@@ -44,8 +42,6 @@ public enum ClientCommandType {
             case UPDATE -> new UpdateRequest();
             case REMOVE_BY_ID -> new RemoveByIdRequest();
             case CLEAR -> new ClearRequest();
-            case EXECUTE_SCRIPT -> new ExecuteScript();
-            case EXIT -> new Exit();
             case REMOVE_HEAD -> new RemoveHeadRequest();
             case ADD_IF_MAX -> new AddIfMaxRequest();
             case ADD_IF_MIN -> new AddIfMinRequest();

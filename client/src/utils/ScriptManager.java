@@ -31,15 +31,14 @@ public class ScriptManager {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
-                CommandRequest cmd = CommandParser.parseCommand(line, null);
-
-                if (cmd instanceof ExecuteScript) {
-                    String[] parts = line.split("\\s+");
+                String[] parts = line.trim().split("\\s+");
+                if (parts[0].equals("execute_script")) {
                     if (parts.length > 1) {
                         List<CommandRequest> nested = processScript(parts[1]);
                         if (nested != null) commands.addAll(nested);
                     }
                 } else {
+                    CommandRequest cmd = CommandParser.parseCommand(line, null);
                     commands.add(cmd);
                 }
             }
