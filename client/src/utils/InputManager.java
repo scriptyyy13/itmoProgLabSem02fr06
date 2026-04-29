@@ -257,10 +257,14 @@ public class InputManager {
             prompt("Ввести Location? (true/false) : ");
             if (!inputBool(reader, false)) return null;
         }
-        prompt("Введите X: "); int x = inputInt(reader, false);
-        prompt("Введите Y: "); int y = inputInt(reader, false);
-        prompt("Введите Z: "); int z = inputInt(reader, false);
-        prompt("Введите name: "); String name = inputString(reader, false);
+        prompt("Введите X: ");
+        int x = inputInt(reader, false);
+        prompt("Введите Y: ");
+        int y = inputInt(reader, false);
+        prompt("Введите Z: ");
+        int z = inputInt(reader, false);
+        prompt("Введите name: ");
+        String name = inputString(reader, false);
         return new Location(x, y, z, name);
     }
 
@@ -276,11 +280,16 @@ public class InputManager {
             prompt("Ввести Person? (true/false) : ");
             if (!inputBool(reader, false)) return null;
         }
-        prompt("Введите name : "); String name = inputString(reader, false);
-        prompt("Введите birthday (dd.MM.yyyy) : "); Date birthday = inputDate(reader, false);
-        prompt("Введите passportID : "); String pid = inputString(reader, true);
-        prompt("Введите nationality : "); Country nat = inputCountry(reader, true);
-        prompt("Введите location : "); Location loc = inputLocation(reader, true);
+        prompt("Введите name : ");
+        String name = inputString(reader, false);
+        prompt("Введите birthday (dd.MM.yyyy) : ");
+        Date birthday = inputDate(reader, false);
+        prompt("Введите passportID : ");
+        String pid = inputString(reader, true);
+        prompt("Введите nationality : ");
+        Country nat = inputCountry(reader, true);
+        prompt("Введите location : ");
+        Location loc = inputLocation(reader, true);
         return new Person(name, birthday, pid, nat, loc);
     }
 
@@ -291,12 +300,17 @@ public class InputManager {
      * @return Вводимый обьект {@code Dragon}.
      */
     public static Dragon inputDragon(Reader reader) {
-        prompt("Введите name : "); String name = inputString(reader, false);
+        prompt("Введите name : ");
+        String name = inputString(reader, false);
         Coordinates coord = inputCoordinates(reader);
-        prompt("Введите age (>0) : "); long age = inputLong(reader, false);
-        prompt("Введите weight (>0) : "); Integer weight = inputInt(reader, true);
-        prompt("Введите speaking (true/false) : "); Boolean speaking = inputBool(reader, false);
-        prompt("Введите color : "); Color color = inputColor(reader, true);
+        prompt("Введите age (>0) : ");
+        long age = inputLong(reader, false);
+        prompt("Введите weight (>0) : ");
+        Integer weight = inputInt(reader, true);
+        prompt("Введите speaking (true/false) : ");
+        Boolean speaking = inputBool(reader, false);
+        prompt("Введите color : ");
+        Color color = inputColor(reader, true);
         Person killer = inputPerson(reader, true);
         return new Dragon(-1, name, coord, new Date(), age, weight, speaking, color, killer);
     }

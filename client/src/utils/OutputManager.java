@@ -2,7 +2,7 @@ package utils;
 
 /**
  * Класс для вывода информации в консоль через единый интерфейс.
- *
+ * <p>
  * author Ыскшзеннн
  * version 1.0
  */
@@ -10,7 +10,8 @@ public class OutputManager {
     /**
      * Конструктор utils.OutputManager.
      */
-    private OutputManager() {}
+    private OutputManager() {
+    }
 
     /**
      * Выводит строку в стандартный поток.

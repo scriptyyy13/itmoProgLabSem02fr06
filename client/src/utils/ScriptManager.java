@@ -1,6 +1,6 @@
 package utils;
 
-import commands.Command;
+import commands.CommandRequest;
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +13,7 @@ public class ScriptManager {
         this.parser = parser;
     }
 
-    public List<Command> processScript(String filePath) {
+    public List<CommandRequest> processScript(String filePath) {
         File file = new File(filePath);
         String absolutePath = file.getAbsolutePath();
 
@@ -23,7 +23,7 @@ public class ScriptManager {
         }
 
         activeScripts.add(absolutePath);
-        List<Command> commands = new ArrayList<>();
+        List<CommandRequest> commands = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -31,15 +31,14 @@ public class ScriptManager {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
-                Command cmd = CommandParser.parseCommand(line, null);
-
-                if (cmd instanceof ExecuteScript) {
-                    String[] parts = line.split("\\s+");
+                String[] parts = line.trim().split("\\s+");
+                if (parts[0].equals("execute_script")) {
                     if (parts.length > 1) {
-                        List<Command> nested = processScript(parts[1]);
+                        List<CommandRequest> nested = processScript(parts[1]);
                         if (nested != null) commands.addAll(nested);
                     }
                 } else {
+                    CommandRequest cmd = CommandParser.parseCommand(line, null);
                     commands.add(cmd);
                 }
             }
