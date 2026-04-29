@@ -11,48 +11,32 @@ public class CommandExecutor {
 
     public Message executeCommand(Command command){
         Message ans = new Message();
-        switch (command){
-            case Add a:
-                ans =collection.add((Dragon) command.getArgs()[0].getValue());
-                break;
-            case AddIfMin amn:
-                ans = collection.addIfMin((Dragon) command.getArgs()[0].getValue());
-                break;
-            case AddIfMax amx:
-                ans = collection.addIfMax((Dragon) command.getArgs()[0].getValue());
-                break;
-            case AverageOfAge avr:
-                ans = collection.averageOfAge();
-                break;
-            case Clear cl:
-                ans = collection.clear();
-                break;
-            case FilterLessThanAge flt:
-                ans = collection.filterLessThanAge((Long) command.getArgs()[0].getValue());
-                break;
-            case Help hlp:
-                ans = collection.help();
-                break;
-            case Info inf:
-                ans = collection.info();
-                break;
-            case PrintUniqueWeight puw:
-                ans = collection.printUniqueWeight();
-                break;
-            case RemoveById rbi:
-                ans = collection.removeById((Long) command.getArgs()[0].getValue());
-                break;
-            case RemoveHead a:
-                ans = collection.removeHead();
-                break;
-            case Show shw:
-                ans = collection.show();
-                break;
-            case Update upd:
-                ans = collection.update((Long) command.getArgs()[0].getValue(),(Dragon) command.getArgs()[1].getValue() );
-                break;
-            default:
-                break;
+        if (command instanceof Add) {
+            ans = collection.add((Dragon) command.getArgs()[0].getValue());
+        } else if (command instanceof AddIfMin) {
+            ans = collection.addIfMin((Dragon) command.getArgs()[0].getValue());
+        } else if (command instanceof AddIfMax) {
+            ans = collection.addIfMax((Dragon) command.getArgs()[0].getValue());
+        } else if (command instanceof AverageOfAge) {
+            ans = collection.averageOfAge();
+        } else if (command instanceof Clear) {
+            ans = collection.clear();
+        } else if (command instanceof FilterLessThanAge) {
+            ans = collection.filterLessThanAge((Long) command.getArgs()[0].getValue());
+        } else if (command instanceof Help) {
+            ans = collection.help();
+        } else if (command instanceof Info) {
+            ans = collection.info();
+        } else if (command instanceof PrintUniqueWeight) {
+            ans = collection.printUniqueWeight();
+        } else if (command instanceof RemoveById) {
+            ans = collection.removeById((Long) command.getArgs()[0].getValue());
+        } else if (command instanceof RemoveHead) {
+            ans = collection.removeHead();
+        } else if (command instanceof Show) {
+            ans = collection.show();
+        } else if (command instanceof Update) {
+            ans = collection.update((Long) command.getArgs()[0].getValue(), (Dragon) command.getArgs()[1].getValue());
         }
         return ans;
     }
