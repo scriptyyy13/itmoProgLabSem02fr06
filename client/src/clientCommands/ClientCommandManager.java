@@ -54,42 +54,15 @@ public class ClientCommandManager {
         }
     }
 
-    private void handleScript(String inputLine) {
-        String[] splitted = inputLine.trim().split("\\s+");
-
-        if (splitted.length < 2) {
-            OutputManager.errPrintln("Ошибка: не указан путь к файлу скрипта.");
-            return;
-        }
-        String filePath = splitted[1];
-
-        List<Command> commands = scriptManager.processScript(filePath);
-
-        if (commands != null) {
-            OutputManager.println("Выполнение скрипта: " + filePath);
-            for (Command cmd : commands) {
-                if (!sendAndReceive(cmd)) {
-                    OutputManager.errPrintln("Скрипт прерван из-за ошибки сети.");
-                    break;
-                }
-            }
-        } else {
-            OutputManager.errPrintln("Выполнение скрипта отменено.");
-        }
-    }
-
-    private boolean sendAndReceive(Command command) {
+    private void sendAndReceive(Command command) {
         try {
             udpClient.sendCommand(command);
             tools.Message response = udpClient.receiveResponse();
             OutputManager.println(response.getText());
-            return true;
         } catch (java.net.SocketTimeoutException e) {
             OutputManager.errPrintln("Сервер недоступен.");
-            return false;
         } catch (Exception e) {
             OutputManager.errPrintln("Ошибка связи: " + e.getMessage());
-            return false;
         }
     }
 }
