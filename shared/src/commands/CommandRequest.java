@@ -16,17 +16,17 @@ import java.io.Serializable;
 )
 
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Add.class, name = "Add"),
-        @JsonSubTypes.Type(value = AddIfMax.class, name = "AddIfMax"),
-        @JsonSubTypes.Type(value = AddIfMin.class, name = "AddIfMin"),
-        @JsonSubTypes.Type(value = Clear.class, name = "Clear"),
+        @JsonSubTypes.Type(value = AddRequest.class, name = "Add"),
+        @JsonSubTypes.Type(value = AddIfMaxRequest.class, name = "AddIfMax"),
+        @JsonSubTypes.Type(value = AddIfMinRequest.class, name = "AddIfMin"),
+        @JsonSubTypes.Type(value = ClearRequest.class, name = "Clear"),
         @JsonSubTypes.Type(value = ExecuteScript.class, name = "ExecuteScript"),
-        @JsonSubTypes.Type(value = RemoveById.class, name = "RemoveById"),
-        @JsonSubTypes.Type(value = RemoveHead.class, name = "RemoveHead"),
-        @JsonSubTypes.Type(value = Update.class, name = "Update"),
+        @JsonSubTypes.Type(value = RemoveByIdRequest.class, name = "RemoveById"),
+        @JsonSubTypes.Type(value = RemoveHeadRequest.class, name = "RemoveHead"),
+        @JsonSubTypes.Type(value = UpdateRequest.class, name = "Update"),
 })
 
-public abstract class Command implements Serializable {
+public abstract class CommandRequest implements Serializable {
     /**
      * Массив аргументов команды.
      */
@@ -36,7 +36,7 @@ public abstract class Command implements Serializable {
      * Создание экземпляра команды
      *
      */
-    public Command() {
+    public CommandRequest() {
     }
 
 

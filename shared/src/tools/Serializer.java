@@ -1,6 +1,5 @@
 package tools;
 
-import commands.Command;
 import exceptions.SerializeException;
 
 import java.io.ByteArrayOutputStream;

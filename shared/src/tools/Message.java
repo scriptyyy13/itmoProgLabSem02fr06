@@ -1,8 +1,5 @@
 package tools;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import commands.Command;
-
 import java.io.Serializable;
 
 /**

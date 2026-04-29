@@ -35,23 +35,23 @@ public enum ClientCommandType {
     }
 
     /** Метод для генерации чистого экземпляра команды для сериализации */
-    public Command create() {
+    public CommandRequest create() {
         return switch (this) {
-            case HELP -> new Help();
-            case INFO -> new Info();
-            case SHOW -> new Show();
-            case ADD -> new Add();
-            case UPDATE -> new Update();
-            case REMOVE_BY_ID -> new RemoveById();
-            case CLEAR -> new Clear();
+            case HELP -> new HelpRequest();
+            case INFO -> new InfoRequest();
+            case SHOW -> new ShowRequest();
+            case ADD -> new AddRequest();
+            case UPDATE -> new UpdateRequest();
+            case REMOVE_BY_ID -> new RemoveByIdRequest();
+            case CLEAR -> new ClearRequest();
             case EXECUTE_SCRIPT -> new ExecuteScript();
             case EXIT -> new Exit();
-            case REMOVE_HEAD -> new RemoveHead();
-            case ADD_IF_MAX -> new AddIfMax();
-            case ADD_IF_MIN -> new AddIfMin();
-            case AVERAGE_OF_AGE -> new AverageOfAge();
-            case FILTER_LESS_THAN_AGE -> new FilterLessThanAge();
-            case PRINT_UNIQUE_WEIGHT -> new PrintUniqueWeight();
+            case REMOVE_HEAD -> new RemoveHeadRequest();
+            case ADD_IF_MAX -> new AddIfMaxRequest();
+            case ADD_IF_MIN -> new AddIfMinRequest();
+            case AVERAGE_OF_AGE -> new AverageOfAgeRequest();
+            case FILTER_LESS_THAN_AGE -> new FilterLessThanAgeRequest();
+            case PRINT_UNIQUE_WEIGHT -> new PrintUniqueWeightRequest();
         };
     }
 }

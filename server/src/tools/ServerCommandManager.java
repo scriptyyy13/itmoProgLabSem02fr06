@@ -1,7 +1,6 @@
-import commands.Command;
-import tools.Deserializer;
-import tools.Message;
-import tools.Serializer;
+package tools;
+
+import commands.CommandRequest;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -86,7 +85,7 @@ public class ServerCommandManager {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
                                 SocketAddress client = dc.receive(buffer);
                                 buffer.flip();
-                                Command cmd = (Command) Deserializer.deserializeFromBytes(buffer.array());
+                                CommandRequest cmd = (CommandRequest) Deserializer.deserializeFromBytes(buffer.array());
                                 Message ans = commandExecutor.executeCommand(cmd);
                                 buffer.clear();
                                 buffer.put(Serializer.serializeToBytes(ans));

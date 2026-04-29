@@ -1,18 +1,18 @@
 package commands;
 
-
 import exceptions.InvalidInputException;
+import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code update}.
  */
-public class RemoveById extends Command {
+public class UpdateRequest extends CommandRequest {
     /**
-     * Создание экземпляра команды {@code remove_by_id}.
+     * Создание экземпляра команды {@code update}.
      *
      */
 
-    public RemoveById() {
+    public UpdateRequest() {
     }
 
 
@@ -27,5 +27,7 @@ public class RemoveById extends Command {
         } catch (Exception e) {
             throw new InvalidInputException("Неверный формат");
         }
+        if (getArgs().length < 2 || !(getArgs()[1].getValue() instanceof Dragon))
+            throw new InvalidInputException("Неверный формат");
     }
 }

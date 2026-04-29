@@ -1,18 +1,17 @@
 package commands;
 
 import exceptions.InvalidInputException;
-import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code update}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
  */
-public class Update extends Command {
+public class FilterLessThanAgeRequest extends CommandRequest {
     /**
-     * Создание экземпляра команды {@code update}.
+     * Создание экземпляра команды {@code filter_less_than_age}.
      *
      */
 
-    public Update() {
+    public FilterLessThanAgeRequest() {
     }
 
 
@@ -27,7 +26,5 @@ public class Update extends Command {
         } catch (Exception e) {
             throw new InvalidInputException("Неверный формат");
         }
-        if (getArgs().length < 2 || !(getArgs()[1].getValue() instanceof Dragon))
-            throw new InvalidInputException("Неверный формат");
     }
 }

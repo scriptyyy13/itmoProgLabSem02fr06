@@ -4,15 +4,16 @@ import exceptions.InvalidInputException;
 import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code add_if_min}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code add}.
  */
-public class AddIfMin extends Command {
+
+public class AddRequest extends CommandRequest {
     /**
-     * Создание экземпляра команды {@code add_if_min}.
+     * Создание экземпляра команды {@code add}.
      *
      */
 
-    public AddIfMin() {
+    public AddRequest() {
     }
 
     /**

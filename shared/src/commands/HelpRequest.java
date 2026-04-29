@@ -4,13 +4,13 @@ package commands;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code help}.
  */
-public class Help extends Command {
+public class HelpRequest extends CommandRequest {
     /**
      * Создание экземпляра команды {@code help}.
      *
      */
 
-    public Help() {
+    public HelpRequest() {
     }
 
 }

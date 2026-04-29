@@ -1,6 +1,6 @@
 package network;
 
-import commands.Command;
+import commands.CommandRequest;
 import tools.Message;
 
 import java.io.*;
@@ -20,7 +20,7 @@ public class UDPClient {
     }
 
     /** Отправка команды в виде байтового объекта */
-    public void sendCommand(Command command) throws IOException {
+    public void sendCommand(CommandRequest command) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(command); // Отправляем саму команду со всеми аргументами

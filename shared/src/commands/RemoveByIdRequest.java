@@ -1,17 +1,18 @@
 package commands;
 
+
 import exceptions.InvalidInputException;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code filter_less_than_age}.
+ * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
  */
-public class FilterLessThanAge extends Command {
+public class RemoveByIdRequest extends CommandRequest {
     /**
-     * Создание экземпляра команды {@code filter_less_than_age}.
+     * Создание экземпляра команды {@code remove_by_id}.
      *
      */
 
-    public FilterLessThanAge() {
+    public RemoveByIdRequest() {
     }
 
 

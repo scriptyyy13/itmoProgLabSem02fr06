@@ -4,13 +4,13 @@ package commands;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code info}.
  */
-public class Info extends Command {
+public class InfoRequest extends CommandRequest {
     /**
      * Создание экземпляра команды {@code info}.
      *
      */
 
-    public Info() {
+    public InfoRequest() {
     }
 
 }
