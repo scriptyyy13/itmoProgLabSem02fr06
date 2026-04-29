@@ -89,7 +89,7 @@ public class ServerCommandManager {
                                 SocketAddress client = new RequestGetter(dc).getRequest(buffer);
                                 Command cmd = (Command) Deserializer.deserializeFromBytes(buffer.array());
                                 Message ans = new Message((wrapCommand(cmd)).execute());
-                                new RequestMaker(dc).makeRequest(ans,client,buffer);
+                                new RequestMaker(dc).makeRequest(ans, client, buffer);
                             }
                         }
                     }
@@ -107,12 +107,12 @@ public class ServerCommandManager {
         switch (cmd) {
             case "exit":
                 XMLWriter xmlWriter = new XMLWriter();
-                xmlWriter.dequeToXML(collectionManager.getCollection(),path);
+                xmlWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
                 System.exit(0);
                 break;
             case "save":
                 XMLWriter xmlWriter2 = new XMLWriter();
-                xmlWriter2.dequeToXML(collectionManager.getCollection(),path);
+                xmlWriter2.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
                 break;
             default:
                 System.out.println("""
@@ -124,63 +124,63 @@ public class ServerCommandManager {
         }
     }
 
-    public Command wrapCommand(Command command){
-        if(command instanceof AddRequest){
-            Add cmd = (Add)command;
+    public Command wrapCommand(Command command) {
+        if (command instanceof AddRequest) {
+            Add cmd = (Add) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof AddIfMinRequest){
+        if (command instanceof AddIfMinRequest) {
             AddIfMin cmd = (AddIfMin) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof AddIfMaxRequest){
+        if (command instanceof AddIfMaxRequest) {
             AddIfMax cmd = (AddIfMax) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof AverageOfAgeRequest){
+        if (command instanceof AverageOfAgeRequest) {
             AverageOfAge cmd = (AverageOfAge) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof ClearRequest){
-            Clear cmd = (Clear)command;
+        if (command instanceof ClearRequest) {
+            Clear cmd = (Clear) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof FilterLessThanAgeRequest){
+        if (command instanceof FilterLessThanAgeRequest) {
             FilterLessThanAge cmd = (FilterLessThanAge) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof InfoRequest){
+        if (command instanceof InfoRequest) {
             Info cmd = (Info) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof PrintUniqueWeightRequest){
+        if (command instanceof PrintUniqueWeightRequest) {
             PrintUniqueWeight cmd = (PrintUniqueWeight) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof RemoveByIdRequest){
+        if (command instanceof RemoveByIdRequest) {
             RemoveById cmd = (RemoveById) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof RemoveHeadRequest){
+        if (command instanceof RemoveHeadRequest) {
             RemoveHead cmd = (RemoveHead) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof ShowRequest){
+        if (command instanceof ShowRequest) {
             Show cmd = (Show) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
         }
-        if(command instanceof UpdateRequest){
+        if (command instanceof UpdateRequest) {
             Update cmd = (Update) command;
             cmd.setCollectionManager(collectionManager);
             return cmd;
