@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         if (args.length > 0) {
             ConfigManager.scanConfig(args[0]);
-        }
+        } else OutputManager.println("Конфиг не был передан, используются параметры по-умолчанию");
 
         Reader consoleReader = new Reader();
         OutputManager.println("Добро пожаловать в клиентское приложение!");
