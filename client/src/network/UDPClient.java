@@ -20,7 +20,9 @@ public class UDPClient {
         this.serverPort = port;
     }
 
-    /** Отправка команды в виде байтового объекта */
+    /**
+     * Отправка команды в виде байтового объекта
+     */
     public void sendCommand(CommandRequest command) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -32,7 +34,9 @@ public class UDPClient {
         socket.send(packet);
     }
 
-    /** Получение сообщения от сервера */
+    /**
+     * Получение сообщения от сервера
+     */
     public Message receiveResponse() throws IOException, ClassNotFoundException {
         byte[] buffer = new byte[ConfigManager.maxPacketSize]; // максимальный размер пакета
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
