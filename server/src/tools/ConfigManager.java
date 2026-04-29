@@ -1,5 +1,7 @@
 package tools;
 
+import utils.OutputManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -31,10 +33,10 @@ public class ConfigManager {
                 } else if (paramName.equals("COMMANDS_BUFFER_CAPACITY")) {
                     commandsBufferCapacity = Integer.parseInt(paramValue);
                 }
-
+                System.out.println("Файл конфигурации был успешно считан");
             }
         } catch (Exception e) {
-            System.out.println("Ошибка при чтении файла " + filePath + ": " + e.getMessage());
+            System.out.println("Ошибка при чтении файла конфигурации " + filePath + ": " + e.getMessage());
         }
     }
 }
