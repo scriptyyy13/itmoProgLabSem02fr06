@@ -1,6 +1,6 @@
 package network;
 
-import commands.CommandRequest;
+import commands.Command;
 import tools.Message;
 import utils.ConfigManager;
 
@@ -23,7 +23,7 @@ public class UDPClient {
     /**
      * Отправка команды в виде байтового объекта
      */
-    public void sendCommand(CommandRequest command) throws IOException {
+    public void sendCommand(Command command) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(command); // Отправляем саму команду со всеми аргументами

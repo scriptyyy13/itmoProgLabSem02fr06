@@ -35,7 +35,7 @@ public enum ClientCommandType {
     /**
      * Метод для генерации чистого экземпляра команды для сериализации
      */
-    public CommandRequest create() {
+    public Command create() {
         return switch (this) {
             case HELP -> new HelpRequest();
             case INFO -> new InfoRequest();

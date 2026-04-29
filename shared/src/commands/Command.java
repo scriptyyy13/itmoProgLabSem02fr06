@@ -20,7 +20,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = AddIfMaxRequest.class, name = "AddIfMax"),
         @JsonSubTypes.Type(value = AddIfMinRequest.class, name = "AddIfMin"),
         @JsonSubTypes.Type(value = ClearRequest.class, name = "Clear"),
-        @JsonSubTypes.Type(value = ExecuteScript.class, name = "ExecuteScript"),
         @JsonSubTypes.Type(value = RemoveByIdRequest.class, name = "RemoveById"),
         @JsonSubTypes.Type(value = RemoveHeadRequest.class, name = "RemoveHead"),
         @JsonSubTypes.Type(value = UpdateRequest.class, name = "Update"),
