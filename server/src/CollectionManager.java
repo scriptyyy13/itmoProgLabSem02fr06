@@ -2,7 +2,6 @@ import exceptions.InvalidInputException;
 import exceptions.XmlSaveException;
 import models.Dragon;
 import tools.Message;
-import utils.OutputManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -256,7 +255,7 @@ public class CollectionManager {
         collection = collection.stream()
                 .filter(e -> {
                     if (ids.contains(e.getId())) {
-                        OutputManager.errPrintln("Обнаружен повтор id, элемент пропущен: " + e.getId());
+                        System.out.println("Обнаружен повтор id, элемент пропущен: " + e.getId());
                         return false;
                     }
                     try {
@@ -264,7 +263,7 @@ public class CollectionManager {
                         ids.add(e.getId());
                         return true;
                     } catch (InvalidInputException ex) {
-                        OutputManager.errPrintln("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
+                        System.out.println("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
                         return false;
                     }
                 })

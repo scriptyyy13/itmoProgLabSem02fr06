@@ -14,12 +14,12 @@ public class Server {
         try {
             XMLReader xmlReader = new XMLReader();
             collection = xmlReader.readXmlCollection(ApplicationContext.collectionPath);
-        }catch (XmlReadingException e){
+        } catch (XmlReadingException e) {
             System.out.println(e.getMessage());
             System.out.println("Коллекция пуста");
         }
         CollectionManager collectionManager = new CollectionManager(collection);
-        ServerCommandManager commandManager= new ServerCommandManager(8085,collectionManager);
+        ServerCommandManager commandManager = new ServerCommandManager(8085, collectionManager);
         commandManager.start();
     }
 }
