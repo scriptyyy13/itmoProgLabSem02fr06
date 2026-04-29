@@ -1,6 +1,5 @@
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import models.Dragon;
-import utils.OutputManager;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,12 +29,12 @@ public class XMLReader {
                 try {
                     collection.add(xmlMapper.readValue(matcher.group(), Dragon.class));
                 } catch (Exception e) {
-                    OutputManager.println("Ошибка в чтении элемента коллекции, пропущен");
+                    System.out.println("Ошибка в чтении элемента коллекции, пропущен");
                 }
             }
             return collection;
         } catch (Exception e) {
-            OutputManager.println("Ошибка чтения файла, возвращена пустая коллекция");
+            System.out.println("Ошибка чтения файла, возвращена пустая коллекция");
             return new ArrayDeque<Dragon>();
         }
     }
