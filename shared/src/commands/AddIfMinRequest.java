@@ -6,7 +6,7 @@ import models.Dragon;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code add_if_min}.
  */
-public class AddIfMinRequest extends CommandRequest {
+public class AddIfMinRequest extends Command {
     /**
      * Создание экземпляра команды {@code add_if_min}.
      *

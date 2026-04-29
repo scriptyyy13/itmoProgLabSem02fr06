@@ -1,10 +1,9 @@
 package serverCommands;
 
 import commands.AddRequest;
-import commands.CommandRequest;
-import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.CollectionWrapper;
 
 
 /**
@@ -21,4 +20,6 @@ public class Add extends AddRequest {
     public String execute(){
         return collectionManager.add((Dragon)getArgs()[0].getValue());
     }
+
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

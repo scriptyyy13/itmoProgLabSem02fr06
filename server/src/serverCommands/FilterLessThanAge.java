@@ -1,9 +1,6 @@
 package serverCommands;
 
-import commands.CommandRequest;
 import commands.FilterLessThanAgeRequest;
-import exceptions.InvalidInputException;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,4 +16,5 @@ public class FilterLessThanAge extends FilterLessThanAgeRequest {
     public String execute(){
         return collectionManager.filterLessThanAge((long)getArgs()[0].getValue());
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

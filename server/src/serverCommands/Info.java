@@ -1,9 +1,7 @@
 package serverCommands;
 
 
-import commands.CommandRequest;
 import commands.InfoRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,5 +17,6 @@ public class Info extends InfoRequest {
     public String execute(){
         return collectionManager.info();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 
 }

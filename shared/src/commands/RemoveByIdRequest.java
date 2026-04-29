@@ -6,7 +6,7 @@ import exceptions.InvalidInputException;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code remove_by_id}.
  */
-public class RemoveByIdRequest extends CommandRequest {
+public class RemoveByIdRequest extends Command {
     /**
      * Создание экземпляра команды {@code remove_by_id}.
      *

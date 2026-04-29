@@ -1,9 +1,7 @@
 package serverCommands;
 
 
-import commands.CommandRequest;
 import commands.RemoveHeadRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,5 +17,6 @@ public class RemoveHead extends RemoveHeadRequest {
     public String execute(){
         return collectionManager.removeHead();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 
 }

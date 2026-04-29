@@ -1,6 +1,9 @@
 package tools;
 
-import commands.CommandRequest;
+
+import commands.*;
+import serverCommands.*;
+
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,10 +21,10 @@ public class ServerCommandManager {
     private DatagramChannel channel;
     private InetSocketAddress inetSocketAddress;
     private Selector selector;
-    private CommandExecutor commandExecutor;
+    private CollectionManager collectionManager;
 
     public ServerCommandManager(int port, CollectionManager collection) {
-        commandExecutor = new CommandExecutor(collection);
+        this.collectionManager = collection;
         try {
             inetSocketAddress = new InetSocketAddress(port);
             channel = DatagramChannel.open();
@@ -83,15 +86,10 @@ public class ServerCommandManager {
                                 serverCmdBuffer.clear();
                             } else {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
-                                SocketAddress client = dc.receive(buffer);
-                                buffer.flip();
-                                CommandRequest cmd = (CommandRequest) Deserializer.deserializeFromBytes(buffer.array());
-                                Message ans = commandExecutor.executeCommand(cmd);
-                                buffer.clear();
-                                buffer.put(Serializer.serializeToBytes(ans));
-                                buffer.flip();
-                                dc.send(buffer, client);
-                                buffer.clear();
+                                SocketAddress client = new RequestGetter(dc).getRequest(buffer);
+                                Command cmd = (Command) Deserializer.deserializeFromBytes(buffer.array());
+                                Message ans = new Message((wrapCommand(cmd)).execute());
+                                new RequestMaker(dc).makeRequest(ans,client,buffer);
                             }
                         }
                     }
@@ -108,11 +106,13 @@ public class ServerCommandManager {
     public void executeServerCommand(String cmd) {
         switch (cmd) {
             case "exit":
-                commandExecutor.getCollection().save();
+                XMLWriter xmlWriter = new XMLWriter();
+                xmlWriter.dequeToXML(collectionManager.getCollection(),path);
                 System.exit(0);
                 break;
             case "save":
-                commandExecutor.getCollection().save();
+                XMLWriter xmlWriter2 = new XMLWriter();
+                xmlWriter2.dequeToXML(collectionManager.getCollection(),path);
                 break;
             default:
                 System.out.println("""
@@ -124,4 +124,68 @@ public class ServerCommandManager {
         }
     }
 
+    public Command wrapCommand(Command command){
+        if(command instanceof AddRequest){
+            Add cmd = (Add)command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof AddIfMinRequest){
+            AddIfMin cmd = (AddIfMin) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof AddIfMaxRequest){
+            AddIfMax cmd = (AddIfMax) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof AverageOfAgeRequest){
+            AverageOfAge cmd = (AverageOfAge) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof ClearRequest){
+            Clear cmd = (Clear)command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof FilterLessThanAgeRequest){
+            FilterLessThanAge cmd = (FilterLessThanAge) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof InfoRequest){
+            Info cmd = (Info) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof PrintUniqueWeightRequest){
+            PrintUniqueWeight cmd = (PrintUniqueWeight) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof RemoveByIdRequest){
+            RemoveById cmd = (RemoveById) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof RemoveHeadRequest){
+            RemoveHead cmd = (RemoveHead) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof ShowRequest){
+            Show cmd = (Show) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        if(command instanceof UpdateRequest){
+            Update cmd = (Update) command;
+            cmd.setCollectionManager(collectionManager);
+            return cmd;
+        }
+        return null;
+
+    }
 }

@@ -1,10 +1,7 @@
 package serverCommands;
 
 
-import commands.CommandRequest;
 import commands.RemoveByIdRequest;
-import exceptions.InvalidInputException;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -20,4 +17,5 @@ public class RemoveById extends RemoveByIdRequest {
     public String execute(){
         return collectionManager.removeById((long)getArgs()[0].getValue());
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

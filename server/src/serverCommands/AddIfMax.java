@@ -1,8 +1,6 @@
 package serverCommands;
 
 import commands.AddIfMaxRequest;
-import commands.CommandRequest;
-import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
 
@@ -19,4 +17,5 @@ public class AddIfMax extends AddIfMaxRequest {
     public String execute(){
         return collectionManager.addIfMax((Dragon)getArgs()[0].getValue());
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

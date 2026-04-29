@@ -1,9 +1,7 @@
 package serverCommands;
 
 
-import commands.CommandRequest;
 import commands.PrintUniqueWeightRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,5 +17,6 @@ public class PrintUniqueWeight extends PrintUniqueWeightRequest {
     public String execute(){
         return collectionManager.printUniqueWeight();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 
 }

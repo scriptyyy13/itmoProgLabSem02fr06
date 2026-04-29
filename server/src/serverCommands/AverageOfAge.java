@@ -2,8 +2,6 @@ package serverCommands;
 
 
 import commands.AverageOfAgeRequest;
-import commands.CommandRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,5 +17,6 @@ public class AverageOfAge extends AverageOfAgeRequest {
     public String execute(){
         return collectionManager.averageOfAge();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 
 }

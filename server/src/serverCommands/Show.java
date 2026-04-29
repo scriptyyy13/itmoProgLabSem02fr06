@@ -1,9 +1,7 @@
 package serverCommands;
 
 
-import commands.CommandRequest;
 import commands.ShowRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,4 +17,5 @@ public class Show extends ShowRequest {
     public String execute(){
         return collectionManager.show();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

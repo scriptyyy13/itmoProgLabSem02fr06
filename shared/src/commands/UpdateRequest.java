@@ -6,7 +6,7 @@ import models.Dragon;
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code update}.
  */
-public class UpdateRequest extends CommandRequest {
+public class UpdateRequest extends Command {
     /**
      * Создание экземпляра команды {@code update}.
      *

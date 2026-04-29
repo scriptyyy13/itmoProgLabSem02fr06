@@ -32,10 +32,10 @@ public class CollectionManager {
      *
      * @param elem добавляемый {@code Dragon}.
      */
-    public Message add(Dragon elem) {
+    public String add(Dragon elem) {
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
-        Message ans = new Message("Элемент добавлен");
+        String ans = new String("Элемент добавлен");
         return ans;
     }
 
@@ -44,16 +44,16 @@ public class CollectionManager {
      *
      * @param newDragon добавляемый {@code Dragon}.
      */
-    public Message addIfMax(Dragon newDragon) {
+    public String addIfMax(Dragon newDragon) {
         boolean isMax = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) > 0);
 
         if (isMax || collection.isEmpty()) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            return new Message("Элемент добавлен (был максимальным)");
+            return new String("Элемент добавлен (был максимальным)");
         }
-        return new Message("Элемент не максимальный");
+        return new String("Элемент не максимальный");
     }
 
     /**
@@ -61,38 +61,38 @@ public class CollectionManager {
      *
      * @param newDragon добавляемый {@code Dragon}.
      */
-    public Message addIfMin(Dragon newDragon) {
+    public String addIfMin(Dragon newDragon) {
         boolean isMin = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) < 0);
 
         if (isMin || collection.isEmpty()) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            return new Message("Элемент добавлен (был минимальным)");
+            return new String("Элемент добавлен (был минимальным)");
         }
-        return new Message("Элемент не минимальный");
+        return new String("Элемент не минимальный");
     }
 
     /**
      * Реализация команды {@code average_of_age}.
      */
-    public Message averageOfAge() {
+    public String averageOfAge() {
         OptionalDouble average = collection.stream()
                 .mapToLong(Dragon::getAge)
                 .average();
         if (average.isPresent()) {
-            return new Message(String.valueOf(average.getAsDouble()));
+            return new String(String.valueOf(average.getAsDouble()));
         } else {
-            return new Message("Коллекция пуста");
+            return new String("Коллекция пуста");
         }
     }
 
     /**
      * Реализация команды {@code clear}.
      */
-    public Message clear() {
+    public String clear() {
         collection.clear();
-        return new Message("Коллекция очищена");
+        return new String("Коллекция очищена");
     }
 
     /**
@@ -100,31 +100,22 @@ public class CollectionManager {
      *
      * @param age значение, по которому происходит фильтрация.
      */
-    public Message filterLessThanAge(long age) {
+    public String filterLessThanAge(long age) {
         String result = collection.stream()
                 .filter(e -> e.getAge() < age)
                 .map(Dragon::toString)
                 .collect(Collectors.joining("\n"));
 
         return result.isEmpty()
-                ? new Message("Нет элементов моложе " + age)
-                : new Message(result);
+                ? new String("Нет элементов моложе " + age)
+                : new String(result);
     }
 
-    /**
-     * Реализация команды {@code help}.
-     */
-    public Message help() {
-        String helpMessage = """
-                
-                """;
-        return new Message(helpMessage);
-    }
 
     /**
      * Реализация команды {@code info}.
      */
-    public Message info() {
+    public String info() {
         String info = String.format("""
                 Информация о коллекции:
                 
@@ -132,13 +123,13 @@ public class CollectionManager {
                 Дата инициализации: %s
                 Количество элементов: %d
                 """, creationTime, collection.size());
-        return new Message(info);
+        return new String(info);
     }
 
     /**
      * Реализация команды {@code print_unique_weight}.
      */
-    public Message printUniqueWeight() {
+    public String printUniqueWeight() {
         String weights = collection.stream()
                 .map(Dragon::getWeight)
                 .filter(Objects::nonNull)
@@ -146,7 +137,7 @@ public class CollectionManager {
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
 
-        return new Message(weights);
+        return new String(weights);
     }
 
     /**
@@ -154,46 +145,34 @@ public class CollectionManager {
      *
      * @param id id удаляемого объекта.
      */
-    public Message removeById(long id) {
+    public String removeById(long id) {
         boolean removed = collection.removeIf(e -> e.getId() == id);
-        return removed ? new Message("Элемент удалён") : new Message("Элемент с таким ID не найден");
+        return removed ? new String("Элемент удалён") : new String("Элемент с таким ID не найден");
     }
 
     /**
      * Реализация команды {@code remove_head}.
      */
-    public Message removeHead() {
+    public String removeHead() {
         Dragon head = collection.poll();
         return head != null
-                ? new Message("Удален элемент: " + head)
-                : new Message("Коллекция пуста");
+                ? new String("Удален элемент: " + head)
+                : new String("Коллекция пуста");
     }
 
-    /**
-     * Реализация команды {@code save}.
-     */
-    public void save() {
-        XMLWriter xmlWriter = new XMLWriter();
-        try {
-            xmlWriter.dequeToXML(collection, ApplicationContext.collectionPath);
-            System.out.println("Сохранения коллекции прошло успешно");
-        } catch (XmlSaveException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     /**
      * Реализация команды {@code show}.
      */
-    public Message show() {
-        if (collection.isEmpty()) return new Message("Коллекция пуста");
+    public String show() {
+        if (collection.isEmpty()) return new String("Коллекция пуста");
 
         String result = collection.stream()
                 .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(Dragon::toString)
                 .collect(Collectors.joining("\n---------------\n"));
 
-        return new Message("Элементы коллекции:\n" + result);
+        return new String("Элементы коллекции:\n" + result);
     }
 
     /**
@@ -202,7 +181,7 @@ public class CollectionManager {
      * @param id        id обновляемого объекта.
      * @param updDragon новое значение обьекта.
      */
-    public Message update(long id, Dragon updDragon) {
+    public String update(long id, Dragon updDragon) {
         Optional<Dragon> found = collection.stream()
                 .filter(e -> e.getId() == id)
                 .findFirst();
@@ -213,9 +192,9 @@ public class CollectionManager {
 
             collection.remove(old);
             collection.add(updDragon);
-            return new Message("Элемент с ID " + id + " успешно обновлен");
+            return new String("Элемент с ID " + id + " успешно обновлен");
         }
-        return new Message("Элемент не найден");
+        return new String("Элемент не найден");
     }
 
     /**

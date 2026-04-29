@@ -1,8 +1,6 @@
 package serverCommands;
 
-import commands.CommandRequest;
 import commands.UpdateRequest;
-import exceptions.InvalidInputException;
 import models.Dragon;
 import tools.CollectionManager;
 
@@ -19,4 +17,5 @@ public class Update extends UpdateRequest {
     public String execute(){
         return collectionManager.update((long)getArgs()[0].getValue(), (Dragon) getArgs()[0].getValue());
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }

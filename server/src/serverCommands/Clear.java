@@ -2,8 +2,6 @@ package serverCommands;
 
 
 import commands.ClearRequest;
-import commands.CommandRequest;
-import models.Dragon;
 import tools.CollectionManager;
 
 /**
@@ -19,4 +17,5 @@ public class Clear extends ClearRequest {
     public String execute(){
         return collectionManager.clear();
     }
+    public void setCollectionManager(CollectionManager collectionManager){this.collectionManager = collectionManager;}
 }
