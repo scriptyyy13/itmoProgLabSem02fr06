@@ -20,7 +20,6 @@ public class ServerCommandManager {
     private InetSocketAddress inetSocketAddress;
     private Selector selector;
     private CommandExecutor commandExecutor;
-    private Pipe pipe;
 
     public ServerCommandManager(int port, CollectionManager collection){
         commandExecutor = new CommandExecutor(collection);
@@ -111,6 +110,7 @@ public class ServerCommandManager {
     public void executeServerCommand(String cmd){
         switch (cmd){
             case "exit":
+                commandExecutor.getCollection().save();
                 System.exit(0);
                 break;
             case "save":
