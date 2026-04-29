@@ -64,8 +64,8 @@ public class ServerCommandManager {
             consoleThread.setDaemon(true);
             consoleThread.start();
 
-            ByteBuffer buffer = ByteBuffer.allocate(65535);
-            ByteBuffer serverCmdBuffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
+            ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
                 try {
                     selector.select();

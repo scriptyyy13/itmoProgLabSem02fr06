@@ -1,6 +1,7 @@
 import exceptions.XmlReadingException;
 import models.Dragon;
 import tools.CollectionManager;
+import tools.ConfigManager;
 import tools.ServerCommandManager;
 import tools.XMLReader;
 
@@ -8,7 +9,10 @@ import java.util.ArrayDeque;
 
 public class Server {
     public static void main(String[] args) {
-        ApplicationContext.collectionPath = "collection.xml";
+        if (args.length > 0) {
+            ConfigManager.scanConfig(args[0]);
+        }
+        ApplicationContext.collectionPath = ConfigManager.collectionFile;
         ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
         try {
             XMLReader xmlReader = new XMLReader();
@@ -18,7 +22,7 @@ public class Server {
             System.out.println("Коллекция пуста");
         }
         CollectionManager collectionManager = new CollectionManager(collection);
-        ServerCommandManager commandManager = new ServerCommandManager(8085, collectionManager);
+        ServerCommandManager commandManager = new ServerCommandManager(ConfigManager.port, collectionManager);
         commandManager.start();
     }
 }
