@@ -19,19 +19,9 @@ public class ArgSetter {
                 InputManager.loadArgs(stringArgs);
             }
             command.setArgs(new Arg(InputManager.inputDragon(reader)));
-        }
-        else if (command instanceof UpdateRequest) {
+        } else if (command instanceof UpdateRequest) {
             command.setArgs(args[0], new Arg(InputManager.inputDragon(reader)));
-        }
-        else if (command instanceof ExecuteScript) {
-            try {
-                String path = (String) args[0].getValue();
-                command.setArgs(new Arg(Files.readString(Paths.get(path))));
-            } catch (IOException e) {
-                throw new InvalidInputException("Файл не найден");
-            }
-        }
-        else {
+        } else {
             command.setArgs(args);
         }
     }
