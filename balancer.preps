@@ -1,0 +1,3 @@
+balancer.port=8000
+servers=localhost:8085,localhost:8002
+packet.size=65535
