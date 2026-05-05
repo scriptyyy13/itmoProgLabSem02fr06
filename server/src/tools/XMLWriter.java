@@ -17,7 +17,7 @@ public class XMLWriter {
      * @param collection сохраняемая коллекция.
      * @param path       путь до сохраняемого файла.
      */
-    public void dequeToXML(ArrayDeque<Dragon> collection, String path) {
+    public static void dequeToXML(ArrayDeque<Dragon> collection, String path) {
         try (FileWriter writer = new FileWriter(path)) {
             XmlMapper xmlMapper = new XmlMapper();
             String xml = xmlMapper.writeValueAsString(new CollectionWrapper(collection));

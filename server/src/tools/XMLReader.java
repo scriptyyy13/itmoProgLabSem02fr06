@@ -20,7 +20,7 @@ public class XMLReader {
      * @param path путь до файла.
      * @return прочитанная коллекция.
      */
-    public ArrayDeque<Dragon> readXmlCollection(String path) {
+    public static ArrayDeque<Dragon> readXmlCollection(String path) {
         try {
             String xml = Files.readString(Paths.get(path));
             Pattern pattern = Pattern.compile("<Dragon>(.*?)</Dragon>");

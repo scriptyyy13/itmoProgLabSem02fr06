@@ -70,6 +70,7 @@ public class ServerCommandManager {
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
             ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
+                XMLReader.readXmlCollection(ConfigManager.collectionFile);
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
@@ -99,6 +100,7 @@ public class ServerCommandManager {
                                     // выполнение обычных команд
                                     Message ans = new Message(toCollectionCommand(cmd).execute());
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
+                                    XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
                                 }
                             }
                         }
@@ -116,13 +118,11 @@ public class ServerCommandManager {
     public void executeServerCommand(String cmd) {
         switch (cmd) {
             case "exit":
-                XMLWriter xmlWriter = new XMLWriter();
-                xmlWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
+                XMLWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
                 System.exit(0);
                 break;
             case "save":
-                XMLWriter xmlWriter2 = new XMLWriter();
-                xmlWriter2.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
+                XMLWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
                 break;
             default:
                 System.out.println("""
