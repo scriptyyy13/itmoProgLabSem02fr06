@@ -86,10 +86,20 @@ public class ServerCommandManager {
                                 serverCmdBuffer.clear();
                             } else {
                                 DatagramChannel dc = (DatagramChannel) key.channel();
+                                buffer.clear();
                                 SocketAddress client = new RequestGetter(dc).getRequest(buffer);
-                                CommandRequest cmd = (CommandRequest) Deserializer.deserializeFromBytes(buffer.array());
-                                Message ans =  new Message( toCollectionCommand(cmd).execute() );
-                                new RequestMaker(dc).makeRequest(ans, client, buffer);
+
+                                Object received = Deserializer.deserializeFromBytes(buffer.array());
+
+                                // отвечаем на сообщение пинг для проверки работоспособности сервера
+                                if (received instanceof Message && "PING".equals(((Message) received).getText())) {
+                                    Message pong = new Message("PONG");
+                                    new RequestMaker(dc).makeRequest(pong, client, buffer);
+                                } else if (received instanceof CommandRequest cmd) {
+                                    // выполнение обычных команд
+                                    Message ans = new Message(toCollectionCommand(cmd).execute());
+                                    new RequestMaker(dc).makeRequest(ans, client, buffer);
+                                }
                             }
                         }
                     }
