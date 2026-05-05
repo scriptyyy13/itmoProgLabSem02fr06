@@ -51,8 +51,9 @@ public class Balancer {
                             channel.send(ByteBuffer.wrap(response), clientAddr);
                         }
                     }
+                } else {
+                    Thread.sleep(10); // чтобы в холостую не работал цикл
                 }
-                Thread.sleep(10); // чтобы в холостую не работал цикл
             }
         } catch (IOException e) {
             System.err.println("Ошибка конфига: " + e.getMessage());
