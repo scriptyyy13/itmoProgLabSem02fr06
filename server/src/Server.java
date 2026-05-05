@@ -15,8 +15,8 @@ public class Server {
         ApplicationContext.collectionPath = ConfigManager.collectionFile;
         ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
         try {
-            XMLReader xmlReader = new XMLReader();
-            collection = xmlReader.readXmlCollection(ApplicationContext.collectionPath);
+
+            collection = XMLReader.readXmlCollection(ApplicationContext.collectionPath);
         } catch (XmlReadingException e) {
             System.out.println(e.getMessage());
             System.out.println("Коллекция пуста");
