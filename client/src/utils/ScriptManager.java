@@ -38,7 +38,8 @@ public class ScriptManager {
                         if (nested != null) commands.addAll(nested);
                     }
                 } else {
-                    CommandRequest cmd = CommandParser.parseCommand(line, null);
+                    Reader scriptReader = new Reader(line);
+                    CommandRequest cmd = CommandParser.parseCommand(line, scriptReader);
                     commands.add(cmd);
                 }
             }
