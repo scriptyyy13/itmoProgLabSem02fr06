@@ -234,4 +234,5 @@ public class CollectionManager {
     }
 
     public ArrayDeque<Dragon> getCollection(){return collection;}
+    public void setCollection(ArrayDeque<Dragon> collection){this.collection = collection;}
 }

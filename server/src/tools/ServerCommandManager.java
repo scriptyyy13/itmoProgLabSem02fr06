@@ -70,7 +70,8 @@ public class ServerCommandManager {
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
             ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
-                XMLReader.readXmlCollection(ConfigManager.collectionFile);
+
+                collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
