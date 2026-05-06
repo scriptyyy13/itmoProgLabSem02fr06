@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import models.Dragon;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.regex.Matcher;
@@ -22,11 +23,19 @@ public class XMLReader {
      */
     public static ArrayDeque<Dragon> readXmlCollection(String path) {
         try {
-            String xml = Files.readString(Paths.get(path));
-            Pattern pattern = Pattern.compile("<Dragon>(.*?)</Dragon>");
+            Path filePath = Paths.get(path).toAbsolutePath();
+
+            if (!Files.exists(filePath)) {
+                System.out.println("Файл не найден по пути: " + filePath);
+                return new ArrayDeque<>();
+            }
+
+            String xml = Files.readString(filePath);
+            Pattern pattern = Pattern.compile("<Dragon>(.*?)</Dragon>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(xml);
             XmlMapper xmlMapper = new XmlMapper();
-            ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
+            ArrayDeque<Dragon> collection = new ArrayDeque<>();
+
             while (matcher.find()) {
                 try {
                     collection.add(xmlMapper.readValue(matcher.group(), Dragon.class));
