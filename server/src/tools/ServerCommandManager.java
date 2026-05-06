@@ -71,7 +71,7 @@ public class ServerCommandManager {
             ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
 
-                collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
+                //collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
@@ -101,7 +101,7 @@ public class ServerCommandManager {
                                     // выполнение обычных команд
                                     Message ans = new Message(toCollectionCommand(cmd).execute());
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
-                                    XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
+                                    //XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
                                 }
                             }
                         }
