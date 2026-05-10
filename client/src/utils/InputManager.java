@@ -157,14 +157,22 @@ public class InputManager {
      */
     public static Boolean inputBool(Reader reader, boolean nullable) {
         while (true) {
-            String str = getNextLine(reader);
-            if (str == null) return null;
-            if (nullable && str.isEmpty()) return null;
-            if (str.equalsIgnoreCase("true") || str.equalsIgnoreCase("false")) {
-                return Boolean.parseBoolean(str);
+            String str = getNextLine(reader).trim().toLowerCase();
+            if (str.isEmpty()) {
+                if (nullable) return null;
+            } else {
+                if (str.equals("true") || str.equals("t")) {
+                    return true;
+                }
+                if (str.equals("false") || str.equals("f")) {
+                    return false;
+                }
             }
-            if (argumentsBuffer.isEmpty()) OutputManager.println("Введите true или false");
-            else throw new RuntimeException("Ошибка: ожидалось boolean в скрипте");
+            if (argumentsBuffer.isEmpty()) {
+                OutputManager.println("Введите true или false");
+            } else {
+                throw new RuntimeException("Ошибка: ожидалось boolean в скрипте");
+            }
         }
     }
 
