@@ -134,20 +134,21 @@ public class ServerCommandManager {
                 break;
         }
     }
-    public Command toCollectionCommand(CommandRequest cmd){
-        if(cmd instanceof AddRequest) return new Add(cmd,collectionManager);
-        if(cmd instanceof AddIfMinRequest) return new AddIfMin(cmd,collectionManager);
-        if(cmd instanceof AddIfMaxRequest) return new AddIfMax(cmd,collectionManager);
-        if(cmd instanceof AverageOfAgeRequest) return new AverageOfAge(cmd,collectionManager);
-        if(cmd instanceof ClearRequest) return new Clear(cmd,collectionManager);
-        if(cmd instanceof FilterLessThanAgeRequest) return new FilterLessThanAge(cmd,collectionManager);
-        if(cmd instanceof HelpRequest) return new Help(cmd,collectionManager);
-        if(cmd instanceof InfoRequest) return new Info(cmd,collectionManager);
-        if(cmd instanceof PrintUniqueWeightRequest) return new PrintUniqueWeight(cmd,collectionManager);
-        if(cmd instanceof RemoveByIdRequest) return new RemoveById(cmd,collectionManager);
-        if(cmd instanceof RemoveHeadRequest) return new RemoveHead(cmd,collectionManager);
-        if(cmd instanceof ShowRequest) return new Show(cmd,collectionManager);
-        if(cmd instanceof UpdateRequest) return new Update(cmd,collectionManager);
+
+    public Command toCollectionCommand(CommandRequest cmd) {
+        if (cmd instanceof AddRequest) return new Add(cmd, collectionManager);
+        if (cmd instanceof AddIfMinRequest) return new AddIfMin(cmd, collectionManager);
+        if (cmd instanceof AddIfMaxRequest) return new AddIfMax(cmd, collectionManager);
+        if (cmd instanceof AverageOfAgeRequest) return new AverageOfAge(cmd, collectionManager);
+        if (cmd instanceof ClearRequest) return new Clear(cmd, collectionManager);
+        if (cmd instanceof FilterLessThanAgeRequest) return new FilterLessThanAge(cmd, collectionManager);
+        if (cmd instanceof HelpRequest) return new Help(cmd, collectionManager);
+        if (cmd instanceof InfoRequest) return new Info(cmd, collectionManager);
+        if (cmd instanceof PrintUniqueWeightRequest) return new PrintUniqueWeight(cmd, collectionManager);
+        if (cmd instanceof RemoveByIdRequest) return new RemoveById(cmd, collectionManager);
+        if (cmd instanceof RemoveHeadRequest) return new RemoveHead(cmd, collectionManager);
+        if (cmd instanceof ShowRequest) return new Show(cmd, collectionManager);
+        if (cmd instanceof UpdateRequest) return new Update(cmd, collectionManager);
         return null;
     }
 }

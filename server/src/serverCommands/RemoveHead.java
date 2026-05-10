@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class RemoveHead extends Command {
 
     public RemoveHead(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
+    public String execute() {
         return getCollectionManager().removeHead();
     }
 

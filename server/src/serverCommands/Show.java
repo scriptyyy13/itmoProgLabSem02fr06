@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class Show extends Command {
 
     public Show(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
+    public String execute() {
         return getCollectionManager().show();
     }
 }

@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class AverageOfAge extends Command {
 
     public AverageOfAge(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
+    public String execute() {
         return getCollectionManager().averageOfAge();
     }
 

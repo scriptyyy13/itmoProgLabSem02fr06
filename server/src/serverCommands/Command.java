@@ -13,8 +13,15 @@ public abstract class Command {
         this.collectionManager = collectionManager;
     }
 
-    public String execute(){return null;}
+    public String execute() {
+        return null;
+    }
 
-    public Arg[] getArgs(){return args;}
-    public  CollectionManager getCollectionManager(){return collectionManager;}
+    public Arg[] getArgs() {
+        return args;
+    }
+
+    public CollectionManager getCollectionManager() {
+        return collectionManager;
+    }
 }

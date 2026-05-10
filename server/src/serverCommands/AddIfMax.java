@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class AddIfMax extends Command {
 
     public AddIfMax(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
-        return getCollectionManager().addIfMax((Dragon)getArgs()[0].getValue());
+    public String execute() {
+        return getCollectionManager().addIfMax((Dragon) getArgs()[0].getValue());
     }
 }

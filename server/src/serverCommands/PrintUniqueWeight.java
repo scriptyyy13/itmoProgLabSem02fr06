@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class PrintUniqueWeight extends Command {
 
     public PrintUniqueWeight(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
+    public String execute() {
         return getCollectionManager().printUniqueWeight();
     }
 

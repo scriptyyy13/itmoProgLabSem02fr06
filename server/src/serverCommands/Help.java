@@ -8,10 +8,10 @@ public class Help extends Command {
     private CollectionManager collectionManager;
 
     public Help(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
+    public String execute() {
         return """
                 Доступные команды:
                 

@@ -233,6 +233,11 @@ public class CollectionManager {
                 .collect(Collectors.toCollection(ArrayDeque::new));
     }
 
-    public ArrayDeque<Dragon> getCollection(){return collection;}
-    public void setCollection(ArrayDeque<Dragon> collection){this.collection = collection;}
+    public ArrayDeque<Dragon> getCollection() {
+        return collection;
+    }
+
+    public void setCollection(ArrayDeque<Dragon> collection) {
+        this.collection = collection;
+    }
 }

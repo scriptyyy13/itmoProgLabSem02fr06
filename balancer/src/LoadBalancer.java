@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 import tools.Serializer;
 import tools.Message;
 
@@ -18,7 +19,9 @@ public class LoadBalancer {
         }
     }
 
-    /** Выбор сервера и проверка доступности */
+    /**
+     * Выбор сервера и проверка доступности
+     */
     public InetSocketAddress getBestServer() {
         return servers.stream()
                 .filter(this::isAlive)
@@ -26,7 +29,9 @@ public class LoadBalancer {
                 .orElse(null);
     }
 
-    /** Проверка доступности */
+    /**
+     * Проверка доступности
+     */
     private boolean isAlive(InetSocketAddress addr) {
         try (DatagramSocket socket = new DatagramSocket()) {
             socket.setSoTimeout(300);
@@ -41,7 +46,9 @@ public class LoadBalancer {
         }
     }
 
-    /** Пересылка и получение */
+    /**
+     * Пересылка и получение
+     */
     public byte[] forwardRequest(byte[] data, InetSocketAddress server) {
         try (DatagramSocket socket = new DatagramSocket()) {
             socket.setSoTimeout(2000);

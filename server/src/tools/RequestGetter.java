@@ -8,10 +8,11 @@ import java.nio.channels.DatagramChannel;
 public class RequestGetter {
     private DatagramChannel channel;
 
-    public RequestGetter(DatagramChannel dc){
+    public RequestGetter(DatagramChannel dc) {
         channel = dc;
     }
-    public SocketAddress getRequest(ByteBuffer buffer){
+
+    public SocketAddress getRequest(ByteBuffer buffer) {
         try {
             SocketAddress client = channel.receive(buffer);
             buffer.flip();

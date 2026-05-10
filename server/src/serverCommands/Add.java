@@ -12,11 +12,11 @@ import tools.CollectionManager;
 public class Add extends Command {
 
     public Add(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
-        return getCollectionManager().add((Dragon)getArgs()[0].getValue());
+    public String execute() {
+        return getCollectionManager().add((Dragon) getArgs()[0].getValue());
     }
 
 }

@@ -11,10 +11,10 @@ import tools.CollectionManager;
 public class AddIfMin extends Command {
 
     public AddIfMin(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
-        return getCollectionManager().addIfMin((Dragon)getArgs()[0].getValue());
+    public String execute() {
+        return getCollectionManager().addIfMin((Dragon) getArgs()[0].getValue());
     }
 }
