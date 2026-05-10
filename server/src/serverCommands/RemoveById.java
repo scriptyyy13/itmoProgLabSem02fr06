@@ -11,10 +11,12 @@ import tools.CollectionManager;
 public class RemoveById extends Command {
 
     public RemoveById(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
-        return getCollectionManager().removeById((long)getArgs()[0].getValue());
+    public String execute() {
+        String argValue = getArgs()[0].getValue().toString();
+        long id = Long.parseLong(argValue);
+        return getCollectionManager().removeById(id);
     }
 }

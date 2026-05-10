@@ -10,10 +10,12 @@ import tools.CollectionManager;
 public class FilterLessThanAge extends Command {
 
     public FilterLessThanAge(CommandRequest cmd, CollectionManager collection) {
-        super(cmd,collection);
+        super(cmd, collection);
     }
 
-    public String execute(){
-        return getCollectionManager().filterLessThanAge((long)getArgs()[0].getValue());
+    public String execute() {
+        String ageString = getArgs()[0].getValue().toString();
+        long age = Long.parseLong(ageString);
+        return getCollectionManager().filterLessThanAge(age);
     }
 }
