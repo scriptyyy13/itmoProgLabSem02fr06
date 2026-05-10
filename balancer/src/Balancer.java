@@ -7,7 +7,9 @@ import java.util.*;
 public class Balancer {
     public static void main(String[] args) {
         Properties props = new Properties();
-        try (InputStream is = new FileInputStream("balancer.preps")) {
+        String fileName = (args.length > 0) ? args[0] : "balancer.preps";
+        File configFile = new File(fileName);
+        try (InputStream is = new FileInputStream(configFile)) {
             props.load(is);
 
             int port = Integer.parseInt(props.getProperty("balancer.port"));
@@ -56,7 +58,7 @@ public class Balancer {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Ошибка конфига: " + e.getMessage());
+            System.err.println("Ошибка конфига: " + configFile.getAbsolutePath());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
