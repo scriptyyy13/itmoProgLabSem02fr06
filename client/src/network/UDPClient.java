@@ -24,14 +24,15 @@ public class UDPClient {
      * Отправка команды в виде байтового объекта
      */
     public void sendCommand(CommandRequest command) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(command); // Отправляем саму команду со всеми аргументами
-        oos.flush();
-        byte[] data = baos.toByteArray();
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(command);
+            oos.flush();
+            byte[] data = baos.toByteArray();
 
-        DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, serverPort);
-        socket.send(packet);
+            DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, serverPort);
+            socket.send(packet);
+        }
     }
 
     /**
@@ -41,10 +42,10 @@ public class UDPClient {
         byte[] buffer = new byte[ConfigManager.maxPacketSize]; // максимальный размер пакета
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData(), 0, packet.getLength());
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        return (Message) ois.readObject();
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData(), 0, packet.getLength())) {
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (Message) ois.readObject();
+        }
     }
 
     public void close() {
