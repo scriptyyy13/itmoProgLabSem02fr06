@@ -20,25 +20,12 @@ public class CollectionManager {
      */
     private ArrayDeque<Dragon> collection;
     private final Date creationTime;
-    private final CollectionSync synchronizer;
 
-    public CollectionManager(ArrayDeque<Dragon> collection, String path) {
+    public CollectionManager(ArrayDeque<Dragon> collection) {
         this.creationTime = new Date();
         this.collection = collection;
-        this.synchronizer = new CollectionSync(path);
     }
 
-    private void checkSync() {
-        ArrayDeque<Dragon> updated = synchronizer.syncBeforeRead(this.collection);
-        if (updated != this.collection) {
-            this.collection = updated;
-            validate();
-        }
-    }
-
-    private void saveSync() {
-        synchronizer.syncAfterWrite(this.collection);
-    }
 
     /**
      * Реализация команды {@code add}.
@@ -46,10 +33,8 @@ public class CollectionManager {
      * @param elem добавляемый {@code Dragon}.
      */
     public String add(Dragon elem) {
-        checkSync();
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
-        saveSync();
         return "Элемент добавлен";
     }
 
@@ -59,14 +44,12 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public String addIfMax(Dragon newDragon) {
-        checkSync();
         boolean isMax = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) > 0);
 
         if (isMax) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            saveSync();
             return "Элемент добавлен (был максимальным)";
         }
         return "Элемент не максимальный";
@@ -78,14 +61,12 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public String addIfMin(Dragon newDragon) {
-        checkSync();
         boolean isMin = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) < 0);
 
         if (isMin) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
-            saveSync();
             return "Элемент добавлен (был минимальным)";
         }
         return "Элемент не минимальный";
@@ -95,7 +76,6 @@ public class CollectionManager {
      * Реализация команды {@code average_of_age}.
      */
     public String averageOfAge() {
-        checkSync();
         OptionalDouble average = collection.stream()
                 .mapToLong(Dragon::getAge)
                 .average();
@@ -111,7 +91,6 @@ public class CollectionManager {
      */
     public String clear() {
         collection.clear();
-        saveSync();
         return "Коллекция очищена";
     }
 
@@ -121,7 +100,6 @@ public class CollectionManager {
      * @param age значение, по которому происходит фильтрация.
      */
     public String filterLessThanAge(long age) {
-        checkSync();
         String result = collection.stream()
                 .filter(e -> e.getAge() < age)
                 .map(Dragon::toString)
@@ -137,7 +115,6 @@ public class CollectionManager {
      * Реализация команды {@code info}.
      */
     public String info() {
-        checkSync();
         return String.format("""
                 Информация о коллекции:
                 
@@ -151,7 +128,6 @@ public class CollectionManager {
      * Реализация команды {@code print_unique_weight}.
      */
     public String printUniqueWeight() {
-        checkSync();
         return collection.stream()
                 .map(Dragon::getWeight)
                 .filter(Objects::nonNull)
@@ -166,9 +142,7 @@ public class CollectionManager {
      * @param id id удаляемого объекта.
      */
     public String removeById(long id) {
-        checkSync();
         boolean removed = collection.removeIf(e -> e.getId() == id);
-        saveSync();
         return removed ? "Элемент удалён" : "Элемент с таким ID не найден";
     }
 
@@ -176,9 +150,7 @@ public class CollectionManager {
      * Реализация команды {@code remove_head}.
      */
     public String removeHead() {
-        checkSync();
         Dragon head = collection.poll();
-        saveSync();
         return head != null
                 ? "Удален элемент: " + head
                 : "Коллекция пуста";
@@ -189,7 +161,6 @@ public class CollectionManager {
      * Реализация команды {@code show}.
      */
     public String show() {
-        checkSync();
         if (collection.isEmpty()) return "Коллекция пуста";
 
         String result = collection.stream()
@@ -206,7 +177,6 @@ public class CollectionManager {
      * @param updDragon новое значение обьекта.
      */
     public String update(long id, Dragon updDragon) {
-        checkSync();
         Optional<Dragon> found = collection.stream()
                 .filter(e -> e.getId() == id)
                 .findFirst();
@@ -217,7 +187,6 @@ public class CollectionManager {
 
             collection.remove(old);
             collection.add(updDragon);
-            saveSync();
             return "Элемент с ID " + id + " успешно обновлен";
         }
         return "Элемент не найден";

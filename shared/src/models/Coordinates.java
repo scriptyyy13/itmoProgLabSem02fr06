@@ -49,7 +49,7 @@ public class Coordinates implements Serializable {
      * @throws InvalidInputException Выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if (x == null) throw new InvalidInputException("Неверный формат в элементе");
-        if (y == null || y <= -433) throw new InvalidInputException("Неверный формат в элементе");
+        if (x == null) throw new InvalidInputException("Неверный формат в элементе (Coordinates.x)");
+        if (y == null || y <= -433) throw new InvalidInputException("Неверный формат в элементе (Coordinates.y)");
     }
 }

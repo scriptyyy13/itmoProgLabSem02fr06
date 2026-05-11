@@ -182,11 +182,12 @@ public class Dragon implements Comparable<Dragon>, Serializable {
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if (name == null) throw new InvalidInputException("Неверный формат в элементе");
-        if (weight != null && weight <= 0) throw new InvalidInputException("Неверный формат в элементе");
-        if (age <= 0) throw new InvalidInputException("Неверный формат в элементе");
-        if (speaking == null) throw new InvalidInputException("Неверный формат в элементе");
+        if (name == null) throw new InvalidInputException("Неверный формат в элементе (Dragon.name)");
+        if (weight != null && weight <= 0) throw new InvalidInputException("Неверный формат в элементе (Dragon.weight)");
+        if (age <= 0) throw new InvalidInputException("Неверный формат в элементе (Dragon.age)");
+        if (speaking == null) throw new InvalidInputException("Неверный формат в элементе (Dragon.speaking)");
         coordinates.validate();
-        if (killer != null && !killer.isEmpty()) killer.validate();
+        if(killer.isEmpty()) killer = null;
+        if (killer != null) killer.validate();
     }
 }

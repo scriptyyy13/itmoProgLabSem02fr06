@@ -7,8 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="module" module-name="shared" />
-    <orderEntry type="module" module-name="client" />
+    <orderEntry type="library" exported="" name="lib" level="project" />
+    <orderEntry type="module" module-name="shared" exported="" />
+    <orderEntry type="module" module-name="client" exported="" />
+    <orderEntry type="library" name="jackson-annotations-2.21" level="project" />
   </component>
 </module>

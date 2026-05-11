@@ -15,7 +15,7 @@ public enum ClientCommandType {
     ADD_IF_MIN("add_if_min"),
     AVERAGE_OF_AGE("average_of_age"),
     FILTER_LESS_THAN_AGE("filter_less_than_age"),
-    PRINT_UNIQUE_WEIGHT("print_unique_speaking"); // Название из твоего HashMap
+    PRINT_UNIQUE_WEIGHT("print_unique_weight"); // Название из твоего HashMap
 
     private final String name;
 

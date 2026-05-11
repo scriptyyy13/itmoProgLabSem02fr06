@@ -2,6 +2,8 @@ package tools;
 
 
 import commands.*;
+import mainFiles.ApplicationContext;
+import models.Dragon;
 import serverCommands.*;
 
 
@@ -14,6 +16,7 @@ import java.nio.channels.Pipe;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -22,8 +25,10 @@ public class ServerCommandManager {
     private InetSocketAddress inetSocketAddress;
     private Selector selector;
     private CollectionManager collectionManager;
+    private CollectionSync synchronizer;
 
     public ServerCommandManager(int port, CollectionManager collection) {
+        this.synchronizer = new CollectionSync(ApplicationContext.collectionPath);
         this.collectionManager = collection;
         try {
             inetSocketAddress = new InetSocketAddress(port);
@@ -37,6 +42,17 @@ public class ServerCommandManager {
         }
 
 
+    }
+    private void checkSync() {
+        ArrayDeque<Dragon> updated = synchronizer.syncBeforeRead(collectionManager.getCollection());
+        if (updated != collectionManager.getCollection()) {
+            collectionManager.setCollection(updated);
+            collectionManager.validate();
+        }
+    }
+
+    private void saveSync() {
+        synchronizer.syncAfterWrite(collectionManager.getCollection());
     }
 
     public void start() {
@@ -99,8 +115,10 @@ public class ServerCommandManager {
                                     new RequestMaker(dc).makeRequest(pong, client, buffer);
                                 } else if (received instanceof CommandRequest cmd) {
                                     // выполнение обычных команд
+                                    checkSync();
                                     Message ans = new Message(toCollectionCommand(cmd).execute());
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
+                                    saveSync();
                                     //XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
                                 }
                             }

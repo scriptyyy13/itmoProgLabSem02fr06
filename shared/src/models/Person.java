@@ -74,8 +74,9 @@ public class Person implements Serializable {
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
+        if(location.isEmpty()) location = null;
         if (name.isEmpty() || birthday == null || passportID == null)
-            throw new InvalidInputException("Неверный формат в элементе");
+            throw new InvalidInputException("Неверный формат в элементе (Person)");
     }
 
     /**

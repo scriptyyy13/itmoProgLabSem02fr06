@@ -1,3 +1,5 @@
+package mainFiles;
+
 import exceptions.XmlReadingException;
 import models.Dragon;
 import tools.CollectionManager;
@@ -21,7 +23,7 @@ public class Server {
             System.out.println(e.getMessage());
             System.out.println("Коллекция пуста");
         }
-        CollectionManager collectionManager = new CollectionManager(collection, ApplicationContext.collectionPath);
+        CollectionManager collectionManager = new CollectionManager(collection);
         ServerCommandManager commandManager = new ServerCommandManager(ConfigManager.port, collectionManager);
         commandManager.start();
     }

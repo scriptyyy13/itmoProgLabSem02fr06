@@ -22,7 +22,7 @@ public class CollectionSync {
     public ArrayDeque<Dragon> syncBeforeRead(ArrayDeque<Dragon> currentCollection) {
         File file = new File(path);
         if (file.exists() && file.lastModified() > lastKnownModification) {
-            System.out.println("Файл был изменен другим сервером. Синхронизация...");
+            //System.out.println("Файл был изменен другим сервером. Синхронизация...");
             ArrayDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
             updateLastModified();
             return loaded;

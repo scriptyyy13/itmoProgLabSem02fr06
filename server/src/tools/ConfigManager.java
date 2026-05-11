@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 
 public class ConfigManager {
-    public static Integer port = 8085;
+    public static Integer port = 8002;
     public static String collectionFile = "collection.xml";
     public static Integer messageBufferCapacity = 65535;
     public static Integer commandsBufferCapacity = 1024;
