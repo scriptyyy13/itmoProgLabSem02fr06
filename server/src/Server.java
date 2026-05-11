@@ -21,7 +21,7 @@ public class Server {
             System.out.println(e.getMessage());
             System.out.println("Коллекция пуста");
         }
-        CollectionManager collectionManager = new CollectionManager(collection);
+        CollectionManager collectionManager = new CollectionManager(collection, ApplicationContext.collectionPath);
         ServerCommandManager commandManager = new ServerCommandManager(ConfigManager.port, collectionManager);
         commandManager.start();
     }

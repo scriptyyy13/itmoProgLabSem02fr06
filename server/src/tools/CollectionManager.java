@@ -4,11 +4,12 @@ import exceptions.InvalidInputException;
 import exceptions.XmlSaveException;
 import models.Dragon;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Коллекция с методами для ней управления.
+ * Коллекция с методами для её управления.
  */
 public class CollectionManager {
     /**
@@ -16,15 +17,47 @@ public class CollectionManager {
      */
     private ArrayDeque<Dragon> collection;
     private Date creationTime;
+    private final String path; // Путь к файлу для синхронизации
+    private long lastKnownModification = 0;
 
     /**
      * Создание экзмепляра {@code tools.CollectionManager}.
      *
      * @param collection коллекция.
      */
-    public CollectionManager(ArrayDeque<Dragon> collection) {
+    public CollectionManager(ArrayDeque<Dragon> collection, String path) {
         this.creationTime = new Date();
         this.collection = collection;
+        this.path = path;
+        updateLastModified();
+    }
+
+    /**
+     * Проверяет, изменился ли файл другими серверами, и если да — перечитывает его.
+     */
+    private void syncBeforeRead() {
+        File file = new File(path);
+        if (file.exists() && file.lastModified() > lastKnownModification) {
+            System.out.println("Файл был изменен другим сервером. Синхронизация...");
+            this.collection = XMLReader.readXmlCollection(path);
+            validate(); // Проверяем данные после загрузки
+            updateLastModified();
+        }
+    }
+
+    /**
+     * Сохраняет коллекцию в файл и обновляет метку времени, чтобы не читать свой же файл.
+     */
+    private void syncAfterWrite() {
+        XMLWriter.dequeToXML(collection, path);
+        updateLastModified();
+    }
+
+    private void updateLastModified() {
+        File file = new File(path);
+        if (file.exists()) {
+            this.lastKnownModification = file.lastModified();
+        }
     }
 
     /**
@@ -33,8 +66,10 @@ public class CollectionManager {
      * @param elem добавляемый {@code Dragon}.
      */
     public String add(Dragon elem) {
+        syncBeforeRead();
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
+        syncAfterWrite();
         String ans = new String("Элемент добавлен");
         return ans;
     }
@@ -45,12 +80,14 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public String addIfMax(Dragon newDragon) {
+        syncBeforeRead();
         boolean isMax = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) > 0);
 
         if (isMax || collection.isEmpty()) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
+            syncAfterWrite();
             return new String("Элемент добавлен (был максимальным)");
         }
         return new String("Элемент не максимальный");
@@ -62,12 +99,14 @@ public class CollectionManager {
      * @param newDragon добавляемый {@code Dragon}.
      */
     public String addIfMin(Dragon newDragon) {
+        syncBeforeRead();
         boolean isMin = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) < 0);
 
         if (isMin || collection.isEmpty()) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
+            syncAfterWrite();
             return new String("Элемент добавлен (был минимальным)");
         }
         return new String("Элемент не минимальный");
@@ -77,6 +116,7 @@ public class CollectionManager {
      * Реализация команды {@code average_of_age}.
      */
     public String averageOfAge() {
+        syncBeforeRead();
         OptionalDouble average = collection.stream()
                 .mapToLong(Dragon::getAge)
                 .average();
@@ -92,6 +132,7 @@ public class CollectionManager {
      */
     public String clear() {
         collection.clear();
+        syncAfterWrite();
         return new String("Коллекция очищена");
     }
 
@@ -101,6 +142,7 @@ public class CollectionManager {
      * @param age значение, по которому происходит фильтрация.
      */
     public String filterLessThanAge(long age) {
+        syncBeforeRead();
         String result = collection.stream()
                 .filter(e -> e.getAge() < age)
                 .map(Dragon::toString)
@@ -116,6 +158,7 @@ public class CollectionManager {
      * Реализация команды {@code info}.
      */
     public String info() {
+        syncBeforeRead();
         String info = String.format("""
                 Информация о коллекции:
                 
@@ -130,13 +173,13 @@ public class CollectionManager {
      * Реализация команды {@code print_unique_weight}.
      */
     public String printUniqueWeight() {
+        syncBeforeRead();
         String weights = collection.stream()
                 .map(Dragon::getWeight)
                 .filter(Objects::nonNull)
                 .distinct()
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
-
         return new String(weights);
     }
 
@@ -146,7 +189,9 @@ public class CollectionManager {
      * @param id id удаляемого объекта.
      */
     public String removeById(long id) {
+        syncBeforeRead();
         boolean removed = collection.removeIf(e -> e.getId() == id);
+        syncAfterWrite();
         return removed ? new String("Элемент удалён") : new String("Элемент с таким ID не найден");
     }
 
@@ -154,7 +199,9 @@ public class CollectionManager {
      * Реализация команды {@code remove_head}.
      */
     public String removeHead() {
+        syncBeforeRead();
         Dragon head = collection.poll();
+        syncAfterWrite();
         return head != null
                 ? new String("Удален элемент: " + head)
                 : new String("Коллекция пуста");
@@ -165,13 +212,13 @@ public class CollectionManager {
      * Реализация команды {@code show}.
      */
     public String show() {
+        syncBeforeRead();
         if (collection.isEmpty()) return new String("Коллекция пуста");
 
         String result = collection.stream()
                 .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(Dragon::toString)
                 .collect(Collectors.joining("\n---------------\n"));
-
         return new String("Элементы коллекции:\n" + result);
     }
 
@@ -182,6 +229,7 @@ public class CollectionManager {
      * @param updDragon новое значение обьекта.
      */
     public String update(long id, Dragon updDragon) {
+        syncBeforeRead();
         Optional<Dragon> found = collection.stream()
                 .filter(e -> e.getId() == id)
                 .findFirst();
@@ -192,6 +240,7 @@ public class CollectionManager {
 
             collection.remove(old);
             collection.add(updDragon);
+            syncAfterWrite();
             return new String("Элемент с ID " + id + " успешно обновлен");
         }
         return new String("Элемент не найден");
