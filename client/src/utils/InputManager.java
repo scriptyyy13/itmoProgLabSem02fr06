@@ -101,13 +101,16 @@ public class InputManager {
     public static Float inputFloat(Reader reader, boolean nullable) {
         while (true) {
             String str = getNextLine(reader);
-            if (str == null) return null;
+            if (str == null) {
+                if (nullable) return null;
+                throw new RuntimeException("Ошибка: Ожидалось число Float");
+            }
             if (nullable && str.isEmpty()) return null;
             try {
                 return Float.parseFloat(str);
             } catch (NumberFormatException e) {
                 if (argumentsBuffer.isEmpty()) OutputManager.println("Неправильный формат");
-                else throw new RuntimeException("Ошибка парсинга Float в скрипте");
+                else throw new RuntimeException("Ошибка парсинга: " + str);
             }
         }
     }

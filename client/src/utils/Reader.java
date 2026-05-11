@@ -27,6 +27,13 @@ public class Reader {
     }
 
     /**
+     * Создание экземпляра {@code utils.Reader} для стандартного потока ввода.
+     */
+    public Reader(BufferedReader bufferedReader) {
+        this.inputReader = bufferedReader;
+    }
+
+    /**
      * Читает строку ввода.
      *
      * @return вводимая строка.
