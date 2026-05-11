@@ -187,7 +187,5 @@ public class Dragon implements Comparable<Dragon>, Serializable {
         if (age <= 0) throw new InvalidInputException("Неверный формат в элементе (Dragon.age)");
         if (speaking == null) throw new InvalidInputException("Неверный формат в элементе (Dragon.speaking)");
         coordinates.validate();
-        if(killer.isEmpty()) killer = null;
-        if (killer != null) killer.validate();
     }
 }
