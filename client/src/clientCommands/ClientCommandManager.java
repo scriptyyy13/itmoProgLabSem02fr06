@@ -23,8 +23,10 @@ public class ClientCommandManager {
     public void start() {
         while (true) {
             try {
+                OutputManager.print("> ");
                 String str = consoleReader.getLine();
                 if (str == null) break;
+                if (str.trim().isEmpty()) continue;
 
                 String[] parts = str.trim().split("\\s+");
                 if (parts[0].equals("exit")) {
