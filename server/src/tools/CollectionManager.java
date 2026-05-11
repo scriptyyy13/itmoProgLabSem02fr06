@@ -5,6 +5,9 @@ import exceptions.XmlSaveException;
 import models.Dragon;
 
 import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,8 +52,14 @@ public class CollectionManager {
      * Сохраняет коллекцию в файл и обновляет метку времени, чтобы не читать свой же файл.
      */
     private void syncAfterWrite() {
-        XMLWriter.dequeToXML(collection, path);
-        updateLastModified();
+        try (RandomAccessFile file = new RandomAccessFile(path, "rw");
+             FileChannel channel = file.getChannel();
+             FileLock lock = channel.lock()) {
+            XMLWriter.dequeToXML(collection, path);
+            updateLastModified();
+        } catch (Exception e) {
+            throw new XmlSaveException("Ошибка при сохранении с блокировкой: " + e.getMessage());
+        }
     }
 
     private void updateLastModified() {
