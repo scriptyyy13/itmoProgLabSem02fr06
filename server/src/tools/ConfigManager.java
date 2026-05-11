@@ -20,9 +20,10 @@ public class ConfigManager {
                 line = line.trim();
                 if (line.isEmpty()) continue;
                 String[] parts = line.split("=", 2);
+                if (parts.length < 2) continue;
 
-                String paramName = parts[0];
-                String paramValue = parts[1];
+                String paramName = parts[0].trim();
+                String paramValue = parts[1].trim();
 
                 if (paramName.equals("PORT")) {
                     port = Integer.parseInt(paramValue);
@@ -33,8 +34,8 @@ public class ConfigManager {
                 } else if (paramName.equals("COMMANDS_BUFFER_CAPACITY")) {
                     commandsBufferCapacity = Integer.parseInt(paramValue);
                 }
-                System.out.println("Файл конфигурации был успешно считан");
             }
+            System.out.println("Файл конфигурации был успешно считан");
         } catch (Exception e) {
             System.out.println("Ошибка при чтении файла конфигурации " + filePath + ": " + e.getMessage());
         }

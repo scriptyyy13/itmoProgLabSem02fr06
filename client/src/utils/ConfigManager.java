@@ -18,9 +18,10 @@ public class ConfigManager {
                 line = line.trim();
                 if (line.isEmpty()) continue;
                 String[] parts = line.split("=", 2);
+                if (parts.length < 2) continue;
 
-                String paramName = parts[0];
-                String paramValue = parts[1];
+                String paramName = parts[0].trim();
+                String paramValue = parts[1].trim();
 
                 if (paramName.equals("PORT")) {
                     port = Integer.parseInt(paramValue);
@@ -31,9 +32,8 @@ public class ConfigManager {
                 } else if (paramName.equals("TIMEOUT")) {
                     serverResponseTimeout = Integer.parseInt(paramValue);
                 }
-                OutputManager.println("Файл конфигурации был успешно считан");
-
             }
+            OutputManager.println("Файл конфигурации был успешно считан");
         } catch (Exception e) {
             OutputManager.errPrintln("Ошибка при чтении файла конфигурации " + filePath + ": " + e.getMessage());
         }
