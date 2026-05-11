@@ -52,14 +52,8 @@ public class CollectionManager {
      * Сохраняет коллекцию в файл и обновляет метку времени, чтобы не читать свой же файл.
      */
     private void syncAfterWrite() {
-        try (RandomAccessFile file = new RandomAccessFile(path, "rw");
-             FileChannel channel = file.getChannel();
-             FileLock lock = channel.lock()) {
-            XMLWriter.dequeToXML(collection, path);
-            updateLastModified();
-        } catch (Exception e) {
-            throw new XmlSaveException("Ошибка при сохранении с блокировкой: " + e.getMessage());
-        }
+        XMLWriter.dequeToXML(collection, path);
+        updateLastModified();
     }
 
     private void updateLastModified() {
