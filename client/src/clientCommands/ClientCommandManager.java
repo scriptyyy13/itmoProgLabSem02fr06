@@ -29,6 +29,7 @@ public class ClientCommandManager {
                 if (str.trim().isEmpty()) continue;
 
                 String[] parts = str.trim().split("\\s+");
+                if (parts.length == 0) continue;
                 if (parts[0].equals("exit")) {
                     OutputManager.println("Завершение работы клиента...");
                     break;
