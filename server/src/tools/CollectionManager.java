@@ -19,7 +19,7 @@ public class CollectionManager {
      * Коллекция.
      */
     private ArrayDeque<Dragon> collection;
-    private Date creationTime;
+    private final Date creationTime;
     private final String path; // Путь к файлу для синхронизации
     private long lastKnownModification = 0;
 
@@ -79,8 +79,7 @@ public class CollectionManager {
         elem.setId(getMaxId() + 1);
         collection.addLast(elem);
         syncAfterWrite();
-        String ans = new String("Элемент добавлен");
-        return ans;
+        return "Элемент добавлен";
     }
 
     /**
@@ -93,13 +92,13 @@ public class CollectionManager {
         boolean isMax = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) > 0);
 
-        if (isMax || collection.isEmpty()) {
+        if (isMax) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
             syncAfterWrite();
-            return new String("Элемент добавлен (был максимальным)");
+            return "Элемент добавлен (был максимальным)";
         }
-        return new String("Элемент не максимальный");
+        return "Элемент не максимальный";
     }
 
     /**
@@ -112,13 +111,13 @@ public class CollectionManager {
         boolean isMin = collection.stream()
                 .allMatch(e -> newDragon.compareTo(e) < 0);
 
-        if (isMin || collection.isEmpty()) {
+        if (isMin) {
             newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
             syncAfterWrite();
-            return new String("Элемент добавлен (был минимальным)");
+            return "Элемент добавлен (был минимальным)";
         }
-        return new String("Элемент не минимальный");
+        return "Элемент не минимальный";
     }
 
     /**
@@ -130,9 +129,9 @@ public class CollectionManager {
                 .mapToLong(Dragon::getAge)
                 .average();
         if (average.isPresent()) {
-            return new String(String.valueOf(average.getAsDouble()));
+            return String.valueOf(average.getAsDouble());
         } else {
-            return new String("Коллекция пуста");
+            return "Коллекция пуста";
         }
     }
 
@@ -142,7 +141,7 @@ public class CollectionManager {
     public String clear() {
         collection.clear();
         syncAfterWrite();
-        return new String("Коллекция очищена");
+        return "Коллекция очищена";
     }
 
     /**
@@ -158,8 +157,8 @@ public class CollectionManager {
                 .collect(Collectors.joining("\n"));
 
         return result.isEmpty()
-                ? new String("Нет элементов моложе " + age)
-                : new String(result);
+                ? "Нет элементов моложе " + age
+                : result;
     }
 
 
@@ -168,14 +167,13 @@ public class CollectionManager {
      */
     public String info() {
         syncBeforeRead();
-        String info = String.format("""
+        return String.format("""
                 Информация о коллекции:
                 
                 Тип: ArrayDeque
                 Дата инициализации: %s
                 Количество элементов: %d
                 """, creationTime, collection.size());
-        return new String(info);
     }
 
     /**
@@ -183,13 +181,12 @@ public class CollectionManager {
      */
     public String printUniqueWeight() {
         syncBeforeRead();
-        String weights = collection.stream()
+        return collection.stream()
                 .map(Dragon::getWeight)
                 .filter(Objects::nonNull)
                 .distinct()
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
-        return new String(weights);
     }
 
     /**
@@ -201,7 +198,7 @@ public class CollectionManager {
         syncBeforeRead();
         boolean removed = collection.removeIf(e -> e.getId() == id);
         syncAfterWrite();
-        return removed ? new String("Элемент удалён") : new String("Элемент с таким ID не найден");
+        return removed ? "Элемент удалён" : "Элемент с таким ID не найден";
     }
 
     /**
@@ -212,8 +209,8 @@ public class CollectionManager {
         Dragon head = collection.poll();
         syncAfterWrite();
         return head != null
-                ? new String("Удален элемент: " + head)
-                : new String("Коллекция пуста");
+                ? "Удален элемент: " + head
+                : "Коллекция пуста";
     }
 
 
@@ -222,13 +219,13 @@ public class CollectionManager {
      */
     public String show() {
         syncBeforeRead();
-        if (collection.isEmpty()) return new String("Коллекция пуста");
+        if (collection.isEmpty()) return "Коллекция пуста";
 
         String result = collection.stream()
                 .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(Dragon::toString)
                 .collect(Collectors.joining("\n---------------\n"));
-        return new String("Элементы коллекции:\n" + result);
+        return "Элементы коллекции:\n" + result;
     }
 
     /**
@@ -250,9 +247,9 @@ public class CollectionManager {
             collection.remove(old);
             collection.add(updDragon);
             syncAfterWrite();
-            return new String("Элемент с ID " + id + " успешно обновлен");
+            return "Элемент с ID " + id + " успешно обновлен";
         }
-        return new String("Элемент не найден");
+        return "Элемент не найден";
     }
 
     /**
