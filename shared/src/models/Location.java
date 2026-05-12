@@ -67,7 +67,7 @@ public class Location implements Serializable {
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if (x == null || y == null || z == null || name==null||name.isEmpty())
+        if (x == null || y == null || z == null || name == null || name.isEmpty())
             throw new InvalidInputException("Неверный формат в элементе");
     }
 
@@ -76,25 +76,38 @@ public class Location implements Serializable {
      */
     @JsonIgnore
     public boolean isEmpty() {
-        return (name == null && x == null && y==null && z == null);
+        return (name == null && x == null && y == null && z == null);
     }
+
     @Override
     public boolean equals(Object oth) {
         if (this == oth) return true;
         if (oth == null || getClass() != oth.getClass()) return false;
         Location location = (Location) oth;
-        return ((name == null && location.getName() ==null)||name.equals( location.getName()))&&
-                ((x == null && location.getX() ==null)||x.equals( location.getX())  )&&
-                        ((y == null && location.getY() ==null)||y.equals( location.getY())  )&&
-                                ((z == null && location.getZ() ==null)||z.equals(location.getZ()) );
-    }
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, x,y,z);
+        return ((name == null && location.getName() == null) || name.equals(location.getName())) &&
+                ((x == null && location.getX() == null) || x.equals(location.getX())) &&
+                ((y == null && location.getY() == null) || y.equals(location.getY())) &&
+                ((z == null && location.getZ() == null) || z.equals(location.getZ()));
     }
 
-    public String getName(){return name;}
-    public Integer getX(){return x;}
-    public Integer getY(){return y;}
-    public Integer getZ(){return z;}
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, x, y, z);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getX() {
+        return x;
+    }
+
+    public Integer getY() {
+        return y;
+    }
+
+    public Integer getZ() {
+        return z;
+    }
 }

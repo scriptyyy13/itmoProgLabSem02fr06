@@ -75,7 +75,7 @@ public class Person implements Serializable {
      * @throws InvalidInputException выбрасывается при неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if(location != null && location.isEmpty()) location = null;
+        if (location != null && location.isEmpty()) location = null;
         if (name == null || name.isEmpty() || birthday == null || passportID == null)
             throw new InvalidInputException("Неверный формат в элементе (Person)");
     }
@@ -93,19 +93,35 @@ public class Person implements Serializable {
         if (this == oth) return true;
         if (oth == null || getClass() != oth.getClass()) return false;
         Person person = (Person) oth;
-        return ((name == null && person.getName() ==null) || name.equals(person.getName()) ) &&
-                ((birthday == null && person.getBirthday() ==null)||birthday.equals(person.getBirthday()) ) &&
-                        ((passportID == null && person.getPassportID() ==null) || passportID.equals(person.getPassportID()) ) &&
-                                ((nationality == null && person.getNationality() ==null)|| nationality == person.getNationality() )&&
-                                        ((location == null && person.getLocation() ==null)||location.equals(person.getLocation()) );
+        return ((name == null && person.getName() == null) || name.equals(person.getName())) &&
+                ((birthday == null && person.getBirthday() == null) || birthday.equals(person.getBirthday())) &&
+                ((passportID == null && person.getPassportID() == null) || passportID.equals(person.getPassportID())) &&
+                ((nationality == null && person.getNationality() == null) || nationality == person.getNationality()) &&
+                ((location == null && person.getLocation() == null) || location.equals(person.getLocation()));
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, birthday, passportID, nationality, location);
     }
-    public String getName(){return name;}
-    public Date getBirthday(){return birthday;}
-    public String getPassportID(){return passportID;}
-    public Country getNationality(){return nationality;}
-    public Location getLocation(){return location;}
+
+    public String getName() {
+        return name;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public String getPassportID() {
+        return passportID;
+    }
+
+    public Country getNationality() {
+        return nationality;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
 }
