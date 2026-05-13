@@ -136,21 +136,13 @@ public class ServerCommandManager {
     }
 
     public void executeServerCommand(String cmd) {
-        switch (cmd) {
-            case "exit":
-                XMLWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
-                System.exit(0);
-                break;
-            case "save":
-                XMLWriter.dequeToXML(collectionManager.getCollection(), ConfigManager.collectionFile);
-                break;
-            default:
-                System.out.println("""
-                        Доступные команды:
-                        save - сохранить коллекцию
-                        exit - завершить работу приложения с сохранением коллекции
-                        """);
-                break;
+        if (cmd.equals("exit")) {
+            System.exit(0);
+        } else {
+            System.out.println("""
+                    Доступные команды:
+                    exit - завершить работу приложения с сохранением коллекции
+                    """);
         }
     }
 
