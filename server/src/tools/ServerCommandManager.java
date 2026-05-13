@@ -116,6 +116,7 @@ public class ServerCommandManager {
                                 } else if (received instanceof CommandRequest cmd) {
                                     // выполнение обычных команд
                                     checkSync();
+                                    Thread.sleep(10);
                                     Message ans = new Message(toCollectionCommand(cmd).execute());
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
                                     saveSync();
