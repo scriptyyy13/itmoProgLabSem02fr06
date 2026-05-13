@@ -9,11 +9,9 @@ import java.util.ArrayDeque;
  */
 public class CollectionSync {
     private final String path;
-    private long lastKnownModification = 0;
 
     public CollectionSync(String path) {
         this.path = path;
-        updateLastModified();
     }
 
     /**
@@ -21,13 +19,8 @@ public class CollectionSync {
      */
     public ArrayDeque<Dragon> syncBeforeRead(ArrayDeque<Dragon> currentCollection) {
         File file = new File(path);
-        if (file.exists() && file.lastModified() > lastKnownModification) {
-            //System.out.println("Файл был изменен другим сервером. Синхронизация...");
-            ArrayDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
-            updateLastModified();
-            return loaded;
-        }
-        return currentCollection;
+        ArrayDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
+        return loaded;
     }
 
     /**
@@ -35,13 +28,5 @@ public class CollectionSync {
      */
     public void syncAfterWrite(ArrayDeque<Dragon> collection) {
         XMLWriter.dequeToXML(collection, path);
-        updateLastModified();
-    }
-
-    private void updateLastModified() {
-        File file = new File(path);
-        if (file.exists()) {
-            this.lastKnownModification = file.lastModified();
-        }
     }
 }
