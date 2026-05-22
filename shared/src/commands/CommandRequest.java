@@ -4,12 +4,12 @@ package commands;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import exceptions.InvalidInputException;
-import tools.Arg;
+import sharedTools.Arg;
 
 import java.io.Serializable;
 
 /**
- * Абстрактный класс-предок всех команд.
+ * Абстрактный класс-предок всех реквестов команд.
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type"

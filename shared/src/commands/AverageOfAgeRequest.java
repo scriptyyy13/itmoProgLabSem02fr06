@@ -2,7 +2,7 @@ package commands;
 
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code average_of_age}.
+ * Класс, отвечающий за сохрание экземпляра реквесты команды {@code average_of_age}.
  */
 public class AverageOfAgeRequest extends CommandRequest {
     /**

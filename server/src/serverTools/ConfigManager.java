@@ -1,0 +1,61 @@
+package serverTools;
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
+/**
+ * Класс отвечающий за работу с конфигом.
+ */
+public class ConfigManager {
+    /**
+     * Порт сервера.
+     */
+    public static Integer port = 8002;
+    /**
+     * Путть до файла-коллекции.
+     */
+    public static String collectionFile = "collection.xml";
+    /**
+     * Размер пакета с {@code Message}
+     */
+    public static Integer messageBufferCapacity = 65535;
+    /**
+     * Размер пакета с {@code Command}
+     */
+    public static Integer commandsBufferCapacity = 1024;
+
+    /**
+     * Сканирование файла конфига
+     * @param filePath путь до файла коллекции.
+     */
+    public static void scanConfig(String filePath) {
+        File file = new File(filePath);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                String[] parts = line.split("=", 2);
+                if (parts.length < 2) continue;
+
+                String paramName = parts[0].trim();
+                String paramValue = parts[1].trim();
+
+                if (paramName.equals("PORT")) {
+                    port = Integer.parseInt(paramValue);
+                } else if (paramName.equals("COLLECTION_FILE")) {
+                    collectionFile = paramValue;
+                } else if (paramName.equals("MESSAGE_BUFFER_CAPACITY")) {
+                    messageBufferCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("COMMANDS_BUFFER_CAPACITY")) {
+                    commandsBufferCapacity = Integer.parseInt(paramValue);
+                }
+            }
+            System.out.println("Файл конфигурации был успешно считан");
+        } catch (Exception e) {
+            System.out.println("Ошибка при чтении файла конфигурации " + filePath + ": " + e.getMessage());
+        }
+    }
+}

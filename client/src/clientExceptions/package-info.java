@@ -1,0 +1,4 @@
+/**
+ * Клиентские исключения.
+ */
+package clientExceptions;

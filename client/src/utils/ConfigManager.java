@@ -4,12 +4,31 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+/**
+ * Работает с конфигом клиента.
+ */
 public class ConfigManager {
+    /**
+     * ip сервера к которому подключаемся.
+     */
     public static String ip = "localhost";
+    /**
+     * порт сервера.
+     */
     public static Integer port = 8085;
+    /**
+     * Размер пакета.
+     */
     public static Integer maxPacketSize = 65535;
+    /**
+     * Допустимое время ожидания ответа.
+     */
     public static Integer serverResponseTimeout = 5000;
 
+    /**
+     * Сканирование файла конфига.
+     * @param filePath
+     */
     public static void scanConfig(String filePath) {
         File file = new File(filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

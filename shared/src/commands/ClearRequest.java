@@ -2,7 +2,7 @@ package commands;
 
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code clear}.
+ * Класс, отвечающий за сохрание экземпляра реквесты команды {@code clear}.
  */
 public class ClearRequest extends CommandRequest {
     /**

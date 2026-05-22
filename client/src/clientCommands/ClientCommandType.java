@@ -2,6 +2,9 @@ package clientCommands;
 
 import commands.*;
 
+/**
+ * Перечисление возможных типов команд.
+ */
 public enum ClientCommandType {
     HELP("help"),
     INFO("info"),

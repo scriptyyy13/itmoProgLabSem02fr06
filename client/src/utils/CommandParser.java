@@ -3,10 +3,13 @@ package utils;
 import clientCommands.ClientCommandType;
 import commands.CommandRequest;
 import exceptions.InvalidInputException;
-import tools.Arg;
+import sharedTools.Arg;
 
 import java.util.Arrays;
 
+/**
+ * Создает экземпляр команды.
+ */
 public class CommandParser {
     public static CommandRequest parseCommand(String line, Reader currentReader) throws InvalidInputException {
         line = line.trim();

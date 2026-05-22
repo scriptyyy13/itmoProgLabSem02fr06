@@ -2,7 +2,7 @@ package commands;
 
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code show}.
+ * Класс, отвечающий за сохрание экземпляра реквесты команды {@code show}.
  */
 public class ShowRequest extends CommandRequest {
     /**

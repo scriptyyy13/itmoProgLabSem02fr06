@@ -1,0 +1,4 @@
+/**
+ * Серверные исключения.
+ */
+package serverExceptions;

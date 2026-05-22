@@ -1,12 +1,15 @@
 package network;
 
 import commands.CommandRequest;
-import tools.Message;
+import sharedTools.Message;
 import utils.ConfigManager;
 
 import java.io.*;
 import java.net.*;
 
+/**
+ * Интернет-часть клиента.
+ */
 public class UDPClient {
     private final DatagramSocket socket;
     private final InetAddress serverAddress;

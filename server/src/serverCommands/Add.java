@@ -2,7 +2,7 @@ package serverCommands;
 
 import commands.CommandRequest;
 import models.Dragon;
-import tools.CollectionManager;
+import serverTools.CollectionManager;
 
 
 /**
@@ -15,6 +15,10 @@ public class Add extends Command {
         super(cmd, collection);
     }
 
+    /**
+     * Исполнение команды в коллекции
+     * @return результат выполнения команды
+     */
     public String execute() {
         return getCollectionManager().add((Dragon) getArgs()[0].getValue());
     }

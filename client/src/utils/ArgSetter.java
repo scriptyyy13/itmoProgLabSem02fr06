@@ -1,10 +1,13 @@
 package utils;
 
 import commands.*;
-import tools.Arg;
+import sharedTools.Arg;
 
 import java.util.Arrays;
 
+/**
+ * Устанавливает аргументы команды.
+ */
 public class ArgSetter {
 
     public static void setArgs(CommandRequest command, Arg[] args, Reader reader) {

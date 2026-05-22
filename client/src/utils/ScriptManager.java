@@ -5,14 +5,28 @@ import commands.CommandRequest;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Класс, для работы со скриптами.
+ */
 public class ScriptManager {
+    /**
+     * Парсер команды.
+     */
     private final CommandParser parser;
+    /**
+     * Активные скрипты.
+     */
     private final Set<String> activeScripts = new HashSet<>();
 
     public ScriptManager(CommandParser parser) {
         this.parser = parser;
     }
 
+    /**
+     * обрабатывает скрипт.
+     * @param filePath путь до скрипта.
+     * @return Список реквестов команд.
+     */
     public List<CommandRequest> processScript(String filePath) {
         File file = new File(filePath);
         String absolutePath = file.getAbsolutePath();

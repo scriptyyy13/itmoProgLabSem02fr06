@@ -4,7 +4,7 @@ import exceptions.InvalidInputException;
 import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code update}.
+ * Класс, отвечающий за сохрание экземпляра реквесты команды {@code update}.
  */
 public class UpdateRequest extends CommandRequest {
     /**

@@ -1,11 +1,21 @@
 package serverCommands;
 
 import commands.CommandRequest;
-import tools.Arg;
-import tools.CollectionManager;
+import sharedTools.Arg;
+import serverTools.CollectionManager;
 
+
+/**
+ *  Абстрактный класс предок всех команд.
+ */
 public abstract class Command {
+    /**
+     * Коллекция, в которой исполняется команда.
+     */
     private CollectionManager collectionManager;
+    /**
+     * Масссив аргументы команды.
+     */
     private Arg[] args;
 
     public Command(CommandRequest commandRequest, CollectionManager collectionManager) {
@@ -13,6 +23,10 @@ public abstract class Command {
         this.collectionManager = collectionManager;
     }
 
+    /**
+     * Исполнение команды в коллекции
+     * @return результат выполнения команды
+     */
     public String execute() {
         return null;
     }

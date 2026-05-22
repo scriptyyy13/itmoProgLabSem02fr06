@@ -1,9 +1,8 @@
 package serverCommands;
 
-import commands.AddIfMaxRequest;
 import commands.CommandRequest;
 import models.Dragon;
-import tools.CollectionManager;
+import serverTools.CollectionManager;
 
 /**
  * Класс, отвечающий за сохрание экземпляра команды {@code add_if_max}.
@@ -14,6 +13,10 @@ public class AddIfMax extends Command {
         super(cmd, collection);
     }
 
+    /**
+     * Исполнение команды в коллекции
+     * @return результат выполнения команды
+     */
     public String execute() {
         return getCollectionManager().addIfMax((Dragon) getArgs()[0].getValue());
     }

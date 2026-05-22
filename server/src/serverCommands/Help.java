@@ -1,8 +1,7 @@
 package serverCommands;
 
 import commands.CommandRequest;
-import commands.HelpRequest;
-import tools.CollectionManager;
+import serverTools.CollectionManager;
 
 public class Help extends Command {
     private CollectionManager collectionManager;
@@ -10,7 +9,10 @@ public class Help extends Command {
     public Help(CommandRequest cmd, CollectionManager collection) {
         super(cmd, collection);
     }
-
+    /**
+     * Исполнение команды в коллекции
+     * @return результат выполнения команды
+     */
     public String execute() {
         return """
                 Доступные команды:

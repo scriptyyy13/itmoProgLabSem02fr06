@@ -7,10 +7,25 @@ import utils.*;
 
 import java.util.List;
 
+/**
+ * Основная логика клиента.
+ */
 public class ClientCommandManager {
+    /**
+     * {@code Reader}, читающий консоль.
+     */
     private final Reader consoleReader;
+    /**
+     * Интернет-часть клиента.
+     */
     private final UDPClient udpClient;
+    /**
+     * Парсер команд.
+     */
     private final CommandParser parser;
+    /**
+     * Менеджер для работы со скриптами.
+     */
     private final ScriptManager scriptManager;
 
     public ClientCommandManager(Reader reader, UDPClient udpClient) {
@@ -20,6 +35,9 @@ public class ClientCommandManager {
         this.scriptManager = new ScriptManager(this.parser);
     }
 
+    /**
+     * Основный цикл работы клиента.
+     */
     public void start() {
         while (true) {
             try {
@@ -55,10 +73,14 @@ public class ClientCommandManager {
         }
     }
 
+    /**
+     * Отправка команды на сервер и получение ответа.
+     * @param command
+     */
     private void sendAndReceive(CommandRequest command) {
         try {
             udpClient.sendCommand(command);
-            tools.Message response = udpClient.receiveResponse();
+            sharedTools.Message response = udpClient.receiveResponse();
             OutputManager.println(response.getText());
         } catch (java.net.SocketTimeoutException e) {
             OutputManager.errPrintln("Сервер недоступен.");

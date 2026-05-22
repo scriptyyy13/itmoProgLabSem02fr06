@@ -4,7 +4,7 @@ import exceptions.InvalidInputException;
 import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code add_if_min}.
+ * Класс, отвечающий за сохрание экземпляра реквесты команды {@code add_if_min}.
  */
 public class AddIfMinRequest extends CommandRequest {
     /**

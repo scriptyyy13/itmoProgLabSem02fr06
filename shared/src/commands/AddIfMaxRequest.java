@@ -4,7 +4,7 @@ import exceptions.InvalidInputException;
 import models.Dragon;
 
 /**
- * Класс, отвечающий за сохрание экземпляра команды {@code add_if_max}.
+ * Класс, отвечающий за сохрание экземпляра реквеста команды {@code add_if_max}.
  */
 public class AddIfMaxRequest extends CommandRequest {
     /**
