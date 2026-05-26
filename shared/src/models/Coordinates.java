@@ -36,6 +36,14 @@ public class Coordinates implements Serializable {
         this.y = y;
     }
 
+    public Float getX() {
+        return x;
+    }
+
+    public Double getY() {
+        return y;
+    }
+
     @Override
     public String toString() {
         return "Coordinates: " + "\n" +

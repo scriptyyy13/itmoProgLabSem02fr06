@@ -146,6 +146,22 @@ public class Dragon implements Comparable<Dragon>, Serializable {
         this.id = id;
     }
 
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public Boolean getSpeaking() {
+        return speaking;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Person getKiller() {
+        return killer;
+    }
+
     public void setCreatorId(long id) {
         this.creatorId = id;
     }
