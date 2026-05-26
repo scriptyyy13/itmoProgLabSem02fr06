@@ -15,7 +15,7 @@ public class ConfigManager {
     /**
      * порт сервера.
      */
-    public static Integer port = 8085;
+    public static Integer port = 8000;
     /**
      * Размер пакета.
      */
@@ -25,11 +25,11 @@ public class ConfigManager {
      */
     public static Integer serverResponseTimeout = 5000;
     /**
-     * Логин текущего пользователя. Null, если не авторизован.
+     * Логин текущего пользователя. Пусто, если не авторизован.
      */
     public static String login = "";
     /**
-     * Пароль текущего пользователя. Null, если не авторизован.
+     * Пароль текущего пользователя. Пусто, если не авторизован.
      */
     public static String password = "";
 
