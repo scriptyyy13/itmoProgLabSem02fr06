@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import models.Dragon;
 
-import java.util.ArrayDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Класс-обёртка для коллекции.
@@ -14,16 +14,16 @@ import java.util.ArrayDeque;
 public class CollectionWrapper {
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "Dragon")
-    private ArrayDeque<Dragon> collection;
+    private ConcurrentLinkedDeque<Dragon> collection;
 
     public CollectionWrapper() {
     }
 
-    public CollectionWrapper(ArrayDeque<Dragon> collection) {
+    public CollectionWrapper(ConcurrentLinkedDeque<Dragon> collection) {
         this.collection = collection;
     }
 
-    public ArrayDeque<Dragon> getCollection() {
+    public ConcurrentLinkedDeque<Dragon> getCollection() {
         return this.collection;
     }
 }
