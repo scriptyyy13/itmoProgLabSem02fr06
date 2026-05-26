@@ -82,8 +82,8 @@ public class DatabaseManager {
 
         // Координаты (Coordinates)
         Coordinates coordinates = new Coordinates(
-            rs.getFloat("coord_x"),
-            rs.getDouble("coord_y")
+                rs.getFloat("coord_x"),
+                rs.getDouble("coord_y")
         );
 
         java.util.Date creationDate = new java.util.Date(rs.getTimestamp("creation_date").getTime());
@@ -116,10 +116,10 @@ public class DatabaseManager {
             // Если имя локации есть, значит и сама локация была сохранена
             if (locName != null) {
                 location = new Location(
-                    rs.getInt("killer_loc_x"),
-                    rs.getInt("killer_loc_y"),
-                    rs.getInt("killer_loc_z"),
-                    locName
+                        rs.getInt("killer_loc_x"),
+                        rs.getInt("killer_loc_y"),
+                        rs.getInt("killer_loc_z"),
+                        locName
                 );
             }
             killer = new Person(killerName, birthday, passportId, nationality, location);
@@ -130,5 +130,181 @@ public class DatabaseManager {
         dragon.setCreatorId(creatorId);
 
         return dragon;
+    }
+
+    /**
+     * Атомарное добавление дракона в БД.
+     *
+     * @param dragon    объект для сохранения
+     * @param creatorId ID создателя объекта
+     * @return сгенерированный базой данных ID, либо -1 в случае ошибки.
+     */
+    public long insertDragon(Dragon dragon, long creatorId) {
+        String sql = "INSERT INTO dragons (" +
+                "creator_id, name, coord_x, coord_y, age, weight, speaking, color, " +
+                "killer_name, killer_birthday, killer_passport_id, killer_nationality, " +
+                "killer_loc_x, killer_loc_y, killer_loc_z, killer_loc_name" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id, creation_date;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, creatorId);
+            pstmt.setString(2, dragon.getName());
+            pstmt.setFloat(3, dragon.getCoordinates().getX());
+            pstmt.setDouble(4, dragon.getCoordinates().getY());
+            pstmt.setLong(5, dragon.getAge());
+
+            if (dragon.getWeight() != null) pstmt.setInt(6, dragon.getWeight());
+            else pstmt.setNull(6, Types.INTEGER);
+
+            pstmt.setBoolean(7, dragon.getSpeaking());
+
+            if (dragon.getColor() != null) pstmt.setString(8, dragon.getColor().name());
+            else pstmt.setNull(8, Types.VARCHAR);
+
+            Person killer = dragon.getKiller();
+            if (killer != null && killer.getName() != null) {
+                pstmt.setString(9, killer.getName());
+                pstmt.setDate(10, new java.sql.Date(killer.getBirthday().getTime()));
+                pstmt.setString(11, killer.getPassportID());
+
+                if (killer.getNationality() != null) pstmt.setString(12, killer.getNationality().name());
+                else pstmt.setNull(12, Types.VARCHAR);
+
+                Location loc = killer.getLocation();
+                if (loc != null && !loc.isEmpty()) {
+                    pstmt.setInt(13, loc.getX());
+                    pstmt.setInt(14, loc.getY());
+                    pstmt.setInt(15, loc.getZ());
+                    pstmt.setString(16, loc.getName());
+                } else {
+                    pstmt.setNull(13, Types.INTEGER);
+                    pstmt.setNull(14, Types.INTEGER);
+                    pstmt.setNull(15, Types.INTEGER);
+                    pstmt.setNull(16, Types.VARCHAR);
+                }
+            } else {
+                for (int i = 9; i <= 16; i++) {
+                    if (i == 13 || i == 14 || i == 15) pstmt.setNull(i, Types.INTEGER);
+                    else pstmt.setNull(i, Types.VARCHAR);
+                }
+                pstmt.setNull(10, Types.DATE);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Обновляем дату создания прямо из БД, чтобы все было синхронно
+                    dragon.setCreationDate(new java.util.Date(rs.getTimestamp("creation_date").getTime()));
+                    return rs.getLong("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка БД при insertDragon: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Атомарное удаление дракона из БД по ID и ID создателя (проверка прав).
+     *
+     * @param id        ID удаляемого дракона
+     * @param creatorId ID пользователя, инициировавшего удаление
+     * @return true, если строка удалена, false если объект не найден или нет прав
+     */
+    public boolean deleteDragon(long id, long creatorId) {
+        String sql = "DELETE FROM dragons WHERE id = ? AND creator_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            pstmt.setLong(2, creatorId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Ошибка БД при deleteDragon: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Атомарное обновление дракона в БД.
+     *
+     * @param id        ID обновляемого дракона
+     * @param dragon    Новые данные дракона
+     * @param creatorId ID пользователя, инициировавшего обновление
+     * @return true, если обновление прошло успешно
+     */
+    public boolean updateDragon(long id, Dragon dragon, long creatorId) {
+        String sql = "UPDATE dragons SET " +
+                "name = ?, coord_x = ?, coord_y = ?, age = ?, weight = ?, speaking = ?, color = ?, " +
+                "killer_name = ?, killer_birthday = ?, killer_passport_id = ?, killer_nationality = ?, " +
+                "killer_loc_x = ?, killer_loc_y = ?, killer_loc_z = ?, killer_loc_name = ? " +
+                "WHERE id = ? AND creator_id = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, dragon.getName());
+            pstmt.setFloat(2, dragon.getCoordinates().getX());
+            pstmt.setDouble(3, dragon.getCoordinates().getY());
+            pstmt.setLong(4, dragon.getAge());
+
+            if (dragon.getWeight() != null) pstmt.setInt(5, dragon.getWeight());
+            else pstmt.setNull(5, Types.INTEGER);
+
+            pstmt.setBoolean(6, dragon.getSpeaking());
+
+            if (dragon.getColor() != null) pstmt.setString(7, dragon.getColor().name());
+            else pstmt.setNull(7, Types.VARCHAR);
+
+            Person killer = dragon.getKiller();
+            if (killer != null && killer.getName() != null) {
+                pstmt.setString(8, killer.getName());
+                pstmt.setDate(9, new java.sql.Date(killer.getBirthday().getTime()));
+                pstmt.setString(10, killer.getPassportID());
+
+                if (killer.getNationality() != null) pstmt.setString(11, killer.getNationality().name());
+                else pstmt.setNull(11, Types.VARCHAR);
+
+                Location loc = killer.getLocation();
+                if (loc != null && !loc.isEmpty()) {
+                    pstmt.setInt(12, loc.getX());
+                    pstmt.setInt(13, loc.getY());
+                    pstmt.setInt(14, loc.getZ());
+                    pstmt.setString(15, loc.getName());
+                } else {
+                    pstmt.setNull(12, Types.INTEGER);
+                    pstmt.setNull(13, Types.INTEGER);
+                    pstmt.setNull(14, Types.INTEGER);
+                    pstmt.setNull(15, Types.VARCHAR);
+                }
+            } else {
+                for (int i = 8; i <= 15; i++) {
+                    if (i == 12 || i == 13 || i == 14) pstmt.setNull(i, Types.INTEGER);
+                    else pstmt.setNull(i, Types.VARCHAR);
+                }
+                pstmt.setNull(9, Types.DATE);
+            }
+
+            pstmt.setLong(16, id);
+            pstmt.setLong(17, creatorId);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Ошибка БД при updateDragon: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Очистка всех объектов в БД, принадлежащих конкретному пользователю.
+     *
+     * @param creatorId ID пользователя
+     * @return true, если транзакция прошла успешно
+     */
+    public boolean clearDragons(long creatorId) {
+        String sql = "DELETE FROM dragons WHERE creator_id = ?;";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, creatorId);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Ошибка БД при clearDragons: " + e.getMessage());
+            return false;
+        }
     }
 }
