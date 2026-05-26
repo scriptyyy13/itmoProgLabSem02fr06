@@ -10,6 +10,8 @@ import serverCommands.*;
 import sharedTools.*;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -175,16 +177,22 @@ public class ServerCommandManager {
     }
 
     public void sendingLoop() {
-        while (!Thread.interrupted()) {
-            try {
-                Request r = requestBuffer.take();
+        try {
+            DatagramSocket ds = new DatagramSocket();
+            while (!Thread.interrupted()) {
+                try {
+                    ResultOfRequest r = resultBuffer.take();
+                    Message msg = new Message();
+                    byte[] bytesAns = Serializer.serializeToBytes(r.answer());
 
-                Message msg = new Message();
-                resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
+                    ds.send(new DatagramPacket(bytesAns, bytesAns.length, r.client()) );
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
+        }catch (Exception e){
+            throw new RuntimeException(e);
         }
     }
 }
