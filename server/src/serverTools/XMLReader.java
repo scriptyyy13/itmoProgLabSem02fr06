@@ -6,7 +6,7 @@ import models.Dragon;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,20 +21,20 @@ public class XMLReader {
      * @param path путь до файла.
      * @return прочитанная коллекция.
      */
-    public static ArrayDeque<Dragon> readXmlCollection(String path) {
+    public static ConcurrentLinkedDeque<Dragon> readXmlCollection(String path) {
         try {
             Path filePath = Paths.get(path).toAbsolutePath();
 
             if (!Files.exists(filePath)) {
                 System.out.println("Файл не найден по пути: " + filePath);
-                return new ArrayDeque<>();
+                return new ConcurrentLinkedDeque<>();
             }
 
             String xml = Files.readString(filePath);
             Pattern pattern = Pattern.compile("<Dragon>(.*?)</Dragon>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(xml);
             XmlMapper xmlMapper = new XmlMapper();
-            ArrayDeque<Dragon> collection = new ArrayDeque<>();
+            ConcurrentLinkedDeque<Dragon> collection = new ConcurrentLinkedDeque<>();
 
             while (matcher.find()) {
                 try {
@@ -46,7 +46,7 @@ public class XMLReader {
             return collection;
         } catch (Exception e) {
             System.out.println("Ошибка чтения файла, возвращена пустая коллекция");
-            return new ArrayDeque<Dragon>();
+            return new ConcurrentLinkedDeque<Dragon>();
         }
     }
 

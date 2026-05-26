@@ -7,7 +7,7 @@ import serverTools.ConfigManager;
 import serverTools.ServerCommandManager;
 import serverTools.XMLReader;
 
-import java.util.ArrayDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * mainFiles.Main-класс для сервера
@@ -18,7 +18,7 @@ public class Server {
             ConfigManager.scanConfig(args[0]);
         }
         ApplicationContext.collectionPath = ConfigManager.collectionFile;
-        ArrayDeque<Dragon> collection = new ArrayDeque<Dragon>();
+        ConcurrentLinkedDeque<Dragon> collection = new ConcurrentLinkedDeque<Dragon>();
         try {
 
             collection = XMLReader.readXmlCollection(ApplicationContext.collectionPath);
