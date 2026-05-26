@@ -187,7 +187,12 @@ public class ClientCommandManager {
             OutputManager.println(response.getText());
 
             // Если сервер вернул ошибку валидации, значит логин/пароль не подошли
-            return !response.getText().contains("Ошибка валидации пользователя");
+            if (response.getText().contains("Ошибка валидации пользователя")) {
+                return false;
+            } else if (response.getText().contains("SUCCESS_")) {
+                return true;
+            }
+            return false;
         } catch (java.net.SocketTimeoutException e) {
             OutputManager.errPrintln("Сервер недоступен.");
             return false;
