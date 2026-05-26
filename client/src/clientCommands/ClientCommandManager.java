@@ -104,7 +104,7 @@ public class ClientCommandManager {
 
                     authRequest.setLogin(inputLogin);
                     authRequest.setUserPassword(inputPassword);
-                    Arg[] args = Arg.toArgList(new String[]{ConfigManager.login, ConfigManager.password});
+                    Arg[] args = Arg.toArgList(new String[]{inputLogin, inputPassword});
                     authRequest.setArgs(args);
 
                     if (sendAndReceiveAuth(authRequest)) {

@@ -25,9 +25,8 @@ public class Register extends Command {
             return "Ошибка: Неверное количество аргументов для регистрации.";
         }
 
-        String login = args[0].toString();
-        String password = args[1].toString();
-
+        String login = (String) args[0].getValue();
+        String password = (String) args[1].getValue();
         if (login.trim().isEmpty() || password.trim().isEmpty()) {
             return "Ошибка: Логин и пароль не могут быть пустыми.";
         }
