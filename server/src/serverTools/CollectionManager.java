@@ -4,6 +4,7 @@ import exceptions.InvalidInputException;
 import models.Dragon;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
 /**
@@ -13,14 +14,13 @@ public class CollectionManager {
     /**
      * Коллекция.
      */
-    private ArrayDeque<Dragon> collection;
+    private ConcurrentLinkedDeque<Dragon> collection;
     private final Date creationTime;
 
-    public CollectionManager(ArrayDeque<Dragon> collection) {
+    public CollectionManager(ConcurrentLinkedDeque<Dragon> collection) {
         this.creationTime = new Date();
         this.collection = collection;
     }
-
 
     /**
      * Реализация команды {@code add}.
@@ -28,7 +28,6 @@ public class CollectionManager {
      * @param elem добавляемый {@code Dragon}.
      */
     public String add(Dragon elem) {
-        elem.setId(getMaxId() + 1);
         collection.addLast(elem);
         return "Элемент добавлен";
     }
@@ -43,7 +42,6 @@ public class CollectionManager {
                 .allMatch(e -> newDragon.compareTo(e) > 0);
 
         if (isMax) {
-            newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
             return "Элемент добавлен (был максимальным)";
         }
@@ -60,7 +58,6 @@ public class CollectionManager {
                 .allMatch(e -> newDragon.compareTo(e) < 0);
 
         if (isMin) {
-            newDragon.setId(getMaxId() + 1);
             collection.addLast(newDragon);
             return "Элемент добавлен (был минимальным)";
         }
@@ -105,7 +102,6 @@ public class CollectionManager {
                 : result;
     }
 
-
     /**
      * Реализация команды {@code info}.
      */
@@ -113,7 +109,7 @@ public class CollectionManager {
         return String.format("""
                 Информация о коллекции:
                 
-                Тип: ArrayDeque
+                Тип: ConcurrentLinkedDeque
                 Дата инициализации: %s
                 Количество элементов: %d
                 """, creationTime, collection.size());
@@ -151,7 +147,6 @@ public class CollectionManager {
                 : "Коллекция пуста";
     }
 
-
     /**
      * Реализация команды {@code show}.
      */
@@ -188,46 +183,34 @@ public class CollectionManager {
     }
 
     /**
-     * Получения максимального id среди объектов коллекции.
-     *
-     * @return максимальный id.
-     */
-    public long getMaxId() {
-        return collection.stream()
-                .mapToLong(Dragon::getId)
-                .max()
-                .orElse(0L);
-    }
-
-    /**
      * Валидация элементов коллекции.
      * Элементы, не прошедшие валидацию, удаляются из коллекции.
      */
     public void validate() {
         Set<Long> ids = new HashSet<>();
-        collection = collection.stream()
-                .filter(e -> {
-                    if (ids.contains(e.getId())) {
-                        System.out.println("Обнаружен повтор id, элемент пропущен: " + e.getId());
-                        return false;
-                    }
-                    try {
-                        e.validate();
-                        ids.add(e.getId());
-                        return true;
-                    } catch (InvalidInputException ex) {
-                        System.out.println("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
-                        return false;
-                    }
-                })
-                .collect(Collectors.toCollection(ArrayDeque::new));
+        ConcurrentLinkedDeque<Dragon> validCollection = new ConcurrentLinkedDeque<>();
+
+        for (Dragon e : collection) {
+            if (ids.contains(e.getId())) {
+                System.out.println("Обнаружен повтор id, элемент пропущен: " + e.getId());
+                continue;
+            }
+            try {
+                e.validate();
+                ids.add(e.getId());
+                validCollection.add(e);
+            } catch (InvalidInputException ex) {
+                System.out.println("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
+            }
+        }
+        this.collection = validCollection;
     }
 
-    public ArrayDeque<Dragon> getCollection() {
+    public ConcurrentLinkedDeque<Dragon> getCollection() {
         return collection;
     }
 
-    public void setCollection(ArrayDeque<Dragon> collection) {
+    public void setCollection(ConcurrentLinkedDeque<Dragon> collection) {
         this.collection = collection;
     }
 }
