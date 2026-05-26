@@ -32,8 +32,17 @@ public abstract class CommandRequest implements Serializable {
     private Arg[] args;
 
     /**
+     * Логин пользователя, отправившего команду.
+     */
+    private String userLogin;
+
+    /**
+     * Пароль пользователя, отправившего команду.
+     */
+    private String userPassword;
+
+    /**
      * Создание экземпляра команды
-     *
      */
     public CommandRequest() {
     }
