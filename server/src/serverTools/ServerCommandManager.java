@@ -58,11 +58,11 @@ public class ServerCommandManager {
     public ServerCommandManager(int port, CollectionManager collection) {
         this.synchronizer = new CollectionSync();
         this.collectionManager = collection;
-        readingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
-        sendingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
-        requestBuffer = new LinkedBlockingQueue<Request>(1000);
-        resultBuffer = new LinkedBlockingQueue<ResultOfRequest>(1000);
-        workingPool = new ForkJoinPool(4);
+        readingPool = Executors.newFixedThreadPool(ConfigManager.readingPoolCapacity);
+        sendingPool = Executors.newFixedThreadPool(ConfigManager.sendingPoolCapacity);
+        requestBuffer = new LinkedBlockingQueue<Request>(ConfigManager.requestBufferCapacity);
+        resultBuffer = new LinkedBlockingQueue<ResultOfRequest>(ConfigManager.resultBufferCapacity);
+        workingPool = new ForkJoinPool(ConfigManager.workingPoolCapacity);
         try {
             inetSocketAddress = new InetSocketAddress(port);
             channel = DatagramChannel.open();
