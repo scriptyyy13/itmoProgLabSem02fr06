@@ -19,5 +19,4 @@ public class Info extends Command {
     public String execute() {
         return getCollectionManager().info();
     }
-
 }

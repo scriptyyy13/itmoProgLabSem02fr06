@@ -64,4 +64,19 @@ public abstract class CommandRequest implements Serializable {
         this.args = args;
     }
 
+    public String getLogin() {
+        return userLogin;
+    }
+
+    public void setLogin(String login) {
+        this.userLogin = login;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String password) {
+        this.userPassword = password;
+    }
 }

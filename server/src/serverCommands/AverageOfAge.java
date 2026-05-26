@@ -20,5 +20,4 @@ public class AverageOfAge extends Command {
     public String execute() {
         return getCollectionManager().averageOfAge();
     }
-
 }

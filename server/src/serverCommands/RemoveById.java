@@ -19,7 +19,6 @@ public class RemoveById extends Command {
     public String execute() {
         String argValue = getArgs()[0].getValue().toString();
         long id = Long.parseLong(argValue);
-        return getCollectionManager().removeById(id, -1);
-        // TODO: корректно сделать айдишник того, кто создает
+        return getCollectionManager().removeById(id, this.getExecutorId());
     }
 }

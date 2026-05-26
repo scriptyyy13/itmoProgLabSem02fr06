@@ -19,5 +19,4 @@ public class PrintUniqueWeight extends Command {
     public String execute() {
         return getCollectionManager().printUniqueWeight();
     }
-
 }

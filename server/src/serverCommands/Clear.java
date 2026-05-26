@@ -17,7 +17,6 @@ public class Clear extends Command {
      * @return результат выполнения команды
      */
     public String execute() {
-        return getCollectionManager().clear(-1);
-        // TODO: корректно сделать айдишник того, кто создает
+        return getCollectionManager().clear(this.getExecutorId());
     }
 }

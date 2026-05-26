@@ -24,9 +24,18 @@ public class ConfigManager {
      * Допустимое время ожидания ответа.
      */
     public static Integer serverResponseTimeout = 5000;
+    /**
+     * Логин текущего пользователя. Null, если не авторизован.
+     */
+    public static String login = null;
+    /**
+     * Пароль текущего пользователя. Null, если не авторизован.
+     */
+    public static String password = null;
 
     /**
      * Сканирование файла конфига.
+     *
      * @param filePath
      */
     public static void scanConfig(String filePath) {
@@ -50,6 +59,10 @@ public class ConfigManager {
                     maxPacketSize = Integer.parseInt(paramValue);
                 } else if (paramName.equals("TIMEOUT")) {
                     serverResponseTimeout = Integer.parseInt(paramValue);
+                } else if (paramName.equals("LOGIN")) {
+                    login = paramValue;
+                } else if (paramName.equals("PASSWORD")) {
+                    password = paramValue;
                 }
             }
             OutputManager.println("Файл конфигурации был успешно считан");

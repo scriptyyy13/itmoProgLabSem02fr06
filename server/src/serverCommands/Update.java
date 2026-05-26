@@ -20,7 +20,6 @@ public class Update extends Command {
         String idString = getArgs()[0].getValue().toString();
         long id = Long.parseLong(idString);
         Dragon updatedDragon = (Dragon) getArgs()[1].getValue();
-        return getCollectionManager().update(id, updatedDragon, -1);
-        // TODO: корректно сделать айдишник того, кто создает
+        return getCollectionManager().update(id, updatedDragon, this.getExecutorId());
     }
 }
