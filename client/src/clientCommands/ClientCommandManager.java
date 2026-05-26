@@ -49,6 +49,8 @@ public class ClientCommandManager {
             try {
                 CommandRequest authRequest = parser.parseCommand("login", consoleReader);
                 if (authRequest != null) {
+                    authRequest.setLogin(ConfigManager.login);
+                    authRequest.setUserPassword(ConfigManager.password);
                     Arg[] args = Arg.toArgList(new String[]{ConfigManager.login, ConfigManager.password});
                     authRequest.setArgs(args);
 
@@ -100,6 +102,8 @@ public class ClientCommandManager {
                     CommandRequest authRequest = parser.parseCommand(str, consoleReader);
                     if (authRequest == null) continue;
 
+                    authRequest.setLogin(inputLogin);
+                    authRequest.setUserPassword(inputPassword);
                     Arg[] args = Arg.toArgList(new String[]{ConfigManager.login, ConfigManager.password});
                     authRequest.setArgs(args);
 
