@@ -4,6 +4,9 @@ import models.*;
 import serverTools.ConfigManager;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -306,5 +309,77 @@ public class DatabaseManager {
             System.err.println("Ошибка БД при clearDragons: " + e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Хэширует пароль пользователя с использованием алгоритма SHA-224.
+     * @param password открытый пароль
+     * @return строка хэша в hex-формате
+     */
+    public String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-224");
+            byte[] bytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Критическая ошибка: алгоритм SHA-224 не найден!", e);
+        }
+    }
+
+    /**
+     * Регистрирует нового пользователя в базе данных.
+     * @param login имя пользователя
+     * @param password открытый пароль (будет захэширован)
+     * @return сгенерированный ID пользователя, или -1 если логин уже занят
+     */
+    public long registerUser(String login, String password) {
+        String sql = "INSERT INTO users (login, password_hash) VALUES (?, ?) RETURNING id;";
+        String hashedPassword = hashPassword(password);
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            pstmt.setString(2, hashedPassword);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return rs.getLong("id");
+            }
+        } catch (SQLException e) {
+            // Код ошибки бд при нарушении уникальности — 23505
+            if ("23505".equals(e.getSQLState())) {
+                System.out.println("Попытка регистрации существующего логина: " + login);
+            } else {
+                System.err.println("Ошибка при регистрации пользователя: " + e.getMessage());
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Проверяет учетные данные пользователя и возвращает его ID.
+     * @param login имя пользователя
+     * @param password открытый пароль
+     * @return ID пользователя из базы, или -1 если данные неверны
+     */
+    public long validateUser(String login, String password) {
+        String sql = "SELECT id, password_hash FROM users WHERE login = ?;";
+        String hashedPassword = hashPassword(password);
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String dbHash = rs.getString("password_hash");
+                    if (dbHash.equals(hashedPassword)) {
+                        return rs.getLong("id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при валидации пользователя: " + e.getMessage());
+        }
+        return -1;
     }
 }
