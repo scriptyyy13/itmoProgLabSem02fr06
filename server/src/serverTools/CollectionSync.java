@@ -1,32 +1,35 @@
 package serverTools;
 
+import database.DatabaseManager;
 import models.Dragon;
-import java.io.File;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * Класс для синхронизации состояния коллекции с файлом.
+ * Класс для синхронизации состояния коллекции с базой данных.
+ * Защищает от рассинхронизации при работе нескольких серверов через балансировщик.
  */
 public class CollectionSync {
-    private final String path;
+    private final DatabaseManager dbManager = DatabaseManager.getInstance();
 
-    public CollectionSync(String path) {
-        this.path = path;
+    public CollectionSync() {
     }
 
     /**
-     * Проверяет, нужно ли обновить коллекцию из файла.
+     * Проверяет и обновляет коллекцию в памяти актуальными данными из БД перед чтением или записью.
+     * Вызывается перед обработкой команды сервером.
+     *
+     * @param collectionManager менеджер коллекции, чьё состояние нужно актуализировать.
      */
-    public ConcurrentLinkedDeque<Dragon> syncBeforeRead(ConcurrentLinkedDeque<Dragon> currentCollection) {
-        File file = new File(path);
-        ConcurrentLinkedDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
-        return loaded;
-    }
+    public void syncBeforeRead(CollectionManager collectionManager) {
+        try {
+            // Запрашиваем из БД самую свежую версию данных
+            ConcurrentLinkedDeque<Dragon> updated = dbManager.fetchAllDragons();
 
-    /**
-     * Сохраняет коллекцию и обновляет метку времени.
-     */
-    public void syncAfterWrite(ConcurrentLinkedDeque<Dragon> collection) {
-        XMLWriter.dequeToXML(collection, path);
+            // Просто обновляем коллекцию целиком через стандартный сеттер менеджера
+            collectionManager.setCollection(updated);
+            collectionManager.validate();
+        } catch (Exception e) {
+            System.err.println("Ошибка синхронизации серверов через БД: " + e.getMessage());
+        }
     }
 }
