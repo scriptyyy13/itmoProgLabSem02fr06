@@ -4,6 +4,8 @@ package serverTools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Класс отвечающий за работу с конфигом.
@@ -38,6 +40,26 @@ public class ConfigManager {
      * Пароль для базы данных.
      */
     public static String dbPassword = "admin";
+    /**
+     * Кол-во потоков для получения команд для обработки.
+     */
+    public static Integer readingPoolCapacity = 4;
+    /**
+     * Кол-во потоков для отправки ответа по работе команды.
+     */
+    public static Integer sendingPoolCapacity = 4;
+    /**
+     * Размер буфера для получаемых на обработку команд.
+     */
+    public static Integer requestBufferCapacity = 1000;
+    /**
+     * Размер буфера для ответа по работе команды.
+     */
+    public static Integer resultBufferCapacity = 1000;
+    /**
+     * Кол-во потоков для выполнения команд.
+     */
+    public static Integer workingPoolCapacity = 4;
 
     /**
      * Сканирование файла конфига
@@ -71,6 +93,16 @@ public class ConfigManager {
                     dbLogin = paramValue;
                 } else if (paramName.equals("DB_PASSWORD")) {
                     dbPassword = paramValue;
+                } else if (paramName.equals("READING_POOL_CAPACITY")) {
+                    readingPoolCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("SENDING_POOL_CAPACITY")) {
+                    sendingPoolCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("REQUEST_BUFFER_CAPACITY")) {
+                    requestBufferCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("RESULT_BUFFER_CAPACITY")) {
+                    resultBufferCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("WORKING_POOL_CAPACITY")) {
+                    workingPoolCapacity = Integer.parseInt(paramValue);
                 }
             }
             System.out.println("Файл конфигурации был успешно считан");
