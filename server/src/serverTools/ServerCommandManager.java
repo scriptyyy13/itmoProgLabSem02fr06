@@ -58,6 +58,8 @@ public class ServerCommandManager {
         this.collectionManager = collection;
         readingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
         sendingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
+        requestBuffer = new LinkedBlockingQueue<Request>(1000);
+        resultBuffer = new LinkedBlockingQueue<ResultOfRequest>(1000);
         workingPool = new ForkJoinPool(4);
         try {
             inetSocketAddress = new InetSocketAddress(port);
@@ -177,8 +179,7 @@ public class ServerCommandManager {
     public void sendingLoop() {
         while (!Thread.interrupted()) {
             try {
-                Request r = requestBuffer.poll();
-                if(r==null) continue;
+                Request r = requestBuffer.take();
 
                 Message msg = new Message();
                 resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
