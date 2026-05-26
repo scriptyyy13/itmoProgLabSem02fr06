@@ -17,7 +17,8 @@ public class RemoveHead extends Command {
      * @return результат выполнения команды
      */
     public String execute() {
-        return getCollectionManager().removeHead();
+        return getCollectionManager().removeHead(-1);
+        // TODO: корректно сделать айдишник того, кто создает
     }
 
 }

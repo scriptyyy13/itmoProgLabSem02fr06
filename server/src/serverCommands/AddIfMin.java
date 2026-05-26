@@ -18,6 +18,7 @@ public class AddIfMin extends Command {
      * @return результат выполнения команды
      */
     public String execute() {
-        return getCollectionManager().addIfMin((Dragon) getArgs()[0].getValue());
+        return getCollectionManager().addIfMin((Dragon) getArgs()[0].getValue(), -1);
+        // TODO: корректно сделать айдишник того, кто создает
     }
 }

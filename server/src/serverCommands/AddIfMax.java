@@ -18,6 +18,7 @@ public class AddIfMax extends Command {
      * @return результат выполнения команды
      */
     public String execute() {
-        return getCollectionManager().addIfMax((Dragon) getArgs()[0].getValue());
+        return getCollectionManager().addIfMax((Dragon) getArgs()[0].getValue(), -1);
+        // TODO: корректно сделать айдишник того, кто создает
     }
 }

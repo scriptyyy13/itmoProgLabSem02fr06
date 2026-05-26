@@ -166,6 +166,10 @@ public class Dragon implements Comparable<Dragon>, Serializable {
         this.creatorId = id;
     }
 
+    public long getCreatorId() {
+        return creatorId;
+    }
+
     /**
      * Реализует сравнение.
      *
