@@ -184,14 +184,15 @@ public class ClientCommandManager {
         try {
             udpClient.sendCommand(command);
             Message response = udpClient.receiveResponse();
-            OutputManager.println(response.getText());
 
             // Если сервер вернул ошибку валидации, значит логин/пароль не подошли
             if (response.getText().contains("Ошибка валидации пользователя")) {
+                OutputManager.println(response.getText());
                 return false;
             } else if (response.getText().contains("SUCCESS_")) {
                 return true;
             }
+            OutputManager.println(response.getText());
             return false;
         } catch (java.net.SocketTimeoutException e) {
             OutputManager.errPrintln("Сервер недоступен.");
