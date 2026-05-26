@@ -18,7 +18,7 @@ import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.*;
 
 
 /**
@@ -45,10 +45,18 @@ public class ServerCommandManager {
      * Синхронизатор серверов.
      */
     private CollectionSync synchronizer;
+    private ExecutorService readingPool;
+    private ForkJoinPool workingPool;
+    private ExecutorService sendingPool;
+    private LinkedBlockingQueue<Request> requestBuffer;
+    private LinkedBlockingQueue<ResultOfRequest> resultBuffer;
 
     public ServerCommandManager(int port, CollectionManager collection) {
         this.synchronizer = new CollectionSync();
         this.collectionManager = collection;
+        readingPool = Executors.newFixedThreadPool(4); // здесь в конфиге добавить колво потоков на чтение
+        sendingPool = Executors.newFixedThreadPool(4); // здесь в конфиге добавить колво потоков на чтение
+        workingPool = new ForkJoinPool(4);
         try {
             inetSocketAddress = new InetSocketAddress(port);
             channel = DatagramChannel.open();
@@ -64,39 +72,33 @@ public class ServerCommandManager {
     }
 
     /**
+     * Установить последнюю версию коллекции.
+     */
+    private void checkSync() {
+        ConcurrentLinkedDeque<Dragon> updated = synchronizer.syncBeforeRead();
+        if (updated != collectionManager.getCollection()) {
+            collectionManager.setCollection(updated);
+            collectionManager.validate();
+        }
+    }
+
+    /**
+     * Сохранить коллекцию
+     */
+    private void saveSync() {
+        synchronizer.syncAfterWrite(collectionManager.getCollection());
+    }
+
+    /**
      * Основной цикл работы сервера.
      */
     public void start() {
         try {
-            Pipe pipe = Pipe.open();
-            Pipe.SinkChannel sink = pipe.sink();
-            sink.configureBlocking(false);
-            sink.register(selector, SelectionKey.OP_WRITE);
-
-            Pipe.SourceChannel source = pipe.source();
-            source.configureBlocking(false);
-            source.register(selector, SelectionKey.OP_READ);
-
-            Thread consoleThread = new Thread(() -> {
-                Scanner scanner = new Scanner(System.in);
-                while (scanner.hasNextLine()) {
-                    String cmd = scanner.nextLine();
-                    ByteBuffer buf = StandardCharsets.UTF_8.encode(cmd + "\n");
-                    try {
-                        while (buf.hasRemaining()) {
-                            sink.write(buf);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            consoleThread.setDaemon(true);
-            consoleThread.start();
 
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
-            ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
+
+                //collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
@@ -104,31 +106,26 @@ public class ServerCommandManager {
                         SelectionKey key = iter.next();
                         iter.remove();
                         if (key.isReadable()) {
-                            if (key.channel() == source) {
-                                serverCmdBuffer.clear();
-                                source.read(serverCmdBuffer);
-                                serverCmdBuffer.flip();
-                                String command = StandardCharsets.UTF_8.decode(serverCmdBuffer).toString().trim();
-                                executeServerCommand(command);
-                                serverCmdBuffer.clear();
-                            } else {
-                                DatagramChannel dc = (DatagramChannel) key.channel();
-                                buffer.clear();
-                                SocketAddress client = new RequestGetter(dc).getRequest(buffer);
 
-                                Object received = Deserializer.deserializeFromBytes(buffer.array());
+                            DatagramChannel dc = (DatagramChannel) key.channel();
+                            buffer.clear();
+                            SocketAddress client = new RequestGetter(dc).getRequest(buffer);
 
-                                // отвечаем на сообщение пинг для проверки работоспособности сервера
-                                if (received instanceof Message && "PING".equals(((Message) received).getText())) {
-                                    Message pong = new Message("PONG");
-                                    new RequestMaker(dc).makeRequest(pong, client, buffer);
-                                } else if (received instanceof CommandRequest cmd) {
-                                    // выполнение обычных команд
-                                    synchronizer.syncBeforeRead(collectionManager);
-                                    Thread.sleep(10);
-                                    Message ans = new Message(toCollectionCommand(cmd).execute());
-                                    new RequestMaker(dc).makeRequest(ans, client, buffer);
-                                }
+                            Object received = Deserializer.deserializeFromBytes(buffer.array());
+
+                            // отвечаем на сообщение пинг для проверки работоспособности сервера
+                            if (received instanceof Message && "PING".equals(((Message) received).getText())) {
+                                Message pong = new Message("PONG");
+                                new RequestMaker(dc).makeRequest(pong, client, buffer);
+                            } else if (received instanceof CommandRequest cmd) {
+                                // выполнение обычных команд
+                                checkSync();
+                                Thread.sleep(10);
+                                Message ans = new Message(toCollectionCommand(cmd).execute());
+                                new RequestMaker(dc).makeRequest(ans, client, buffer);
+                                saveSync();
+                                //XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
+
                             }
                         }
                     }
@@ -142,20 +139,7 @@ public class ServerCommandManager {
         }
     }
 
-    /**
-     * Выполнить серверную команду
-     * @param cmd Строковое прдеставление команды.
-     */
-    public void executeServerCommand(String cmd) {
-        if (cmd.equals("exit")) {
-            System.exit(0);
-        } else {
-            System.out.println("""
-                    Доступные команды:
-                    exit - завершить работу приложения с сохранением коллекции
-                    """);
-        }
-    }
+
 
     /**
      * Конвертаация реквеста команды в команду.
