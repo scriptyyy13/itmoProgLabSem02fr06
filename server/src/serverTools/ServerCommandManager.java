@@ -2,6 +2,7 @@ package serverTools;
 
 
 import commands.*;
+import database.DatabaseManager;
 import serverMainFiles.ApplicationContext;
 import models.Dragon;
 import serverCommands.*;
@@ -126,7 +127,18 @@ public class ServerCommandManager {
                                     // выполнение обычных команд
                                     synchronizer.syncBeforeRead(collectionManager);
                                     Thread.sleep(10);
-                                    Message ans = new Message(toCollectionCommand(cmd).execute());
+                                    String login = cmd.getLogin();
+                                    String password = cmd.getUserPassword();
+                                    Long id = DatabaseManager.getInstance().validateUser(login, password);
+
+                                    Command collectionCmd = toCollectionCommand(cmd);
+                                    Message ans;
+                                    if (id == -1L && collectionCmd.requiresAuth) {
+                                        ans = new Message("Ошибка валидации пользователя.");
+                                    } else {
+                                        collectionCmd.setExecutorId(id);
+                                        ans = new Message(collectionCmd.execute());
+                                    }
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
                                 }
                             }
@@ -176,6 +188,8 @@ public class ServerCommandManager {
         if (cmd instanceof RemoveHeadRequest) return new RemoveHead(cmd, collectionManager);
         if (cmd instanceof ShowRequest) return new Show(cmd, collectionManager);
         if (cmd instanceof UpdateRequest) return new Update(cmd, collectionManager);
+        if (cmd instanceof LoginRequest) return new Login(cmd, collectionManager);
+        if (cmd instanceof RegisterRequest) return new Register(cmd, collectionManager);
         return null;
     }
 }
