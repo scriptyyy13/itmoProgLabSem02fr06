@@ -84,34 +84,9 @@ public class ServerCommandManager {
             for (int i = 0; i < 4; i++) {
                 sendingPool.execute(this::sendingLoop);
             }
-            Pipe pipe = Pipe.open();
-            Pipe.SinkChannel sink = pipe.sink();
-            sink.configureBlocking(false);
-            sink.register(selector, SelectionKey.OP_WRITE);
 
-            Pipe.SourceChannel source = pipe.source();
-            source.configureBlocking(false);
-            source.register(selector, SelectionKey.OP_READ);
-
-            Thread consoleThread = new Thread(() -> {
-                Scanner scanner = new Scanner(System.in);
-                while (scanner.hasNextLine()) {
-                    String cmd = scanner.nextLine();
-                    ByteBuffer buf = StandardCharsets.UTF_8.encode(cmd + "\n");
-                    try {
-                        while (buf.hasRemaining()) {
-                            sink.write(buf);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            consoleThread.setDaemon(true);
-            consoleThread.start();
 
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
-            ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
                 try {
                     selector.select();
@@ -202,7 +177,8 @@ public class ServerCommandManager {
     public void sendingLoop() {
         while (!Thread.interrupted()) {
             try {
-                Request r = requestBuffer.take();
+                Request r = requestBuffer.poll();
+                if(r==null) continue;
 
                 Message msg = new Message();
                 resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
