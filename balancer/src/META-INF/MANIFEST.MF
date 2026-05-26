@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-serverMainFiles.Main-Class: serverMainFiles.Balancer
+Main-Class: balancerMainFiles.Balancer
 
