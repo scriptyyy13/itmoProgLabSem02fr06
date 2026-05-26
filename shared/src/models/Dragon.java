@@ -22,6 +22,13 @@ public class Dragon implements Comparable<Dragon>, Serializable {
     private long id;
 
     /**
+     * Уникальный индефикатор создателя {@code Dragon}.
+     * Поле не может быть null, всегда есть создатель.
+     */
+    @JacksonXmlProperty
+    private long creatorId;
+
+    /**
      * Имя {@code Dragon}.
      * Поле не может быть null, Строка не может быть пустой.
      */
@@ -137,6 +144,10 @@ public class Dragon implements Comparable<Dragon>, Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setCreatorId(long id) {
+        this.creatorId = id;
     }
 
     /**
