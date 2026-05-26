@@ -158,7 +158,6 @@ public class ServerCommandManager {
                 String login = cmd.getLogin();
                 String password = cmd.getUserPassword();
                 Long id = DatabaseManager.getInstance().validateUser(login, password);
-                System.out.println(id);
                 Command collectionCmd = toCollectionCommand(cmd);
                 Message msg;
                 if (id == -1L && collectionCmd.requiresAuth) {
