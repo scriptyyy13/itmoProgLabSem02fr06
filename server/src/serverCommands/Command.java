@@ -17,6 +17,14 @@ public abstract class Command {
      * Масссив аргументы команды.
      */
     private Arg[] args;
+    /**
+     * ID пользователя, отправившего команду.
+     */
+    private Long executorId = -1L;
+    /**
+     * Требование авторизации для выполнения команды.
+     */
+    public Boolean requiresAuth = true;
 
     public Command(CommandRequest commandRequest, CollectionManager collectionManager) {
         args = commandRequest.getArgs();
@@ -33,6 +41,14 @@ public abstract class Command {
 
     public Arg[] getArgs() {
         return args;
+    }
+
+    public Long getExecutorId() {
+        return executorId;
+    }
+
+    public Long setExecutorId(Long id) {
+        return this.executorId = id;
     }
 
     public CollectionManager getCollectionManager() {
