@@ -6,6 +6,7 @@ import models.Dragon;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +18,10 @@ public class CollectionManager {
      */
     private ConcurrentLinkedDeque<Dragon> collection;
     private final Date creationTime;
+    /**
+     * Блокировка для потокобезопасности.
+     */
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     /**
      * Экземпляр базы данных.
      */
@@ -39,7 +44,13 @@ public class CollectionManager {
         if (generatedId != -1) {
             elem.setId(generatedId);
             elem.setCreatorId(creatorId);
-            collection.addLast(elem);
+
+            lock.writeLock().lock();
+            try {
+                collection.addLast(elem);
+            } finally {
+                lock.writeLock().unlock();
+            }
             return "Элемент успешно добавлен.";
         } else {
             return "Ошибка: Не удалось добавить элемент в базу данных.";
@@ -53,21 +64,26 @@ public class CollectionManager {
      * @param creatorId ID пользователя, создающего объект.
      */
     public String addIfMax(Dragon newDragon, long creatorId) {
-        boolean isMax = collection.stream()
-                .allMatch(e -> newDragon.compareTo(e) > 0);
+        lock.writeLock().lock();
+        try {
+            boolean isMax = collection.stream()
+                    .allMatch(e -> newDragon.compareTo(e) > 0);
 
-        if (isMax) {
-            long generatedId = dbManager.insertDragon(newDragon, creatorId);
-            if (generatedId != -1) {
-                newDragon.setId(generatedId);
-                newDragon.setCreatorId(creatorId);
-                collection.addLast(newDragon);
-                return "Элемент добавлен (был максимальным).";
-            } else {
-                return "Ошибка: Не удалось добавить элемент в базу данных.";
+            if (isMax) {
+                long generatedId = dbManager.insertDragon(newDragon, creatorId);
+                if (generatedId != -1) {
+                    newDragon.setId(generatedId);
+                    newDragon.setCreatorId(creatorId);
+                    collection.addLast(newDragon);
+                    return "Элемент добавлен (был максимальным).";
+                } else {
+                    return "Ошибка: Не удалось добавить элемент в базу данных.";
+                }
             }
+            return "Элемент не максимальный.";
+        } finally {
+            lock.writeLock().unlock();
         }
-        return "Элемент не максимальный.";
     }
 
     /**
@@ -77,34 +93,44 @@ public class CollectionManager {
      * @param creatorId ID пользователя, создающего объект.
      */
     public String addIfMin(Dragon newDragon, long creatorId) {
-        boolean isMin = collection.stream()
-                .allMatch(e -> newDragon.compareTo(e) < 0);
+        lock.writeLock().lock();
+        try {
+            boolean isMin = collection.stream()
+                    .allMatch(e -> newDragon.compareTo(e) < 0);
 
-        if (isMin) {
-            long generatedId = dbManager.insertDragon(newDragon, creatorId);
-            if (generatedId != -1) {
-                newDragon.setId(generatedId);
-                newDragon.setCreatorId(creatorId);
-                collection.addLast(newDragon);
-                return "Элемент добавлен (был минимальным).";
-            } else {
-                return "Ошибка: Не удалось добавить элемент в базу данных.";
+            if (isMin) {
+                long generatedId = dbManager.insertDragon(newDragon, creatorId);
+                if (generatedId != -1) {
+                    newDragon.setId(generatedId);
+                    newDragon.setCreatorId(creatorId);
+                    collection.addLast(newDragon);
+                    return "Элемент добавлен (был минимальным).";
+                } else {
+                    return "Ошибка: Не удалось добавить элемент в базу данных.";
+                }
             }
+            return "Элемент не минимальный.";
+        } finally {
+            lock.writeLock().unlock();
         }
-        return "Элемент не минимальный.";
     }
 
     /**
      * Реализация команды {@code average_of_age}.
      */
     public String averageOfAge() {
-        OptionalDouble average = collection.stream()
-                .mapToLong(Dragon::getAge)
-                .average();
-        if (average.isPresent()) {
-            return String.valueOf(average.getAsDouble());
-        } else {
-            return "Коллекция пуста";
+        lock.readLock().lock();
+        try {
+            OptionalDouble average = collection.stream()
+                    .mapToLong(Dragon::getAge)
+                    .average();
+            if (average.isPresent()) {
+                return String.valueOf(average.getAsDouble());
+            } else {
+                return "Коллекция пуста";
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
@@ -113,12 +139,15 @@ public class CollectionManager {
      * * @param creatorId ID пользователя, очищающего свои объекты.
      */
     public String clear(long creatorId) {
-        // Удаляем из БД только те записи, которые принадлежат этому пользователю
         boolean isCleared = dbManager.clearDragons(creatorId);
 
         if (isCleared) {
-            // Удаляем из памяти только свои объекты
-            collection.removeIf(e -> e.getCreatorId() == creatorId);
+            lock.writeLock().lock();
+            try {
+                collection.removeIf(e -> e.getCreatorId() == creatorId);
+            } finally {
+                lock.writeLock().unlock();
+            }
             return "Ваши элементы успешно удалены из коллекции.";
         } else {
             return "Ошибка при очистке коллекции в базе данных.";
@@ -131,14 +160,19 @@ public class CollectionManager {
      * @param age значение, по которому происходит фильтрация.
      */
     public String filterLessThanAge(long age) {
-        String result = collection.stream()
-                .filter(e -> e.getAge() < age)
-                .map(Dragon::toString)
-                .collect(Collectors.joining("\n"));
+        lock.readLock().lock();
+        try {
+            String result = collection.stream()
+                    .filter(e -> e.getAge() < age)
+                    .map(Dragon::toString)
+                    .collect(Collectors.joining("\n"));
 
-        return result.isEmpty()
-                ? "Нет элементов моложе " + age
-                : result;
+            return result.isEmpty()
+                    ? "Нет элементов моложе " + age
+                    : result;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -158,12 +192,17 @@ public class CollectionManager {
      * Реализация команды {@code print_unique_weight}.
      */
     public String printUniqueWeight() {
-        return collection.stream()
-                .map(Dragon::getWeight)
-                .filter(Objects::nonNull)
-                .distinct()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
+        lock.readLock().lock();
+        try {
+            return collection.stream()
+                    .map(Dragon::getWeight)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", "));
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -173,26 +212,29 @@ public class CollectionManager {
      * @param creatorId ID пользователя, инициировавшего удаление.
      */
     public String removeById(long id, long creatorId) {
-        Optional<Dragon> found = collection.stream()
-                .filter(e -> e.getId() == id)
-                .findFirst();
+        lock.writeLock().lock();
+        try {
+            Optional<Dragon> found = collection.stream()
+                    .filter(e -> e.getId() == id)
+                    .findFirst();
 
-        if (found.isEmpty()) {
-            return "Элемент с таким ID не найден.";
-        }
+            if (found.isEmpty()) {
+                return "Элемент с таким ID не найден.";
+            }
 
-        if (found.get().getCreatorId() != creatorId) {
-            return "Ошибка: У вас нет прав на удаление этого объекта!";
-        }
+            if (found.get().getCreatorId() != creatorId) {
+                return "Ошибка: У вас нет прав на удаление этого объекта!";
+            }
+            boolean isDeleted = dbManager.deleteDragon(id, creatorId);
 
-        // Пытаемся удалить из БД
-        boolean isDeleted = dbManager.deleteDragon(id, creatorId);
-
-        if (isDeleted) {
-            collection.removeIf(e -> e.getId() == id);
-            return "Элемент удалён.";
-        } else {
-            return "Ошибка: Не удалось удалить элемент из базы данных.";
+            if (isDeleted) {
+                collection.removeIf(e -> e.getId() == id);
+                return "Элемент удалён.";
+            } else {
+                return "Ошибка: Не удалось удалить элемент из базы данных.";
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -201,22 +243,27 @@ public class CollectionManager {
      * * @param creatorId ID пользователя, инициировавшего операцию.
      */
     public String removeHead(long creatorId) {
-        Optional<Dragon> firstUserDragon = collection.stream()
-                .filter(e -> e.getCreatorId() == creatorId)
-                .findFirst();
+        lock.writeLock().lock();
+        try {
+            Optional<Dragon> firstUserDragon = collection.stream()
+                    .filter(e -> e.getCreatorId() == creatorId)
+                    .findFirst();
 
-        if (firstUserDragon.isEmpty()) {
-            return "В коллекции нет принадлежащих вам элементов.";
-        }
+            if (firstUserDragon.isEmpty()) {
+                return "В коллекции нет принадлежащих вам элементов.";
+            }
 
-        Dragon target = firstUserDragon.get();
-        boolean isDeleted = dbManager.deleteDragon(target.getId(), creatorId);
+            Dragon target = firstUserDragon.get();
+            boolean isDeleted = dbManager.deleteDragon(target.getId(), creatorId);
 
-        if (isDeleted) {
-            collection.remove(target);
-            return "Удален ваш первый элемент в коллекции: " + target;
-        } else {
-            return "Ошибка базы данных при удалении элемента.";
+            if (isDeleted) {
+                collection.remove(target);
+                return "Удален ваш первый элемент в коллекции: " + target;
+            } else {
+                return "Ошибка базы данных при удалении элемента.";
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -224,13 +271,18 @@ public class CollectionManager {
      * Реализация команды {@code show}.
      */
     public String show() {
-        if (collection.isEmpty()) return "Коллекция пуста";
+        lock.readLock().lock();
+        try {
+            if (collection.isEmpty()) return "Коллекция пуста";
 
-        String result = collection.stream()
-                .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
-                .map(Dragon::toString)
-                .collect(Collectors.joining("\n---------------\n"));
-        return "Элементы коллекции:\n" + result;
+            String result = collection.stream()
+                    .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
+                    .map(Dragon::toString)
+                    .collect(Collectors.joining("\n---------------\n"));
+            return "Элементы коллекции:\n" + result;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -241,34 +293,37 @@ public class CollectionManager {
      * @param creatorId ID пользователя, инициировавшего обновление.
      */
     public String update(long id, Dragon updDragon, long creatorId) {
-        // Проверяем наличие элемента в памяти перед походом в БД
-        Optional<Dragon> found = collection.stream()
-                .filter(e -> e.getId() == id)
-                .findFirst();
+        lock.writeLock().lock();
+        try {
+            Optional<Dragon> found = collection.stream()
+                    .filter(e -> e.getId() == id)
+                    .findFirst();
 
-        if (found.isEmpty()) {
-            return "Элемент с ID " + id + " не найден.";
-        }
+            if (found.isEmpty()) {
+                return "Элемент с ID " + id + " не найден.";
+            }
 
-        // Проверка прав в памяти
-        if (found.get().getCreatorId() != creatorId) {
-            return "Ошибка: У вас нет прав на модификацию этого объекта!";
-        }
+            if (found.get().getCreatorId() != creatorId) {
+                return "Ошибка: У вас нет прав на модификацию этого объекта!";
+            }
 
-        // Атомарно обновляем в БД
-        boolean isUpdated = dbManager.updateDragon(id, updDragon, creatorId);
+            // Атомарно обновляем в БД
+            boolean isUpdated = dbManager.updateDragon(id, updDragon, creatorId);
 
-        if (isUpdated) {
-            Dragon old = found.get();
-            updDragon.setId(id);
-            updDragon.setCreatorId(creatorId);
-            updDragon.setCreationDate(old.getCreationDate());
+            if (isUpdated) {
+                Dragon old = found.get();
+                updDragon.setId(id);
+                updDragon.setCreatorId(creatorId);
+                updDragon.setCreationDate(old.getCreationDate());
 
-            collection.remove(old);
-            collection.add(updDragon);
-            return "Элемент с ID " + id + " успешно обновлен.";
-        } else {
-            return "Ошибка: Не удалось обновить элемент в базе данных.";
+                collection.remove(old);
+                collection.add(updDragon);
+                return "Элемент с ID " + id + " успешно обновлен.";
+            } else {
+                return "Ошибка: Не удалось обновить элемент в базе данных.";
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
@@ -277,23 +332,28 @@ public class CollectionManager {
      * Элементы, не прошедшие валидацию, удаляются из коллекции.
      */
     public void validate() {
-        Set<Long> ids = new HashSet<>();
-        ConcurrentLinkedDeque<Dragon> validCollection = new ConcurrentLinkedDeque<>();
+        lock.writeLock().lock();
+        try {
+            Set<Long> ids = new HashSet<>();
+            ConcurrentLinkedDeque<Dragon> validCollection = new ConcurrentLinkedDeque<>();
 
-        for (Dragon e : collection) {
-            if (ids.contains(e.getId())) {
-                System.out.println("Обнаружен повтор id, элемент пропущен: " + e.getId());
-                continue;
+            for (Dragon e : collection) {
+                if (ids.contains(e.getId())) {
+                    System.out.println("Обнаружен повтор id, элемент пропущен: " + e.getId());
+                    continue;
+                }
+                try {
+                    e.validate();
+                    ids.add(e.getId());
+                    validCollection.add(e);
+                } catch (InvalidInputException ex) {
+                    System.out.println("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
+                }
             }
-            try {
-                e.validate();
-                ids.add(e.getId());
-                validCollection.add(e);
-            } catch (InvalidInputException ex) {
-                System.out.println("Ошибка в объекте ID " + e.getId() + ": " + ex.getMessage());
-            }
+            this.collection = validCollection;
+        } finally {
+            lock.writeLock().unlock();
         }
-        this.collection = validCollection;
     }
 
     public ConcurrentLinkedDeque<Dragon> getCollection() {
