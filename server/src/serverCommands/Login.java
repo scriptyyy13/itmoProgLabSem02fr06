@@ -25,12 +25,11 @@ public class Login extends Command {
             return "Ошибка: Неверное количество аргументов для входа.";
         }
 
-        String login = args[0].toString();
-        String password = args[1].toString();
+        String login = (String) args[0].getValue();
+        String password = (String) args[1].getValue();
 
         DatabaseManager dbManager = DatabaseManager.getInstance();
         long userId = dbManager.validateUser(login, password);
-
         if (userId != -1) {
             return "SUCCESS_LOGIN:" + userId;
         } else {
