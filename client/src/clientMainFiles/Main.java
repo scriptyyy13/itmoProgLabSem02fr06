@@ -26,8 +26,6 @@ public class Main {
         try {
             UDPClient udpClient = new UDPClient(ConfigManager.ip, ConfigManager.port);
             ClientCommandManager commandManager = new ClientCommandManager(consoleReader, udpClient);
-
-            OutputManager.println("Введите команду (или 'help' для списка доступных команд):");
             commandManager.start();
 
         } catch (UnknownHostException e) {

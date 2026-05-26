@@ -118,6 +118,7 @@ public class ClientCommandManager {
         }
 
         OutputManager.println("Вы вошли как: " + ConfigManager.login);
+        OutputManager.println("Введите команду (или 'help' для списка доступных команд):");
         while (true) {
             try {
                 OutputManager.print("> ");
