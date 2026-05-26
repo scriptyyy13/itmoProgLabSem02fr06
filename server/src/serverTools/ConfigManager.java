@@ -14,8 +14,9 @@ public class ConfigManager {
      */
     public static Integer port = 8002;
     /**
-     * Путть до файла-коллекции.
+     * @deprecated Путь до файла-коллекции.
      */
+    @Deprecated
     public static String collectionFile = "collection.xml";
     /**
      * Размер пакета с {@code Message}
@@ -25,9 +26,22 @@ public class ConfigManager {
      * Размер пакета с {@code Command}
      */
     public static Integer commandsBufferCapacity = 1024;
+    /**
+     * Ссылка на базу данных.
+     */
+    public static String dbUrl = "jdbc:postgresql://localhost:5432/studs";
+    /**
+     * Логин для базы данных.
+     */
+    public static String dbLogin = "postgres";
+    /**
+     * Пароль для базы данных.
+     */
+    public static String dbPassword = "admin";
 
     /**
      * Сканирование файла конфига
+     *
      * @param filePath путь до файла коллекции.
      */
     public static void scanConfig(String filePath) {
@@ -51,6 +65,12 @@ public class ConfigManager {
                     messageBufferCapacity = Integer.parseInt(paramValue);
                 } else if (paramName.equals("COMMANDS_BUFFER_CAPACITY")) {
                     commandsBufferCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("DB_URL")) {
+                    dbUrl = paramValue;
+                } else if (paramName.equals("DB_LOGIN")) {
+                    dbLogin = paramValue;
+                } else if (paramName.equals("DB_PASSWORD")) {
+                    dbPassword = paramValue;
                 }
             }
             System.out.println("Файл конфигурации был успешно считан");

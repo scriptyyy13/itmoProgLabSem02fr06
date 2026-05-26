@@ -2,3 +2,6 @@ PORT = 8085
 COLLECTION_FILE = collection.xml
 MESSAGE_BUFFER_CAPACITY = 65535
 COMMANDS_BUFFER_CAPACITY = 1024
+DB_URL = jdbc:postgresql://localhost:5432/studs
+DB_LOGIN = postgres
+DB_PASSWORD = admin
