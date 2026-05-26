@@ -8,6 +8,7 @@ import models.Dragon;
 import serverCommands.*;
 
 import sharedTools.*;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -19,7 +20,7 @@ import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.*;
 
 
 /**
@@ -46,10 +47,18 @@ public class ServerCommandManager {
      * Синхронизатор серверов.
      */
     private CollectionSync synchronizer;
+    private ExecutorService readingPool;
+    private ForkJoinPool workingPool;
+    private ExecutorService sendingPool;
+    private LinkedBlockingQueue<Request> requestBuffer;
+    private LinkedBlockingQueue<ResultOfRequest> resultBuffer;
 
     public ServerCommandManager(int port, CollectionManager collection) {
         this.synchronizer = new CollectionSync();
         this.collectionManager = collection;
+        readingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
+        sendingPool = Executors.newFixedThreadPool(4); // TODO: здесь в конфиге добавить колво потоков на чтение
+        workingPool = new ForkJoinPool(4);
         try {
             inetSocketAddress = new InetSocketAddress(port);
             channel = DatagramChannel.open();
@@ -69,6 +78,12 @@ public class ServerCommandManager {
      */
     public void start() {
         try {
+            for (int i = 0; i < 4; i++) {
+                workingPool.execute(this::workLoop);
+            }
+            for (int i = 0; i < 4; i++) {
+                sendingPool.execute(this::sendingLoop);
+            }
             Pipe pipe = Pipe.open();
             Pipe.SinkChannel sink = pipe.sink();
             sink.configureBlocking(false);
@@ -105,43 +120,12 @@ public class ServerCommandManager {
                         SelectionKey key = iter.next();
                         iter.remove();
                         if (key.isReadable()) {
-                            if (key.channel() == source) {
-                                serverCmdBuffer.clear();
-                                source.read(serverCmdBuffer);
-                                serverCmdBuffer.flip();
-                                String command = StandardCharsets.UTF_8.decode(serverCmdBuffer).toString().trim();
-                                executeServerCommand(command);
-                                serverCmdBuffer.clear();
-                            } else {
-                                DatagramChannel dc = (DatagramChannel) key.channel();
-                                buffer.clear();
-                                SocketAddress client = new RequestGetter(dc).getRequest(buffer);
-
-                                Object received = Deserializer.deserializeFromBytes(buffer.array());
-
-                                // отвечаем на сообщение пинг для проверки работоспособности сервера
-                                if (received instanceof Message && "PING".equals(((Message) received).getText())) {
-                                    Message pong = new Message("PONG");
-                                    new RequestMaker(dc).makeRequest(pong, client, buffer);
-                                } else if (received instanceof CommandRequest cmd) {
-                                    // выполнение обычных команд
-                                    synchronizer.syncBeforeRead(collectionManager);
-                                    Thread.sleep(10);
-                                    String login = cmd.getLogin();
-                                    String password = cmd.getUserPassword();
-                                    Long id = DatabaseManager.getInstance().validateUser(login, password);
-
-                                    Command collectionCmd = toCollectionCommand(cmd);
-                                    Message ans;
-                                    if (id == -1L && collectionCmd.requiresAuth) {
-                                        ans = new Message("Ошибка валидации пользователя.");
-                                    } else {
-                                        collectionCmd.setExecutorId(id);
-                                        ans = new Message(collectionCmd.execute());
-                                    }
-                                    new RequestMaker(dc).makeRequest(ans, client, buffer);
-                                }
-                            }
+                            DatagramChannel dc = (DatagramChannel) key.channel();
+                            var client = new RequestGetter(dc).getRequest(buffer);
+                            ByteRequest br = new ByteRequest(buffer.duplicate(), client);
+                            readingPool.execute(() -> {
+                                readingByteRequest(br);
+                            });
                         }
                     }
                 } catch (IOException e) {
@@ -155,22 +139,8 @@ public class ServerCommandManager {
     }
 
     /**
-     * Выполнить серверную команду
-     * @param cmd Строковое прдеставление команды.
-     */
-    public void executeServerCommand(String cmd) {
-        if (cmd.equals("exit")) {
-            System.exit(0);
-        } else {
-            System.out.println("""
-                    Доступные команды:
-                    exit - завершить работу приложения с сохранением коллекции
-                    """);
-        }
-    }
-
-    /**
      * Конвертаация реквеста команды в команду.
+     *
      * @param cmd Реквест команды.
      * @return команда.
      */
@@ -191,5 +161,55 @@ public class ServerCommandManager {
         if (cmd instanceof LoginRequest) return new Login(cmd, collectionManager);
         if (cmd instanceof RegisterRequest) return new Register(cmd, collectionManager);
         return null;
+    }
+
+
+    public void readingByteRequest(ByteRequest br) {
+        try {
+            requestBuffer.offer(new Request(br.client(), (CommandRequest) Deserializer.deserializeFromBytes(br.bytes().array())), 500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void workLoop() {
+        while (!Thread.interrupted()) {
+            try {
+                synchronizer.syncBeforeRead(collectionManager);
+                Request r = requestBuffer.take();
+                CommandRequest cmd = r.command();
+                String login = cmd.getLogin();
+                String password = cmd.getUserPassword();
+                Long id = DatabaseManager.getInstance().validateUser(login, password);
+
+                Command collectionCmd = toCollectionCommand(cmd);
+                Message msg;
+                if (id == -1L && collectionCmd.requiresAuth) {
+                    msg = new Message("Ошибка валидации пользователя.");
+                } else {
+                    collectionCmd.setExecutorId(id);
+                    msg = new Message(collectionCmd.execute());
+                }
+                resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
+
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    public void sendingLoop() {
+        while (!Thread.interrupted()) {
+            try {
+                Request r = requestBuffer.take();
+
+                Message msg = new Message();
+                resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 }
