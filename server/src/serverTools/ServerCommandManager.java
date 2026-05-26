@@ -71,8 +71,6 @@ public class ServerCommandManager {
         } catch (Exception e) {
             System.out.println("Не удалось открыть сервер");
         }
-
-
     }
 
     /**

@@ -18,7 +18,9 @@ public enum ClientCommandType {
     ADD_IF_MIN("add_if_min"),
     AVERAGE_OF_AGE("average_of_age"),
     FILTER_LESS_THAN_AGE("filter_less_than_age"),
-    PRINT_UNIQUE_WEIGHT("print_unique_weight"); // Название из твоего HashMap
+    PRINT_UNIQUE_WEIGHT("print_unique_weight"),
+    LOGIN("login"),
+    REGISTER("register");
 
     private final String name;
 
@@ -53,6 +55,8 @@ public enum ClientCommandType {
             case AVERAGE_OF_AGE -> new AverageOfAgeRequest();
             case FILTER_LESS_THAN_AGE -> new FilterLessThanAgeRequest();
             case PRINT_UNIQUE_WEIGHT -> new PrintUniqueWeightRequest();
+            case REGISTER -> new RegisterRequest();
+            case LOGIN -> new LoginRequest();
         };
     }
 }

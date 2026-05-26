@@ -103,7 +103,6 @@ public class ClientCommandManager {
                     authRequest.setUserPassword(inputPassword);
 
                     if (sendAndReceiveAuth(authRequest)) {
-                        // Сохраняем новые валидные данные
                         ConfigManager.login = inputLogin;
                         ConfigManager.password = inputPassword;
                         OutputManager.println("Авторизация успешно пройдена!");
