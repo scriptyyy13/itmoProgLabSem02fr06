@@ -2,7 +2,7 @@ package serverTools;
 
 import models.Dragon;
 import java.io.File;
-import java.util.ArrayDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Класс для синхронизации состояния коллекции с файлом.
@@ -17,16 +17,16 @@ public class CollectionSync {
     /**
      * Проверяет, нужно ли обновить коллекцию из файла.
      */
-    public ArrayDeque<Dragon> syncBeforeRead(ArrayDeque<Dragon> currentCollection) {
+    public ConcurrentLinkedDeque<Dragon> syncBeforeRead(ConcurrentLinkedDeque<Dragon> currentCollection) {
         File file = new File(path);
-        ArrayDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
+        ConcurrentLinkedDeque<Dragon> loaded = XMLReader.readXmlCollection(path);
         return loaded;
     }
 
     /**
      * Сохраняет коллекцию и обновляет метку времени.
      */
-    public void syncAfterWrite(ArrayDeque<Dragon> collection) {
+    public void syncAfterWrite(ConcurrentLinkedDeque<Dragon> collection) {
         XMLWriter.dequeToXML(collection, path);
     }
 }
