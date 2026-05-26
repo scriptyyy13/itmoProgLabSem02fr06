@@ -47,7 +47,7 @@ public class ServerCommandManager {
     private CollectionSync synchronizer;
 
     public ServerCommandManager(int port, CollectionManager collection) {
-        this.synchronizer = new CollectionSync(ApplicationContext.collectionPath);
+        this.synchronizer = new CollectionSync();
         this.collectionManager = collection;
         try {
             inetSocketAddress = new InetSocketAddress(port);
@@ -61,24 +61,6 @@ public class ServerCommandManager {
         }
 
 
-    }
-
-    /**
-     * Установить последнюю версию коллекции.
-     */
-    private void checkSync() {
-        ConcurrentLinkedDeque<Dragon> updated = synchronizer.syncBeforeRead(collectionManager.getCollection());
-        if (updated != collectionManager.getCollection()) {
-            collectionManager.setCollection(updated);
-            collectionManager.validate();
-        }
-    }
-
-    /**
-     * Сохранить коллекцию
-     */
-    private void saveSync() {
-        synchronizer.syncAfterWrite(collectionManager.getCollection());
     }
 
     /**
@@ -115,8 +97,6 @@ public class ServerCommandManager {
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
             ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
-
-                //collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
                 try {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
@@ -144,12 +124,10 @@ public class ServerCommandManager {
                                     new RequestMaker(dc).makeRequest(pong, client, buffer);
                                 } else if (received instanceof CommandRequest cmd) {
                                     // выполнение обычных команд
-                                    checkSync();
+                                    synchronizer.syncBeforeRead(collectionManager);
                                     Thread.sleep(10);
                                     Message ans = new Message(toCollectionCommand(cmd).execute());
                                     new RequestMaker(dc).makeRequest(ans, client, buffer);
-                                    saveSync();
-                                    //XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
                                 }
                             }
                         }
