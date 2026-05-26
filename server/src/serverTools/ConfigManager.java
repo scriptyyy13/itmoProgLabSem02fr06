@@ -12,7 +12,7 @@ public class ConfigManager {
     /**
      * Порт сервера.
      */
-    public static Integer port = 8002;
+    public static Integer port = 8000;
     /**
      * @deprecated Путь до файла-коллекции.
      */
