@@ -94,8 +94,40 @@ public class ServerCommandManager {
      */
     public void start() {
         try {
+            for(int i=0;i<4;i++){
+                workingPool.execute(this::workLoop);
+            }
+            for(int i=0;i<4;i++){
+                sendingPool.execute(this::sendingLoop);
+            }
+            Pipe pipe = Pipe.open();
+            Pipe.SinkChannel sink = pipe.sink();
+            sink.configureBlocking(false);
+            sink.register(selector, SelectionKey.OP_WRITE);
+
+            Pipe.SourceChannel source = pipe.source();
+            source.configureBlocking(false);
+            source.register(selector, SelectionKey.OP_READ);
+
+            Thread consoleThread = new Thread(() -> {
+                Scanner scanner = new Scanner(System.in);
+                while (scanner.hasNextLine()) {
+                    String cmd = scanner.nextLine();
+                    ByteBuffer buf = StandardCharsets.UTF_8.encode(cmd + "\n");
+                    try {
+                        while (buf.hasRemaining()) {
+                            sink.write(buf);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            consoleThread.setDaemon(true);
+            consoleThread.start();
 
             ByteBuffer buffer = ByteBuffer.allocate(ConfigManager.messageBufferCapacity);
+            ByteBuffer serverCmdBuffer = ByteBuffer.allocate(ConfigManager.commandsBufferCapacity);
             while (true) {
 
                 //collectionManager.setCollection( XMLReader.readXmlCollection(ConfigManager.collectionFile));
@@ -106,27 +138,10 @@ public class ServerCommandManager {
                         SelectionKey key = iter.next();
                         iter.remove();
                         if (key.isReadable()) {
-
                             DatagramChannel dc = (DatagramChannel) key.channel();
-                            buffer.clear();
-                            SocketAddress client = new RequestGetter(dc).getRequest(buffer);
-
-                            Object received = Deserializer.deserializeFromBytes(buffer.array());
-
-                            // отвечаем на сообщение пинг для проверки работоспособности сервера
-                            if (received instanceof Message && "PING".equals(((Message) received).getText())) {
-                                Message pong = new Message("PONG");
-                                new RequestMaker(dc).makeRequest(pong, client, buffer);
-                            } else if (received instanceof CommandRequest cmd) {
-                                // выполнение обычных команд
-                                checkSync();
-                                Thread.sleep(10);
-                                Message ans = new Message(toCollectionCommand(cmd).execute());
-                                new RequestMaker(dc).makeRequest(ans, client, buffer);
-                                saveSync();
-                                //XMLWriter.dequeToXML(collectionManager.getCollection(),ConfigManager.collectionFile );
-
-                            }
+                            var client = new RequestGetter(dc).getRequest(buffer);
+                            ByteRequest br = new ByteRequest(buffer.duplicate(), client);
+                            readingPool.execute(() -> {readingByteRequest(br);});
                         }
                     }
                 } catch (IOException e) {
@@ -138,7 +153,6 @@ public class ServerCommandManager {
             throw new RuntimeException(e);
         }
     }
-
 
 
     /**
@@ -161,5 +175,41 @@ public class ServerCommandManager {
         if (cmd instanceof ShowRequest) return new Show(cmd, collectionManager);
         if (cmd instanceof UpdateRequest) return new Update(cmd, collectionManager);
         return null;
+    }
+
+    public void readingByteRequest(ByteRequest br){
+        try{
+            requestBuffer.offer(new Request(br.client(),(CommandRequest) Deserializer.deserializeFromBytes( br.bytes().array()) ), 500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void workLoop(){
+        while(!Thread.interrupted()){
+            try{
+                Request r = requestBuffer.take();
+                Message msg = new Message( toCollectionCommand(r.command()).execute());
+                resultBuffer.offer(new ResultOfRequest(r.client(), msg) ,500, TimeUnit.MILLISECONDS);
+
+            }catch(InterruptedException e ){
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    public void sendingLoop(){
+        while(!Thread.interrupted()){
+            try{
+                Request r = requestBuffer.take();
+
+                Message msg = new Message();
+                resultBuffer.offer(new ResultOfRequest(r.client(), msg) ,500, TimeUnit.MILLISECONDS);
+            }catch(InterruptedException e ){
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
     }
 }
