@@ -16,9 +16,9 @@ import java.nio.channels.Pipe;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 
 /**
@@ -67,7 +67,7 @@ public class ServerCommandManager {
      * Установить последнюю версию коллекции.
      */
     private void checkSync() {
-        ArrayDeque<Dragon> updated = synchronizer.syncBeforeRead(collectionManager.getCollection());
+        ConcurrentLinkedDeque<Dragon> updated = synchronizer.syncBeforeRead(collectionManager.getCollection());
         if (updated != collectionManager.getCollection()) {
             collectionManager.setCollection(updated);
             collectionManager.validate();
