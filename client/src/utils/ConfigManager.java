@@ -27,11 +27,11 @@ public class ConfigManager {
     /**
      * Логин текущего пользователя. Null, если не авторизован.
      */
-    public static String login = null;
+    public static String login = "";
     /**
      * Пароль текущего пользователя. Null, если не авторизован.
      */
-    public static String password = null;
+    public static String password = "";
 
     /**
      * Сканирование файла конфига.
