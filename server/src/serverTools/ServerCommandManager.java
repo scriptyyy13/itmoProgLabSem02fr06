@@ -71,7 +71,7 @@ public class ServerCommandManager {
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ);
         } catch (Exception e) {
-            System.out.println("Не удалось открыть сервер");
+            e.printStackTrace();
         }
     }
 
@@ -80,10 +80,10 @@ public class ServerCommandManager {
      */
     public void start() {
         try {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ConfigManager.workingPoolCapacity; i++) {
                 workingPool.execute(this::workLoop);
             }
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ConfigManager.sendingPoolCapacity; i++) {
                 sendingPool.execute(this::sendingLoop);
             }
 
