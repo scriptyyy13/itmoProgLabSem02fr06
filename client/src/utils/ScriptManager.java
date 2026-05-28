@@ -60,10 +60,12 @@ public class ScriptManager {
                         OutputManager.errPrintln("Ошибка: В скрипте не указан путь для execute_script");
                     }
                 } else {
+                    OutputManager.disablePrinting();
                     CommandRequest cmd = CommandParser.parseCommand(line, scriptReader);
                     if (cmd != null) {
                         commands.add(cmd);
                     }
+                    OutputManager.enablePrinting();
                 }
             }
         } catch (FileNotFoundException e) {
