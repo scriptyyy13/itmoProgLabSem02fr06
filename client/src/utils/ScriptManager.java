@@ -74,6 +74,7 @@ public class ScriptManager {
             OutputManager.errPrintln("Ошибка при чтении файла " + filePath + ": " + e.getMessage());
         } finally {
             activeScripts.remove(absolutePath);
+            OutputManager.enablePrinting();
         }
 
         return commands;
