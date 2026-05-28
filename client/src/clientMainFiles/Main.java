@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
  */
 public class Main {
     public static void main(String[] args) {
+        OutputManager.enablePrinting();
         if (args.length > 0) {
             ConfigManager.scanConfig(args[0]);
         } else OutputManager.println("Конфиг не был передан, используются параметры по-умолчанию");
