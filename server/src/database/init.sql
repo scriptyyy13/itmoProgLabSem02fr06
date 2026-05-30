@@ -1,9 +1,18 @@
+-- Роли пользователей
+-- Админ может и серверами в балансере управлять и делать любые операции со всеми объектами коллекциями
+-- Простой пользователь может управлять только своими объектами коллекции
+CREATE TYPE roles AS ENUM ('admin', 'user');
+
 -- Таблица пользователей
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     login VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(56) NOT NULL -- SHA-224 (HEX)
+    password_hash VARCHAR(56) NOT NULL, -- SHA-224 (HEX)
+    role roles DEFAULT 'user'
 );
+
+ALTER TABLE users
+    ADD COLUMN role roles DEFAULT 'user'; -- Для миграции, если требуется (обратная совместимость с прошлыми версиями)
 
 -- Таблица драконов (вложенные поля храним в одной строке, чтобы не плодить потом join'ы)
 CREATE TABLE IF NOT EXISTS dragons (
