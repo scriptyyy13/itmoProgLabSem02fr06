@@ -396,13 +396,36 @@ public class DatabaseManager {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getLong("id");
-                    }
-                } catch (SQLException ex) {
+                }
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
         } catch (SQLException e) {
             System.err.println("Ошибка при валидации пользователя: " + e.getMessage());
         }
         return -1;
+    }
+
+    /**
+     * Ищет айди пользователя и возвращает его роль.
+     * @param id пользователя
+     * @return роль пользователя, или -1 если данные неверны
+     */
+    public String getUserRoleById(Long id) {
+        String sql = "SELECT role FROM users WHERE id = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("role");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при валидации пользователя: " + e.getMessage());
+        }
+        return "-1";
     }
 }
