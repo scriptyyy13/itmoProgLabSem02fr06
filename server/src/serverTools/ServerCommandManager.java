@@ -147,12 +147,35 @@ public class ServerCommandManager {
         return null;
     }
 
-
+    /**
+     * Чтение байтового запроса, безопасное разделение на ПИНГ от балансера и КОМАНДЫ от клиента.
+     */
     public void readingByteRequest(ByteRequest br) {
         try {
-            requestBuffer.offer(new Request(br.client(), (CommandRequest) Deserializer.deserializeFromBytes(br.bytes().array())), 500, TimeUnit.MILLISECONDS);
+            Object deserializedObj = Deserializer.deserializeFromBytes(br.bytes().array());
+
+            // Проверка на пинг-команду
+            if (deserializedObj instanceof Message) {
+                Message msg = (Message) deserializedObj;
+                if ("PING".equalsIgnoreCase(msg.getText())) {
+                    // Формируем моментальный ответ балансировщику, минуя буфер команд
+                    Message pong = new Message("PONG");
+                    resultBuffer.offer(new ResultOfRequest(br.client(), pong), 500, TimeUnit.MILLISECONDS);
+                    return; // Завершаем метод
+                }
+            }
+
+            // Обработка обычных команд
+            if (deserializedObj instanceof CommandRequest) {
+                requestBuffer.offer(new Request(br.client(), (CommandRequest) deserializedObj), 500, TimeUnit.MILLISECONDS);
+            } else {
+                System.err.println("Получен неожиданный тип объекта по сети: " + (deserializedObj != null ? deserializedObj.getClass().getName() : "null"));
+            }
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            System.err.println("Ошибка при десериализации или обработке входящего пакета: " + e.getMessage());
         }
     }
 
@@ -204,7 +227,7 @@ public class ServerCommandManager {
                 }
 
                 resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
-                System.out.println(msg.getText());
+                // System.out.println(msg.getText()); не нужно вне дебага
             } catch (TokenException e) {
                 System.err.println("Ошибка токена: " + e.getMessage());
 
@@ -224,7 +247,6 @@ public class ServerCommandManager {
             while (!Thread.interrupted()) {
                 try {
                     ResultOfRequest r = resultBuffer.take();
-                    Message msg = new Message();
                     byte[] bytesAns = Serializer.serializeToBytes(r.answer());
 
                     ds.send(new DatagramPacket(bytesAns, bytesAns.length, r.client()));
