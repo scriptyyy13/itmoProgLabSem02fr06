@@ -2,13 +2,17 @@ package serverCommands;
 
 import commands.CommandRequest;
 import database.DatabaseManager;
+import exceptions.TokenException;
+import serverTools.ConfigManager;
 import sharedTools.Arg;
 import serverTools.CollectionManager;
+import sharedTools.JwtTokenManager;
 
 /**
  * Команда для регистрации нового пользователя.
  */
 public class Register extends Command {
+    private JwtTokenManager tokenManager = new JwtTokenManager(ConfigManager.tokenSecretKey);
 
     public Register(CommandRequest commandRequest, CollectionManager collectionManager) {
         super(commandRequest, collectionManager);
@@ -19,7 +23,7 @@ public class Register extends Command {
      * Исполнение команды регистрации.
      */
     @Override
-    public String execute() {
+    public String execute() throws TokenException {
         Arg[] args = getArgs();
         if (args == null || args.length < 2) {
             return "Ошибка: Неверное количество аргументов для регистрации.";
@@ -35,7 +39,7 @@ public class Register extends Command {
         long userId = dbManager.registerUser(login, password);
 
         if (userId != -1) {
-            return "SUCCESS_REGISTER:" + userId;
+            return "SUCCESS_REGISTER_+:" + tokenManager.createToken(userId, login, password, 1800000);
         } else {
             return "Ошибка: Пользователь с таким логином уже существует.";
         }
