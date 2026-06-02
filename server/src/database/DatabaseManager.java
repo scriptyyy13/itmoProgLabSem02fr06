@@ -382,4 +382,27 @@ public class DatabaseManager {
         }
         return -1;
     }
+
+    /**
+     * Ищет логин пользователя и возвращает его ID.
+     * @param login имя пользователя
+     * @return ID пользователя из базы, или -1 если данные неверны
+     */
+    public long getUserIdByLogin(String login) {
+        String sql = "SELECT id FROM users WHERE login = ?;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("id");
+                    }
+                } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при валидации пользователя: " + e.getMessage());
+        }
+        return -1;
+    }
 }
