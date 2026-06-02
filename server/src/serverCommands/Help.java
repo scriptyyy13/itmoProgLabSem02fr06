@@ -1,7 +1,10 @@
 package serverCommands;
 
 import commands.CommandRequest;
+import database.DatabaseManager;
 import serverTools.CollectionManager;
+
+import java.util.Locale;
 
 public class Help extends Command {
     private CollectionManager collectionManager;
@@ -9,12 +12,14 @@ public class Help extends Command {
     public Help(CommandRequest cmd, CollectionManager collection) {
         super(cmd, collection);
     }
+
     /**
      * Исполнение команды в коллекции
+     *
      * @return результат выполнения команды
      */
     public String execute() {
-        return """
+        String helpText = """
                 Доступные команды:
                 
                 help - вывести справку по доступным командам
@@ -33,5 +38,14 @@ public class Help extends Command {
                 filter_less_than_age age - вывести элементы, значение поля age которых меньше заданного
                 print_unique_weight - вывести уникальные значения поля weight всех элементов в коллекции
                 """;
+        if (DatabaseManager.getInstance().getUserRoleById(this.getExecutorId()).equalsIgnoreCase("admin")) {
+            helpText += """
+                    \rbalancer_status - получить информацию о балансере и серверах
+                    add_server - добавить сервер в балансер
+                    remove_server - удалить сервер из балансера
+                    """;
+
+        }
+        return helpText;
     }
 }
