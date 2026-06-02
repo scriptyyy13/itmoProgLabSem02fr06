@@ -32,6 +32,10 @@ public class ConfigManager {
      * Пароль текущего пользователя. Пусто, если не авторизован.
      */
     public static String password = "";
+    /**
+     * Токен текущего пользователя. Пусто, если не авторизован.
+     */
+    public static String token = "";
 
     /**
      * Сканирование файла конфига.
