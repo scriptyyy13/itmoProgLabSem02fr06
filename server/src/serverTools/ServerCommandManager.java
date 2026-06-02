@@ -3,6 +3,7 @@ package serverTools;
 
 import commands.*;
 import database.DatabaseManager;
+import exceptions.TokenException;
 import serverMainFiles.ApplicationContext;
 import models.Dragon;
 import serverCommands.*;
@@ -20,6 +21,7 @@ import java.nio.channels.Pipe;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -45,6 +47,11 @@ public class ServerCommandManager {
      * Коллекция сервера.
      */
     private CollectionManager collectionManager;
+    /**
+     * Экземпляр менеджера токена.
+     */
+    private JwtTokenManager tokenManager = new JwtTokenManager(ConfigManager.tokenSecretKey);
+
     /**
      * Синхронизатор серверов.
      */
@@ -150,27 +157,63 @@ public class ServerCommandManager {
     }
 
     public void workLoop() {
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
-                synchronizer.syncBeforeRead(collectionManager);
                 Request r = requestBuffer.take();
+
+                synchronizer.syncBeforeRead(collectionManager);
+
                 CommandRequest cmd = r.command();
-                String login = cmd.getLogin();
-                String password = cmd.getUserPassword();
-                Long id = DatabaseManager.getInstance().validateUser(login, password);
                 Command collectionCmd = toCollectionCommand(cmd);
+
                 Message msg;
-                if (id == -1L && collectionCmd.requiresAuth) {
-                    msg = new Message("Ошибка валидации пользователя.");
+
+                if (collectionCmd == null) {
+                    msg = new Message("Неизвестная команда.");
                 } else {
-                    collectionCmd.setExecutorId(id);
-                    msg = new Message(collectionCmd.execute());
+                    long id = DatabaseManager.getInstance()
+                            .getUserIdByLogin(cmd.getLogin());
+
+                    TokenPayload payload = null;
+
+                    if (cmd.getUserToken() != null && !cmd.getUserToken().isBlank()) {
+                        payload = tokenManager.validateAndParse(cmd.getUserToken());
+                    }
+
+                    boolean validationFailed =
+                            collectionCmd.requiresAuth &&
+                                    (
+                                            payload == null ||
+                                                    id == -1L ||
+                                                    id != payload.getUserId() ||
+                                                    !Objects.equals(cmd.getLogin(), payload.getLogin())
+                                    );
+
+                    if (validationFailed) {
+                        msg = new Message("Ошибка валидации пользователя.");
+                    } else {
+                        collectionCmd.setExecutorId(id);
+
+                        try {
+                            msg = new Message(collectionCmd.execute());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            msg = new Message("Ошибка выполнения команды: " + e.getMessage());
+                        }
+                    }
                 }
+
                 resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
+                System.out.println(msg.getText());
+            } catch (TokenException e) {
+                System.err.println("Ошибка токена: " + e.getMessage());
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -184,13 +227,13 @@ public class ServerCommandManager {
                     Message msg = new Message();
                     byte[] bytesAns = Serializer.serializeToBytes(r.answer());
 
-                    ds.send(new DatagramPacket(bytesAns, bytesAns.length, r.client()) );
+                    ds.send(new DatagramPacket(bytesAns, bytesAns.length, r.client()));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
