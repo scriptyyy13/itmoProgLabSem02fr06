@@ -60,6 +60,10 @@ public class ConfigManager {
      * Кол-во потоков для выполнения команд.
      */
     public static Integer workingPoolCapacity = 4;
+    /**
+     * Секретный ключ для генерации токенов на сервере.
+     */
+    public static String tokenSecretKey = "THE_MOST_SECRET_SECRET";
 
     /**
      * Сканирование файла конфига
@@ -103,6 +107,8 @@ public class ConfigManager {
                     resultBufferCapacity = Integer.parseInt(paramValue);
                 } else if (paramName.equals("WORKING_POOL_CAPACITY")) {
                     workingPoolCapacity = Integer.parseInt(paramValue);
+                } else if (paramName.equals("TOKEN_SECRET_KEY")) {
+                    tokenSecretKey = paramValue;
                 }
             }
             System.out.println("Файл конфигурации был успешно считан");
