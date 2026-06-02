@@ -1,6 +1,7 @@
 package serverCommands;
 
 import commands.CommandRequest;
+import exceptions.TokenException;
 import sharedTools.Arg;
 import serverTools.CollectionManager;
 
@@ -35,7 +36,7 @@ public abstract class Command {
      * Исполнение команды в коллекции
      * @return результат выполнения команды
      */
-    public String execute() {
+    public String execute() throws TokenException {
         return null;
     }
 
