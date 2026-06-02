@@ -50,7 +50,6 @@ public class ClientCommandManager {
                 CommandRequest authRequest = parser.parseCommand("login", consoleReader);
                 if (authRequest != null) {
                     authRequest.setLogin(ConfigManager.login);
-                    authRequest.setUserPassword(ConfigManager.password);
                     Arg[] args = Arg.toArgList(new String[]{ConfigManager.login, ConfigManager.password});
                     authRequest.setArgs(args);
 
@@ -103,7 +102,6 @@ public class ClientCommandManager {
                     if (authRequest == null) continue;
 
                     authRequest.setLogin(inputLogin);
-                    authRequest.setUserPassword(inputPassword);
                     Arg[] args = Arg.toArgList(new String[]{inputLogin, inputPassword});
                     authRequest.setArgs(args);
 
@@ -165,7 +163,7 @@ public class ClientCommandManager {
     private void sendAndReceive(CommandRequest command) {
         try {
             command.setLogin(ConfigManager.login);
-            command.setUserPassword(ConfigManager.password);
+            command.setUserToken(ConfigManager.token);
             udpClient.sendCommand(command);
             sharedTools.Message response = udpClient.receiveResponse();
             OutputManager.println(response.getText());
@@ -190,6 +188,10 @@ public class ClientCommandManager {
                 OutputManager.println(response.getText());
                 return false;
             } else if (response.getText().contains("SUCCESS_")) {
+                String responseText = response.getText();
+                String token;
+                token = responseText.split("_\\+:", 2)[1];
+                ConfigManager.token = token;
                 return true;
             }
             OutputManager.println(response.getText());
