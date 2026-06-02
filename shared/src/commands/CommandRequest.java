@@ -37,9 +37,9 @@ public abstract class CommandRequest implements Serializable {
     private String userLogin;
 
     /**
-     * Пароль пользователя, отправившего команду.
+     * Токен пользователя, отправившего команду.
      */
-    private String userPassword;
+    private String userToken;
 
     /**
      * Создание экземпляра команды
@@ -72,11 +72,11 @@ public abstract class CommandRequest implements Serializable {
         this.userLogin = login;
     }
 
-    public String getUserPassword() {
-        return userPassword;
+    public String getUserToken() {
+        return userToken;
     }
 
-    public void setUserPassword(String password) {
-        this.userPassword = password;
+    public void setUserToken(String token) {
+        this.userToken = token;
     }
 }
