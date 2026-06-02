@@ -1,5 +1,4 @@
-PORT = 8000
-COLLECTION_FILE = collection.xml
+PORT = 8001
 MESSAGE_BUFFER_CAPACITY = 65535
 COMMANDS_BUFFER_CAPACITY = 1024
 DB_URL = jdbc:postgresql://localhost:5432/studs

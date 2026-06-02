@@ -1,3 +1,4 @@
 balancer.port=8000
-servers=localhost:8085,localhost:8002
+servers=localhost:8001,localhost:8002
 packet.size=65535
+token.secret=THE_MOST_SECRET_SECRET
