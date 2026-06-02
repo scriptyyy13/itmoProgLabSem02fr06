@@ -20,7 +20,11 @@ public enum ClientCommandType {
     FILTER_LESS_THAN_AGE("filter_less_than_age"),
     PRINT_UNIQUE_WEIGHT("print_unique_weight"),
     LOGIN("login"),
-    REGISTER("register");
+    REGISTER("register"),
+    BALANCER_STATUS("balancer_status"),
+    ADD_SERVER("add_server"),
+    REMOVE_SERVER("remove_server");
+
 
     private final String name;
 
@@ -57,6 +61,9 @@ public enum ClientCommandType {
             case PRINT_UNIQUE_WEIGHT -> new PrintUniqueWeightRequest();
             case REGISTER -> new RegisterRequest();
             case LOGIN -> new LoginRequest();
+            case BALANCER_STATUS -> new BalancerStatusRequest();
+            case ADD_SERVER -> new AddServerRequest();
+            case REMOVE_SERVER -> new RemoveServerRequest();
         };
     }
 }
