@@ -34,8 +34,9 @@ public class Login extends Command {
 
         DatabaseManager dbManager = DatabaseManager.getInstance();
         long userId = dbManager.validateUser(login, password);
+        String role = dbManager.getUserRoleById(userId);
         if (userId != -1) {
-            return "SUCCESS_LOGIN_+:" + tokenManager.createToken(userId, login, password, 1800000);
+            return "SUCCESS_LOGIN_+:" + tokenManager.createToken(userId, login, role, 1800000);
         } else {
             return "Ошибка: Неверный логин или пароль.";
         }

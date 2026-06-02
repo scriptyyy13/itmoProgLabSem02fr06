@@ -37,9 +37,9 @@ public class Register extends Command {
 
         DatabaseManager dbManager = DatabaseManager.getInstance();
         long userId = dbManager.registerUser(login, password);
-
+        String role = dbManager.getUserRoleById(userId);
         if (userId != -1) {
-            return "SUCCESS_REGISTER_+:" + tokenManager.createToken(userId, login, password, 1800000);
+            return "SUCCESS_REGISTER_+:" + tokenManager.createToken(userId, login, role, 1800000);
         } else {
             return "Ошибка: Пользователь с таким логином уже существует.";
         }
