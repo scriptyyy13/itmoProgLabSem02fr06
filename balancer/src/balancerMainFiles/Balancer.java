@@ -21,13 +21,20 @@ public class Balancer {
             int packetSize = Integer.parseInt(props.getProperty("packet.size"));
             String[] serverList = props.getProperty("servers").split(",");
 
+            // Секретный ключ для проверки подписей токенов
+            String secretKey = props.getProperty("token.secret");
+            if (secretKey == null) {
+                secretKey = "";
+            }
+
             List<InetSocketAddress> servers = new ArrayList<>();
             for (String s : serverList) {
                 String[] parts = s.trim().split(":");
                 servers.add(new InetSocketAddress(parts[0], Integer.parseInt(parts[1])));
+                // System.out.println(s);
             }
 
-            LoadBalancer lb = new LoadBalancer(servers, packetSize);
+            LoadBalancer lb = new LoadBalancer(servers, packetSize, secretKey);
 
             // прием клиента
             DatagramChannel channel = DatagramChannel.open();
@@ -46,20 +53,32 @@ public class Balancer {
                     byte[] clientData = new byte[buffer.remaining()];
                     buffer.get(clientData);
 
-                    // выбор сервера
-                    InetSocketAddress target = lb.getBestServer();
+                    // Проверка на админ-команду
+                    byte[] adminResponse = lb.handlePacketIfAdminCommand(clientData);
 
-                    if (target != null) {
-                        // пересылка и получение
-                        byte[] response = lb.forwardRequest(clientData, target);
+                    if (adminResponse != null) {
+                        // Если балансер сам обработал админскую команду, сразу шлем ответ назад
+                        channel.send(ByteBuffer.wrap(adminResponse), clientAddr);
+                    } else {
+                        // Если обычный запрос, то пускаем дальше
+                        InetSocketAddress target = lb.getBestServer();
 
-                        // возвращаем ответ клиенту
-                        if (response != null) {
-                            channel.send(ByteBuffer.wrap(response), clientAddr);
+                        if (target != null) {
+                            byte[] response = lb.forwardRequest(clientData, target);
+
+                            // возвращаем ответ клиенту
+                            if (response != null) {
+                                channel.send(ByteBuffer.wrap(response), clientAddr);
+                            }
+                        } else {
+                            // Ошибка, если вообще ни одного сервера в пуле нет или все лежат
+                            sharedTools.Message noServersMsg = new sharedTools.Message("Ошибка: Нет доступных серверов!");
+                            byte[] errBytes = sharedTools.Serializer.serializeToBytes(noServersMsg);
+                            channel.send(ByteBuffer.wrap(errBytes), clientAddr);
                         }
                     }
                 } else {
-                    Thread.sleep(10); // чтобы в холостую не работал цикл
+                    Thread.sleep(10); // чтобы вхолостую не работал цикл
                 }
             }
         } catch (IOException e) {
