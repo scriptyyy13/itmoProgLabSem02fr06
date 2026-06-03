@@ -7,6 +7,7 @@ clientMainFiles
 network
 utils
 module:server
+database
 serverCommands
 serverExceptions
 serverMainFiles

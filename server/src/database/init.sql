@@ -11,9 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
     role roles DEFAULT 'user'
 );
 
-ALTER TABLE users
-    ADD COLUMN role roles DEFAULT 'user'; -- Для миграции, если требуется (обратная совместимость с прошлыми версиями)
-
 -- Таблица драконов (вложенные поля храним в одной строке, чтобы не плодить потом join'ы)
 CREATE TABLE IF NOT EXISTS dragons (
       id SERIAL PRIMARY KEY,
