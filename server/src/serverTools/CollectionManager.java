@@ -361,6 +361,11 @@ public class CollectionManager {
     }
 
     public void setCollection(ConcurrentLinkedDeque<Dragon> collection) {
-        this.collection = collection;
+        lock.writeLock().lock();
+        try {
+            this.collection = collection;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 }
