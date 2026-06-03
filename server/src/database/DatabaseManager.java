@@ -45,13 +45,26 @@ public class DatabaseManager {
      * Инициализация таблиц базы данных.
      */
     private void initializeDatabase() {
-        try (InputStream is = getClass().getResourceAsStream("/database/init.sql");
-             Scanner scanner = new Scanner(is);
-             Statement statement = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
+            try {
+                statement.execute(
+                        "CREATE TYPE roles AS ENUM ('admin', 'user')"
+                );
+            } catch (SQLException e) {
+                if (!"42710".equals(e.getSQLState())) {
+                    throw e;
+                }
+            }
 
-            scanner.useDelimiter(";");
-            while (scanner.hasNext()) {
-                statement.execute(scanner.next());
+            try (InputStream is = getClass().getResourceAsStream("/database/init.sql");
+                 Scanner scanner = new Scanner(is)) {
+                scanner.useDelimiter(";");
+                while (scanner.hasNext()) {
+                    String sql = scanner.next().trim();
+                    if (!sql.isEmpty()) {
+                        statement.execute(sql);
+                    }
+                }
             }
         } catch (Exception e) {
             System.err.println("Не удалось выполнить init.sql: " + e.getMessage());
@@ -313,6 +326,7 @@ public class DatabaseManager {
 
     /**
      * Хэширует пароль пользователя с использованием алгоритма SHA-224.
+     *
      * @param password открытый пароль
      * @return строка хэша в hex-формате
      */
@@ -332,7 +346,8 @@ public class DatabaseManager {
 
     /**
      * Регистрирует нового пользователя в базе данных.
-     * @param login имя пользователя
+     *
+     * @param login    имя пользователя
      * @param password открытый пароль (будет захэширован)
      * @return сгенерированный ID пользователя, или -1 если логин уже занят
      */
@@ -359,7 +374,8 @@ public class DatabaseManager {
 
     /**
      * Проверяет учетные данные пользователя и возвращает его ID.
-     * @param login имя пользователя
+     *
+     * @param login    имя пользователя
      * @param password открытый пароль
      * @return ID пользователя из базы, или -1 если данные неверны
      */
@@ -385,6 +401,7 @@ public class DatabaseManager {
 
     /**
      * Ищет логин пользователя и возвращает его ID.
+     *
      * @param login имя пользователя
      * @return ID пользователя из базы, или -1 если данные неверны
      */
@@ -408,6 +425,7 @@ public class DatabaseManager {
 
     /**
      * Ищет айди пользователя и возвращает его роль.
+     *
      * @param id пользователя
      * @return роль пользователя, или -1 если данные неверны
      */
