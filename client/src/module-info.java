@@ -3,6 +3,8 @@
  */
 module client {
     requires shared;
+    requires javafx.graphics;
+    requires javafx.controls;
 
     exports clientCommands;
     exports clientMainFiles;
