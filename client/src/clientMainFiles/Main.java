@@ -1,6 +1,7 @@
 package clientMainFiles;
 
 import clientCommands.ClientCommandManager;
+import graphics.AuthorizationWindow;
 import network.UDPClient;
 import utils.ConfigManager;
 import utils.OutputManager;
@@ -15,6 +16,7 @@ import java.util.NoSuchElementException;
  */
 public class Main {
     public static void main(String[] args) {
+        AuthorizationWindow window = new AuthorizationWindow();
         OutputManager.enablePrinting();
         if (args.length > 0) {
             ConfigManager.scanConfig(args[0]);

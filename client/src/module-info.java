@@ -6,6 +6,7 @@ module client {
     requires javafx.graphics;
     requires javafx.controls;
 
+    exports graphics;
     exports clientCommands;
     exports clientMainFiles;
     exports network;
