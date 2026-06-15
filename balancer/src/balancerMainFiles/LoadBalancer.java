@@ -18,23 +18,23 @@ import commands.CommandRequest;
 import exceptions.TokenException;
 
 /**
- * Основной класс балансера.
+ * Основной класс балансировщика нагрузки.
  */
 public class LoadBalancer {
     /**
-     * Список серверов.
+     * Список активных серверов.
      */
     private final List<InetSocketAddress> servers;
     /**
-     * Список операций с каждым сервером
+     * Счетчик запросов для каждого сервера.
      */
     private final Map<SocketAddress, Integer> requestCounter = new ConcurrentHashMap<>();
     /**
-     * Размер пакета.
+     * Максимальный размер сетевого пакета.
      */
     private final int packetSize;
     /**
-     * Менеджер JWT токенов.
+     * Менеджер для валидации JWT токенов.
      */
     private final JwtTokenManager tokenManager;
 
@@ -49,8 +49,10 @@ public class LoadBalancer {
     }
 
     /**
-     * Точка фильтрации запросов. Проверяет, является ли команда административной.
-     * Если да - обрабатывает сам, если нет - возвращает null (сигнал пересылать дальше).
+     * Проверяет, является ли команда административной, и обрабатывает ее.
+     *
+     * @param clientData сырые байты запроса от клиента.
+     * @return байты ответа балансировщика или null, если команду нужно переслать серверу.
      */
     public byte[] handlePacketIfAdminCommand(byte[] clientData) {
         try {
@@ -63,7 +65,6 @@ public class LoadBalancer {
                 if (obj instanceof RemoveServerRequest) commandName = "remove_server";
 
                 if ("balancer_status".equalsIgnoreCase(commandName) || "add_server".equalsIgnoreCase(commandName) || "remove_server".equalsIgnoreCase(commandName)) {
-
                     return processAdminCommand(request, commandName);
                 }
             }
@@ -73,13 +74,17 @@ public class LoadBalancer {
     }
 
     /**
-     * Внутренняя обработка админ-команд
+     * Обрабатывает административные команды и возвращает локализованный статус-код.
+     *
+     * @param request     объект запроса команды.
+     * @param commandName имя административной команды.
+     * @return сериализованный объект Message с результатом.
      */
     private byte[] processAdminCommand(CommandRequest request, String commandName) {
         String token = request.getUserToken();
 
         if (token == null || token.isEmpty()) {
-            return Serializer.serializeToBytes(new Message("Ошибка: Токен отсутствует. Доступ запрещен."));
+            return Serializer.serializeToBytes(new Message("401:error.token.missing"));
         }
 
         try {
@@ -88,22 +93,21 @@ public class LoadBalancer {
 
             // Проверка роли ADMIN
             if (!"admin".equalsIgnoreCase(payload.getRole())) {
-                return Serializer.serializeToBytes(new Message("Ошибка: Недостаточно прав. Требуется роль ADMIN."));
+                return Serializer.serializeToBytes(new Message("403:error.role.access_denied"));
             }
 
             if ("balancer_status".equalsIgnoreCase(commandName)) {
-                StringBuilder sb = new StringBuilder("--- Статус Балансировщика ---\n");
-                sb.append("Серверы в пуле:\n");
+                StringBuilder sb = new StringBuilder("200:");
                 for (InetSocketAddress addr : servers) {
                     boolean alive = isAlive(addr);
-                    sb.append(String.format(" - %s [%s] (Запросов обработано: %d)\n", addr, alive ? "ONLINE" : "OFFLINE", requestCounter.getOrDefault(addr, 0)));
+                    sb.append(String.format("%s;%s;%d\n", addr, alive ? "ONLINE" : "OFFLINE", requestCounter.getOrDefault(addr, 0)));
                 }
-                return Serializer.serializeToBytes(new Message(sb.toString()));
+                return Serializer.serializeToBytes(new Message(sb.toString().trim()));
 
             } else if ("add_server".equalsIgnoreCase(commandName) || "remove_server".equalsIgnoreCase(commandName)) {
                 // Извлекаем строку "айпи:порт" из аргументов
                 if (request.getArgs() == null || request.getArgs().length == 0) {
-                    return Serializer.serializeToBytes(new Message("Ошибка: Не указан адрес сервера (айпи:порт)."));
+                    return Serializer.serializeToBytes(new Message("400:error.balancer.missing_address"));
                 }
 
                 String rawAddress = (String) request.getArgs()[0].getValue();
@@ -113,31 +117,34 @@ public class LoadBalancer {
                     if (!servers.contains(targetAddr)) {
                         servers.add(targetAddr);
                         requestCounter.put(targetAddr, 0);
-                        return Serializer.serializeToBytes(new Message("Сервер " + targetAddr + " успешно добавлен в пул балансировщика."));
+                        return Serializer.serializeToBytes(new Message("200:success.balancer.server_added"));
                     }
-                    return Serializer.serializeToBytes(new Message("Сервер " + targetAddr + " уже находится в пуле."));
+                    return Serializer.serializeToBytes(new Message("400:error.balancer.server_exists"));
                 } else {
                     if (servers.size() > 1) {
                         if (servers.remove(targetAddr)) {
                             requestCounter.remove(targetAddr);
-                            return Serializer.serializeToBytes(new Message("Сервер " + targetAddr + " успешно удален из пула балансировщика."));
+                            return Serializer.serializeToBytes(new Message("200:success.balancer.server_removed"));
                         }
-                        return Serializer.serializeToBytes(new Message("Сервер " + targetAddr + " не найден в пуле."));
+                        return Serializer.serializeToBytes(new Message("404:error.balancer.server_not_found"));
                     } else {
-                        return Serializer.serializeToBytes(new Message("Невозможно удалить единственный сервер."));
+                        return Serializer.serializeToBytes(new Message("400:error.balancer.remove_last_server"));
                     }
                 }
             }
 
         } catch (TokenException e) {
-            return Serializer.serializeToBytes(new Message("Ошибка авторизации: " + e.getMessage()));
+            return Serializer.serializeToBytes(new Message("401:error.token.invalid"));
         }
 
-        return Serializer.serializeToBytes(new Message("Неизвестная ошибка при обработке админ-команды."));
+        return Serializer.serializeToBytes(new Message("500:error.internal.balancer_error"));
     }
 
     /**
-     * Вспомогательный парсер строки вида айпи:порт или просто айпи
+     * Парсит строковый адрес в объект InetSocketAddress.
+     *
+     * @param rawAddress строка адреса вида ip:port.
+     * @return сформированный объект InetSocketAddress.
      */
     private InetSocketAddress parseAddress(String rawAddress) {
         String[] parts = rawAddress.trim().split(":");
@@ -155,14 +162,19 @@ public class LoadBalancer {
     }
 
     /**
-     * Выбор сервера и проверка доступности
+     * Выбирает наименее загруженный живой сервер из пула по алгоритму Least Connections.
+     *
+     * @return адрес оптимального сервера или null, если живых серверов нет.
      */
     public InetSocketAddress getBestServer() {
         return servers.stream().filter(this::isAlive).min(Comparator.comparingInt(s -> requestCounter.getOrDefault(s, 0))).orElse(null);
     }
 
     /**
-     * Проверка доступности
+     * Проверяет доступность конкретного сервера отправкой датаграммы PING.
+     *
+     * @param addr адрес проверяемого сервера.
+     * @return true, если сервер ответил, иначе false.
      */
     private boolean isAlive(InetSocketAddress addr) {
         try (DatagramSocket socket = new DatagramSocket()) {
@@ -179,7 +191,11 @@ public class LoadBalancer {
     }
 
     /**
-     * Пересылка и получение
+     * Пересылает запрос на выбранный сервер и ожидает ответа.
+     *
+     * @param data   байты запроса клиента.
+     * @param server адрес целевого сервера.
+     * @return байты ответа сервера или null в случае таймаута.
      */
     public byte[] forwardRequest(byte[] data, InetSocketAddress server) {
         try (DatagramSocket socket = new DatagramSocket()) {
