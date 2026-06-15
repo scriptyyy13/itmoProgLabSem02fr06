@@ -14,7 +14,7 @@ public class UDPClient {
     private final DatagramSocket socket;
     private final InetAddress serverAddress;
     private final int serverPort;
-    private final int TIMEOUT = ConfigManager.serverResponseTimeout; // таймаут в 5 секунд
+    private final int TIMEOUT = ConfigManager.serverResponseTimeout;
 
     public UDPClient(String host, int port) throws SocketException, UnknownHostException {
         this.socket = new DatagramSocket();
