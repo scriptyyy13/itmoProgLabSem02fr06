@@ -25,9 +25,9 @@ public class UpdateRequest extends CommandRequest {
         try {
             Long.parseLong((String) getArgs()[0].getValue());
         } catch (Exception e) {
-            throw new InvalidInputException("Неверный формат");
+            throw new InvalidInputException("error.command.validate");
         }
         if (getArgs().length < 2 || !(getArgs()[1].getValue() instanceof Dragon))
-            throw new InvalidInputException("Неверный формат");
+            throw new InvalidInputException("error.command.validate");
     }
 }

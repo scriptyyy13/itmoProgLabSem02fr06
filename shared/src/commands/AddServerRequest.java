@@ -19,6 +19,6 @@ public class AddServerRequest extends AdminCommandRequest {
      */
     public void validate() throws InvalidInputException {
         if (!(getArgs()[0].getValue() instanceof String) && (getArgs().length != 1))
-            throw new InvalidInputException("Неверный формат");
+            throw new InvalidInputException("error.command.validate");
     }
 }

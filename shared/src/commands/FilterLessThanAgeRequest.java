@@ -24,7 +24,7 @@ public class FilterLessThanAgeRequest extends CommandRequest {
         try {
             Long.parseLong((String) getArgs()[0].getValue());
         } catch (Exception e) {
-            throw new InvalidInputException("Неверный формат");
+            throw new InvalidInputException("error.command.validate");
         }
     }
 }

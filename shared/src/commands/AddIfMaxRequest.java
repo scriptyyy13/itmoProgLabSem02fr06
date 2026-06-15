@@ -22,6 +22,6 @@ public class AddIfMaxRequest extends CommandRequest {
      * @throws InvalidInputException исключение, выбрасываемое в случае неуспешной валидации.
      */
     public void validate() throws InvalidInputException {
-        if (!(getArgs()[0].getValue() instanceof Dragon)) throw new InvalidInputException("Неверный формат");
+        if (!(getArgs()[0].getValue() instanceof Dragon)) throw new InvalidInputException("error.command.validate");
     }
 }
