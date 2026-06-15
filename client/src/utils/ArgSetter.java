@@ -10,13 +10,15 @@ import java.util.Arrays;
  */
 public class ArgSetter {
 
+    /**
+     * Заполняет команду необходимыми аргументами.
+     *
+     * @param command объект запроса команды.
+     * @param args    базовые строковые аргументы из строки ввода.
+     * @param reader  источник данных (строка из UI).
+     */
     public static void setArgs(CommandRequest command, Arg[] args, Reader reader) {
         if (command instanceof AddRequest || command instanceof AddIfMaxRequest || command instanceof AddIfMinRequest) {
-            InputManager.clearBuffer();
-            if (args.length > 0) {
-                String[] stringArgs = Arrays.stream(args).map(a -> a.getValue().toString()).toArray(String[]::new);
-                InputManager.loadArgs(stringArgs);
-            }
             command.setArgs(new Arg(InputManager.inputDragon(reader)));
         } else if (command instanceof UpdateRequest) {
             command.setArgs(args[0], new Arg(InputManager.inputDragon(reader)));

@@ -6,35 +6,36 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Класс, для работы со скриптами.
+ * Класс для работы со скриптами.
  */
 public class ScriptManager {
-    /**
-     * Парсер команды.
-     */
+
+    /** Парсер команды. */
     private final CommandParser parser;
-    /**
-     * Активные скрипты.
-     */
+
+    /** Активные скрипты для предотвращения зацикливания. */
     private final Set<String> activeScripts = new HashSet<>();
 
+    /**
+     * Конструктор менеджера скриптов.
+     * @param parser экземпляр парсера команд.
+     */
     public ScriptManager(CommandParser parser) {
         this.parser = parser;
     }
 
     /**
-     * обрабатывает скрипт.
-     * @param filePath путь до скрипта.
+     * Обрабатывает скрипт и преобразует его строки в список объектов запросов.
+     * @param filePath путь до файла скрипта.
      * @return Список реквестов команд.
      */
     public List<CommandRequest> processScript(String filePath) {
         File file = new File(filePath);
         String absolutePath = file.getAbsolutePath();
 
-        // Проверка на рекурсию
+        // Проверка на рекурсию — отдаем ключ ошибки
         if (activeScripts.contains(absolutePath)) {
-            OutputManager.errPrintln("Ошибка рекурсии: Скрипт " + filePath + " уже запущен!");
-            return Collections.emptyList();
+            throw new RuntimeException("error.script.recursion");
         }
 
         activeScripts.add(absolutePath);
@@ -44,10 +45,11 @@ public class ScriptManager {
             Reader scriptReader = new Reader(bufferedReader);
 
             String line;
-            // Читаем файл построчно
             while ((line = bufferedReader.readLine()) != null) {
                 line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) continue;
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
 
                 String[] parts = line.split("\\s+");
                 String commandName = parts[0];
@@ -55,26 +57,25 @@ public class ScriptManager {
                 if (commandName.equals("execute_script")) {
                     if (parts.length > 1) {
                         List<CommandRequest> nested = processScript(parts[1]);
-                        if (nested != null) commands.addAll(nested);
+                        if (nested != null) {
+                            commands.addAll(nested);
+                        }
                     } else {
-                        OutputManager.errPrintln("Ошибка: В скрипте не указан путь для execute_script");
+                        throw new RuntimeException("error.script.missing_path");
                     }
                 } else {
-                    OutputManager.disablePrinting();
-                    CommandRequest cmd = CommandParser.parseCommand(line, scriptReader);
+                    CommandRequest cmd = parser.parseCommand(line, scriptReader);
                     if (cmd != null) {
                         commands.add(cmd);
                     }
-                    OutputManager.enablePrinting();
                 }
             }
         } catch (FileNotFoundException e) {
-            OutputManager.errPrintln("Ошибка: Файл скрипта не найден: " + filePath);
+            throw new RuntimeException("error.script.file_not_found", e);
         } catch (IOException e) {
-            OutputManager.errPrintln("Ошибка при чтении файла " + filePath + ": " + e.getMessage());
+            throw new RuntimeException("error.script.read_failed", e);
         } finally {
             activeScripts.remove(absolutePath);
-            OutputManager.enablePrinting();
         }
 
         return commands;

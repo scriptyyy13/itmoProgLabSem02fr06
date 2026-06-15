@@ -1,46 +1,77 @@
 package clientMainFiles;
 
-import clientCommands.ClientCommandManager;
-import graphics.AuthorizationWindow;
+import core.ClientCore;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import network.UDPClient;
 import utils.ConfigManager;
-import utils.OutputManager;
-import utils.Reader;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.NoSuchElementException;
 
 /**
- * mainFiles.Main-класс клиента.
+ * Main-класс клиента.
  */
-public class Main {
+public class Main extends Application {
+
+    /**
+     * Ядро клиента для работы с командами.
+     */
+    private static ClientCore clientCore;
+
+    /**
+     * Сетевой клиент для работы с сокетом.
+     */
+    private static UDPClient udpClient;
+
+    /**
+     * Точка входа в программу.
+     */
     public static void main(String[] args) {
-        AuthorizationWindow window = new AuthorizationWindow();
-        OutputManager.enablePrinting();
+        // Считываем конфиг, если передан аргумент
         if (args.length > 0) {
             ConfigManager.scanConfig(args[0]);
-        } else OutputManager.println("Конфиг не был передан, используются параметры по-умолчанию");
-
-        Reader consoleReader = new Reader();
-        OutputManager.println("Добро пожаловать в клиентское приложение!");
-        OutputManager.printf("Используется сервер: %s, порт: %d\n", ConfigManager.ip, ConfigManager.port);
+        }
 
         try {
-            UDPClient udpClient = new UDPClient(ConfigManager.ip, ConfigManager.port);
-            ClientCommandManager commandManager = new ClientCommandManager(consoleReader, udpClient);
-            commandManager.start();
+            // Инициализируем сетевое взаимодействие и ядро
+            udpClient = new UDPClient(ConfigManager.ip, ConfigManager.port);
+            clientCore = new ClientCore(udpClient);
+
+            // Запускаем цикл интерфейса
+            launch(args);
 
         } catch (UnknownHostException e) {
-            OutputManager.errPrintln("Критическая ошибка: Не удалось определить адрес хоста: " + ConfigManager.ip);
+            throw new RuntimeException("error.network.unknown_host", e);
         } catch (SocketException e) {
-            OutputManager.errPrintln("Критическая ошибка: Проблема с сетевым сокетом: " + e.getMessage());
-        } catch (NoSuchElementException e) {
-            OutputManager.errPrintln("\nВвод прерван\n Завершение работы.");
+            throw new RuntimeException("error.network.socket_failed", e);
         } catch (Exception e) {
-            OutputManager.errPrintln("Критическая ошибка в работе клиента: " + e.getMessage());
+            // Общая критическая ошибка инициализации
+            throw new RuntimeException("error.internal.startup_failed", e);
         } finally {
-            OutputManager.println("Клиент остановлен.");
+            // Гарантированно закрываем сокет при выходе из приложения
+            if (udpClient != null) {
+                udpClient.close();
+            }
         }
+    }
+
+    /**
+     * Инициализация и запуск графического интерфейса.
+     *
+     * @param stage главное окно приложения (предоставляется JavaFX).
+     */
+    @Override
+    public void start(Stage stage) throws Exception {
+        // сюда графику
+    }
+
+    /**
+     * Возвращает экземпляр ядра клиента для использования в графических окнах.
+     *
+     * @return Объект ClientCore.
+     */
+    public static ClientCore getClientCore() {
+        return clientCore;
     }
 }

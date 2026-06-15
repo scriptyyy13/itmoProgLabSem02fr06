@@ -2,36 +2,56 @@ package utils;
 
 import clientCommands.ClientCommandType;
 import commands.CommandRequest;
-import exceptions.InvalidInputException;
 import sharedTools.Arg;
 
 import java.util.Arrays;
 
 /**
- * Создает экземпляр команды.
+ * Создает экземпляр команды на основе текстовой строки.
  */
 public class CommandParser {
-    public static CommandRequest parseCommand(String line, Reader currentReader) throws InvalidInputException {
+
+    /**
+     * Парсит строку и создает готовый объект CommandRequest.
+     *
+     * @param line          строка с командой и ее первыми аргументами.
+     * @param currentReader ридер, содержащий строки для создания сложных объектов.
+     * @return Сформированный объект запроса команды.
+     */
+    public CommandRequest parseCommand(String line, Reader currentReader) {
+        if (line == null) {
+            throw new RuntimeException("error.command.null");
+        }
+
         line = line.trim();
+        if (line.isEmpty()) {
+            throw new RuntimeException("error.command.empty");
+        }
 
         String[] splittedStr = line.split("\\s+");
         String commandName = splittedStr[0];
 
-        // ищем команду в энаме
+        // Ищем команду в энаме
         ClientCommandType type = ClientCommandType.fromString(commandName);
         if (type == null) {
-            throw new InvalidInputException("Команда '" + commandName + "' не найдена.");
+            throw new RuntimeException("error.command.not_found");
         }
 
-        // создаем новый экземпляр команды
+        // Создаем новый экземпляр команды
         CommandRequest command = type.create();
 
-        // парсим аргументы
+        // Парсим аргументы
         Arg[] args = Arg.toArgList(Arrays.copyOfRange(splittedStr, 1, splittedStr.length));
+
+        // Заполняем сложные аргументы
         ArgSetter.setArgs(command, args, currentReader);
 
-        // валидация перед упаковкой
-        command.validate();
+        // Валидация перед отправкой
+        try {
+            command.validate();
+        } catch (Exception e) {
+            throw new RuntimeException("error.command.validation_failed", e);
+        }
 
         return command;
     }

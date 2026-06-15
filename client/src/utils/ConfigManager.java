@@ -40,7 +40,7 @@ public class ConfigManager {
     /**
      * Сканирование файла конфига.
      *
-     * @param filePath
+     * @param filePath путь к файлу конфигурации.
      */
     public static void scanConfig(String filePath) {
         File file = new File(filePath);
@@ -69,9 +69,8 @@ public class ConfigManager {
                     password = paramValue;
                 }
             }
-            OutputManager.println("Файл конфигурации был успешно считан");
         } catch (Exception e) {
-            OutputManager.errPrintln("Ошибка при чтении файла конфигурации " + filePath + ": " + e.getMessage());
+            throw new RuntimeException("error.config.read_failed", e);
         }
     }
 }
