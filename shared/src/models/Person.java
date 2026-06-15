@@ -77,7 +77,7 @@ public class Person implements Serializable {
     public void validate() throws InvalidInputException {
         if (location != null && location.isEmpty()) location = null;
         if (name == null || name.isEmpty() || birthday == null || passportID == null)
-            throw new InvalidInputException("Неверный формат в элементе (Person)");
+            throw new InvalidInputException("error.model.validate (Person)");
     }
 
     /**

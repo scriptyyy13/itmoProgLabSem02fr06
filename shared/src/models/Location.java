@@ -68,7 +68,7 @@ public class Location implements Serializable {
      */
     public void validate() throws InvalidInputException {
         if (x == null || y == null || z == null || name == null || name.isEmpty())
-            throw new InvalidInputException("Неверный формат в элементе");
+            throw new InvalidInputException("error.model.validate");
     }
 
     /**
