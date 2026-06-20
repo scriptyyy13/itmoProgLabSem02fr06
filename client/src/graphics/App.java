@@ -9,6 +9,8 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Java & Drakonchiki®");
         AuthorizationWindow authorizationWindow = new AuthorizationWindow(stage);
-        authorizationWindow.show();
+        MainWindow mainWindow = new MainWindow(stage);
+        mainWindow.show();
+
     }
 }
