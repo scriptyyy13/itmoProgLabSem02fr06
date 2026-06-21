@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList; // Важно для динамического изменения списка
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import commands.AddServerRequest;
 import commands.BalancerStatusRequest;
@@ -132,11 +132,9 @@ public class LoadBalancer {
                     }
                 }
             }
-
         } catch (TokenException e) {
             return Serializer.serializeToBytes(new Message("401:error.token.invalid"));
         }
-
         return Serializer.serializeToBytes(new Message("500:error.internal.balancer_error"));
     }
 
