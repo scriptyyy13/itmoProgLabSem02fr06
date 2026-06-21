@@ -6,7 +6,8 @@ package serverMainFiles;
 
 public class ApplicationContext {
     /**
-     * Путь до файла коллекции.
+     * Путь до файла коллекции. Устарел, больше не используется.
      */
+    @Deprecated
     public static String collectionPath;
 }
