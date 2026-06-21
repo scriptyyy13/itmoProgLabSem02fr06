@@ -21,6 +21,11 @@ public class AuthorizationWindow {
     private final String CARD_COLOR = "#43506C";
     private final int WIDTH = 1280;
     private final int HEIGHT = 720;
+    public Button loginBtn;
+    public Button regBtn;
+    public TextField username;
+    public TextField password;
+    public Label error;
 
     public AuthorizationWindow(Stage stage){
         this.stage = stage;
@@ -48,12 +53,12 @@ public class AuthorizationWindow {
         HBox row = new HBox(50);
         row.setAlignment(Pos.CENTER);
         VBox buttons = new VBox(15);
-        Button loginBtn = new Button("Вход");
-        Button regBtn = new Button("Регистрация");
+        loginBtn = new Button("Вход");
+        regBtn = new Button("Регистрация");
         buttons.getChildren().addAll(loginBtn,regBtn);
         buttons.setAlignment(Pos.CENTER);
 
-        Label error = new Label("Error");
+        error = new Label("");
         error.setFont(fieldFont);
         error.setTextFill(Color.RED);
 
@@ -68,8 +73,8 @@ public class AuthorizationWindow {
         regBtn.setFont(buttonFont);
 
         VBox fields = new VBox(35);
-        TextField username = new TextField();
-        TextField password = new TextField();
+        username = new TextField();
+        password = new TextField();
         username.setPromptText("Имя пользователя");
         password.setPromptText("Пароль");
         username.setFont(fieldFont);
@@ -95,6 +100,10 @@ public class AuthorizationWindow {
         stage.setScene(createLoginScene());
         stage.setResizable(false);
         stage.show();
+    }
+
+    public void close(){
+        stage.close();
     }
 
 }

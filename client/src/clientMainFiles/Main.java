@@ -1,9 +1,13 @@
 package clientMainFiles;
 
 import core.ClientCore;
+import graphics.AuthorizationWindow;
 import javafx.application.Application;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import network.Response;
 import network.UDPClient;
+import sharedTools.Arg;
 import utils.ConfigManager;
 
 import java.net.SocketException;
@@ -63,7 +67,46 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        // сюда графику
+        stage.setTitle("Java & Drakonchiki®");
+        AuthorizationWindow authorizationWindow = new AuthorizationWindow(stage);
+        startLogin(authorizationWindow);
+
+
+    }
+
+    private void startLogin(AuthorizationWindow aw){
+        aw.show();
+
+        aw.loginBtn.setOnAction(e ->{
+            aw.loginBtn.setDisable(true);
+            Arg[] loginArgs = {new Arg(aw.username.getText()),new  Arg(aw.password.getText())};
+            Response response = clientCore.executeCommand("login",loginArgs);
+            if(response.isSuccess()){
+                ConfigManager.login = aw.username.getText();
+                ConfigManager.token = response.getData();
+                aw.close();
+                System.out.println(ConfigManager.token);
+            }else{
+                aw.error.setText(response.getData());
+            }
+            aw.loginBtn.setDisable(false);
+        });
+        aw.regBtn.setOnAction(e ->{
+            aw.regBtn.setDisable(true);
+            Arg[] loginArgs = {new Arg(aw.username.getText()),new  Arg(aw.password.getText())};
+            Response response = clientCore.executeCommand("register",loginArgs);
+            if(response.isSuccess()){
+                ConfigManager.login = aw.username.getText();
+                ConfigManager.token = response.getData();
+                aw.close();
+
+            }else{
+                aw.error.setText(response.getData());
+            }
+            aw.regBtn.setDisable(false);
+
+        });
+
     }
 
     /**

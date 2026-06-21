@@ -32,7 +32,6 @@ public class UDPClient {
             oos.writeObject(command);
             oos.flush();
             byte[] data = baos.toByteArray();
-
             DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, serverPort);
             socket.send(packet);
         }

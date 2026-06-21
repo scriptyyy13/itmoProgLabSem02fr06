@@ -14,10 +14,42 @@ public class CommandParser {
     /**
      * Парсит строку и создает готовый объект CommandRequest.
      *
-     * @param line          строка с командой и ее первыми аргументами.
-     * @param currentReader ридер, содержащий строки для создания сложных объектов.
+     * @param commandName   строка с командой и ее первыми аргументами.
+     * @param args аргументы аче))
      * @return Сформированный объект запроса команды.
      */
+    public CommandRequest parseCommand(String commandName, Arg[] args) {
+        if (commandName == null) {
+            throw new RuntimeException("error.command.null");
+        }
+
+        commandName = commandName.trim();
+        if (commandName.isEmpty()) {
+            throw new RuntimeException("error.command.empty");
+        }
+
+
+        // Ищем команду в энаме
+        ClientCommandType type = ClientCommandType.fromString(commandName);
+        if (type == null) {
+            throw new RuntimeException("error.command.not_found");
+        }
+
+        // Создаем новый экземпляр команды
+        CommandRequest command = type.create();
+
+        command.setArgs(args);
+
+        // Валидация перед отправкой
+        try {
+            command.validate();
+        } catch (Exception e) {
+            throw new RuntimeException("error.command.validation_failed", e);
+        }
+
+        return command;
+    }
+
     public CommandRequest parseCommand(String line, Reader currentReader) {
         if (line == null) {
             throw new RuntimeException("error.command.null");

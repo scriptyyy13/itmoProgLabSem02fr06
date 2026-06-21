@@ -26,7 +26,7 @@ public class Login extends Command {
     public String execute() throws TokenException {
         Arg[] args = getArgs();
         if (args == null || args.length < 2) {
-            return "Ошибка: Неверное количество аргументов для входа.";
+            return "400:Неверное количество аргументов для входа.";
         }
 
         String login = (String) args[0].getValue();
@@ -36,9 +36,9 @@ public class Login extends Command {
         long userId = dbManager.validateUser(login, password);
         String role = dbManager.getUserRoleById(userId);
         if (userId != -1) {
-            return "SUCCESS_LOGIN_+:" + tokenManager.createToken(userId, login, role, 1800000);
+            return "200:" + tokenManager.createToken(userId, login, role, 1800000);
         } else {
-            return "Ошибка: Неверный логин или пароль.";
+            return "400:Неверный логин или пароль.";
         }
     }
 }

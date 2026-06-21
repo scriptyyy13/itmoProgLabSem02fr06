@@ -3,6 +3,7 @@ package core;
 import commands.CommandRequest;
 import network.UDPClient;
 import network.Response;
+import sharedTools.Arg;
 import sharedTools.Message;
 import utils.ConfigManager;
 import utils.CommandParser;
@@ -48,22 +49,16 @@ public class ClientCore {
      * Универсальный метод выполнения любой команды из графического интерфейса.
      *
      * @param commandName имя команды (например, "add", "remove_by_id", "login").
-     * @param inputLines  список строк-аргументов, собранных из полей UI.
      * @return Универсальный объект Response со статус-кодом и данными.
      */
-    public Response executeCommand(String commandName, List<String> inputLines) {
-        if (commandName.equals("execute_script") && !inputLines.isEmpty()) {
-            return handleScriptExecution(inputLines.get(0));
+    public Response executeCommand(String commandName, Arg[] args ) {
+        if (commandName.equals("execute_script")) {
+            return handleScriptExecution((String) args[0].getValue() );
         }
 
         try {
-            // Склеиваем переданные из UI поля через перенос строки
-            String joinedInput = String.join("\n", inputLines);
 
-            // Используем существующий конструктор Reader для строк
-            Reader virtualReader = new Reader(joinedInput);
-
-            CommandRequest request = parser.parseCommand(commandName, virtualReader);
+            CommandRequest request = parser.parseCommand(commandName, args);
 
             if (request == null) {
                 return new Response(400, "error.command.validation_failed");
@@ -85,6 +80,7 @@ public class ClientCore {
         } catch (java.net.SocketTimeoutException e) {
             return new Response(503, "error.network.server_unavailable");
         } catch (Exception e) {
+            e.printStackTrace();
             return new Response(500, "error.network.connection_failed");
         }
     }
