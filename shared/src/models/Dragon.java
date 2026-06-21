@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import exceptions.InvalidInputException;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -103,6 +104,46 @@ public class Dragon implements Comparable<Dragon>, Serializable {
         this.killer = killer;
     }
 
+    /**
+     * Превращаем {@code Dragon} в строку csv таблицы.
+     */
+    public String toCSV() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+
+        String coordX = coordinates != null ? String.valueOf(coordinates.getX()) : "";
+        String coordY = coordinates != null ? String.valueOf(coordinates.getY()) : "";
+
+        String killerName = killer != null ? killer.getName() : "";
+        String killerBirthday = (killer != null && killer.getBirthday() != null) ? sdf.format(killer.getBirthday()) : "";
+        String killerPassport = (killer != null && killer.getPassportID() != null) ? killer.getPassportID() : "";
+        String killerNat = (killer != null && killer.getNationality() != null) ? killer.getNationality().toString() : "";
+
+        var loc = killer != null ? killer.getLocation() : null;
+        String locX = loc != null ? String.valueOf(loc.getX()) : "";
+        String locY = loc != null ? String.valueOf(loc.getY()) : "";
+        String locZ = loc != null ? String.valueOf(loc.getZ()) : "";
+        String locName = (loc != null && loc.getName() != null) ? loc.getName() : "";
+
+        return String.join(",",
+                String.valueOf(id),
+                name != null ? name : "",
+                coordX,
+                coordY,
+                creationDate != null ? sdf.format(creationDate) : "",
+                String.valueOf(age),
+                weight != null ? String.valueOf(weight) : "",
+                String.valueOf(speaking),
+                color != null ? color.toString() : "",
+                killerName,
+                killerBirthday,
+                killerPassport,
+                killerNat,
+                locX,
+                locY,
+                locZ,
+                locName
+        );
+    }
 
     @Override
     public String toString() {
