@@ -26,6 +26,10 @@ public class CollectionManager {
      * Экземпляр базы данных.
      */
     private final DatabaseManager dbManager = DatabaseManager.getInstance();
+    /**
+     * Колонки csv таблицы драконов.
+     */
+    private static final String CSV_HEADER = "id,name,coordinate_x,coordinate_y,creationDate,age,weight,speaking,color,killer_name,killer_birthday,killer_passportID,killer_nationality,location_x,location_y,location_z,location_name";
 
     public CollectionManager(ConcurrentLinkedDeque<Dragon> collection) {
         this.creationTime = new Date();
@@ -51,9 +55,9 @@ public class CollectionManager {
             } finally {
                 lock.writeLock().unlock();
             }
-            return "Элемент успешно добавлен.";
+            return "200:success.collection.add";
         } else {
-            return "Ошибка: Не удалось добавить элемент в базу данных.";
+            return "500:error.database.add_failed";
         }
     }
 
@@ -75,12 +79,12 @@ public class CollectionManager {
                     newDragon.setId(generatedId);
                     newDragon.setCreatorId(creatorId);
                     collection.addLast(newDragon);
-                    return "Элемент добавлен (был максимальным).";
+                    return "200:success.collection.add_if_max";
                 } else {
-                    return "Ошибка: Не удалось добавить элемент в базу данных.";
+                    return "500:error.database.add_failed";
                 }
             }
-            return "Элемент не максимальный.";
+            return "400:error.collection.not_max";
         } finally {
             lock.writeLock().unlock();
         }
@@ -104,12 +108,12 @@ public class CollectionManager {
                     newDragon.setId(generatedId);
                     newDragon.setCreatorId(creatorId);
                     collection.addLast(newDragon);
-                    return "Элемент добавлен (был минимальным).";
+                    return "200:success.collection.add_if_min";
                 } else {
-                    return "Ошибка: Не удалось добавить элемент в базу данных.";
+                    return "500:error.database.add_failed";
                 }
             }
-            return "Элемент не минимальный.";
+            return "400:error.collection.not_min";
         } finally {
             lock.writeLock().unlock();
         }
@@ -125,9 +129,9 @@ public class CollectionManager {
                     .mapToLong(Dragon::getAge)
                     .average();
             if (average.isPresent()) {
-                return String.valueOf(average.getAsDouble());
+                return "200:" + average.getAsDouble();
             } else {
-                return "Коллекция пуста";
+                return "404:error.collection.empty";
             }
         } finally {
             lock.readLock().unlock();
@@ -148,9 +152,9 @@ public class CollectionManager {
             } finally {
                 lock.writeLock().unlock();
             }
-            return "Ваши элементы успешно удалены из коллекции.";
+            return "200:success.collection.clear";
         } else {
-            return "Ошибка при очистке коллекции в базе данных.";
+            return "500:error.database.clear_failed";
         }
     }
 
@@ -164,12 +168,15 @@ public class CollectionManager {
         try {
             String result = collection.stream()
                     .filter(e -> e.getAge() < age)
-                    .map(Dragon::toString)
+                    .map(Dragon::toCSV)
                     .collect(Collectors.joining("\n"));
 
-            return result.isEmpty()
-                    ? "Нет элементов моложе " + age
-                    : result;
+            if (result.isEmpty()) {
+                return "404:error.collection.no_elements_younger_than;" + age;
+            }
+
+            // Возвращаем хедер + данные
+            return "200:" + CSV_HEADER + "\n" + result;
         } finally {
             lock.readLock().unlock();
         }
@@ -179,13 +186,7 @@ public class CollectionManager {
      * Реализация команды {@code info}.
      */
     public String info() {
-        return String.format("""
-                Информация о коллекции:
-                
-                Тип: ConcurrentLinkedDeque
-                Дата инициализации: %s
-                Количество элементов: %d
-                """, creationTime, collection.size());
+        return "200:success.collection.info_format;" + creationTime + ";" + collection.size();
     }
 
     /**
@@ -194,7 +195,7 @@ public class CollectionManager {
     public String printUniqueWeight() {
         lock.readLock().lock();
         try {
-            return collection.stream()
+            return "200:" + collection.stream()
                     .map(Dragon::getWeight)
                     .filter(Objects::nonNull)
                     .distinct()
@@ -219,19 +220,19 @@ public class CollectionManager {
                     .findFirst();
 
             if (found.isEmpty()) {
-                return "Элемент с таким ID не найден.";
+                return "404:error.collection.id_not_found";
             }
 
             if (found.get().getCreatorId() != creatorId) {
-                return "Ошибка: У вас нет прав на удаление этого объекта!";
+                return "403:error.collection.permission_denied";
             }
             boolean isDeleted = dbManager.deleteDragon(id, creatorId);
 
             if (isDeleted) {
                 collection.removeIf(e -> e.getId() == id);
-                return "Элемент удалён.";
+                return "200:success.collection.remove";
             } else {
-                return "Ошибка: Не удалось удалить элемент из базы данных.";
+                return "500:error.database.delete_failed";
             }
         } finally {
             lock.writeLock().unlock();
@@ -250,7 +251,7 @@ public class CollectionManager {
                     .findFirst();
 
             if (firstUserDragon.isEmpty()) {
-                return "В коллекции нет принадлежащих вам элементов.";
+                return "404:error.collection.no_user_elements";
             }
 
             Dragon target = firstUserDragon.get();
@@ -258,9 +259,9 @@ public class CollectionManager {
 
             if (isDeleted) {
                 collection.remove(target);
-                return "Удален ваш первый элемент в коллекции: " + target;
+                return "200:success.collection.remove_head_format;" + target;
             } else {
-                return "Ошибка базы данных при удалении элемента.";
+                return "500:error.database.delete_failed";
             }
         } finally {
             lock.writeLock().unlock();
@@ -273,13 +274,15 @@ public class CollectionManager {
     public String show() {
         lock.readLock().lock();
         try {
-            if (collection.isEmpty()) return "Коллекция пуста";
+            if (collection.isEmpty()) return "404:error.collection.empty";
 
             String result = collection.stream()
                     .sorted(Comparator.comparing(Dragon::getWeight, Comparator.nullsLast(Comparator.naturalOrder())))
-                    .map(Dragon::toString)
-                    .collect(Collectors.joining("\n---------------\n"));
-            return "Элементы коллекции:\n" + result;
+                    .map(Dragon::toCSV)
+                    .collect(Collectors.joining("\n"));
+
+            // Возвращаем хедер + данные
+            return "200:" + CSV_HEADER + "\n" + result;
         } finally {
             lock.readLock().unlock();
         }
@@ -300,11 +303,11 @@ public class CollectionManager {
                     .findFirst();
 
             if (found.isEmpty()) {
-                return "Элемент с ID " + id + " не найден.";
+                return "404:error.collection.id_not_found_format;" + id;
             }
 
             if (found.get().getCreatorId() != creatorId) {
-                return "Ошибка: У вас нет прав на модификацию этого объекта!";
+                return "403:error.collection.permission_denied";
             }
 
             // Атомарно обновляем в БД
@@ -318,9 +321,9 @@ public class CollectionManager {
 
                 collection.remove(old);
                 collection.add(updDragon);
-                return "Элемент с ID " + id + " успешно обновлен.";
+                return "200:success.collection.update_format;" + id;
             } else {
-                return "Ошибка: Не удалось обновить элемент в базе данных.";
+                return "500:error.database.update_failed";
             }
         } finally {
             lock.writeLock().unlock();
