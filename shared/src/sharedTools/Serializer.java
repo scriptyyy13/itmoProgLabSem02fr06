@@ -18,9 +18,7 @@ public class Serializer {
             oos.writeObject(obj);
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new SerializeException("Не удалось сериализовать сообщение");
+            throw new SerializeException("error.serialize.failed");
         }
     }
-
-
 }

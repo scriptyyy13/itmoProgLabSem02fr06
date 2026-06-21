@@ -38,7 +38,7 @@ public class JwtTokenManager {
             // Склеиваем через точку
             return payloadBase64 + "." + signature;
         } catch (Exception e) {
-            throw new TokenException("Ошибка при создании токена", e);
+            throw new TokenException("error.token.creation_failed", e);
         }
     }
 
@@ -48,12 +48,12 @@ public class JwtTokenManager {
      */
     public TokenPayload validateAndParse(String tokenStr) throws TokenException {
         if (tokenStr == null || !tokenStr.contains(".")) {
-            throw new TokenException("Неверный формат токена (отсутствует разделитель).");
+            throw new TokenException("error.token.invalid_format");
         }
 
         String[] parts = tokenStr.split("\\.");
         if (parts.length != 2) {
-            throw new TokenException("Неверная структура токена.");
+            throw new TokenException("error.token.invalid_structure");
         }
 
         String payloadBase64 = parts[0];
@@ -63,7 +63,7 @@ public class JwtTokenManager {
             // Проверяем подпись. Генерируем ожидаемую подпись от полученного payload и нашего secretKey
             String expectedSignature = generateSignature(payloadBase64, this.secretKey);
             if (!expectedSignature.equals(providedSignature)) {
-                throw new TokenException("Токен скомпрометирован! Подпись не совпадает.");
+                throw new TokenException("error.token.compromised");
             }
 
             // Десериализуем payload обратно в объект
@@ -72,14 +72,14 @@ public class JwtTokenManager {
 
             // Проверяем, не истекло ли время жизни токена
             if (System.currentTimeMillis() > payload.getExpireAt()) {
-                throw new TokenException("Срок действия токена истек. Пожалуйста, авторизуйтесь заново.");
+                throw new TokenException("error.token.expired");
             }
 
             return payload;
         } catch (TokenException e) {
             throw e;
         } catch (Exception e) {
-            throw new TokenException("Не удалось распарсить токен (возможно, он поврежден).", e);
+            throw new TokenException("error.token.parsing_failed", e);
         }
     }
 
