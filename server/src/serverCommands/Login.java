@@ -26,7 +26,7 @@ public class Login extends Command {
     public String execute() throws TokenException {
         Arg[] args = getArgs();
         if (args == null || args.length < 2) {
-            return "400:Неверное количество аргументов для входа.";
+            return "400:error.login.missing_args";
         }
 
         String login = (String) args[0].getValue();
@@ -38,7 +38,7 @@ public class Login extends Command {
         if (userId != -1) {
             return "200:" + tokenManager.createToken(userId, login, role, 1800000);
         } else {
-            return "400:Неверный логин или пароль.";
+            return "400:error.login.invalid_credentials";
         }
     }
 }

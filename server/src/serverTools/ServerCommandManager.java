@@ -192,7 +192,7 @@ public class ServerCommandManager {
                 Message msg;
 
                 if (collectionCmd == null) {
-                    msg = new Message("Неизвестная команда.");
+                    msg = new Message("404:error.workloop.unknown_command");
                 } else {
                     long id = DatabaseManager.getInstance()
                             .getUserIdByLogin(cmd.getLogin());
@@ -213,7 +213,7 @@ public class ServerCommandManager {
                                     );
 
                     if (validationFailed) {
-                        msg = new Message("Ошибка валидации пользователя.");
+                        msg = new Message("401:error.token.validation_failed");
                     } else {
                         collectionCmd.setExecutorId(id);
 
@@ -221,13 +221,12 @@ public class ServerCommandManager {
                             msg = new Message(collectionCmd.execute());
                         } catch (Exception e) {
                             e.printStackTrace();
-                            msg = new Message("Ошибка выполнения команды: " + e.getMessage());
+                            msg = new Message("500:error.workloop.execution_failed");
                         }
                     }
                 }
 
                 resultBuffer.offer(new ResultOfRequest(r.client(), msg), 500, TimeUnit.MILLISECONDS);
-                // System.out.println(msg.getText()); не нужно вне дебага
             } catch (TokenException e) {
                 System.err.println("Ошибка токена: " + e.getMessage());
 

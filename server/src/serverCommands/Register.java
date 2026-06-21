@@ -26,13 +26,13 @@ public class Register extends Command {
     public String execute() throws TokenException {
         Arg[] args = getArgs();
         if (args == null || args.length < 2) {
-            return "400:Неверное количество аргументов для регистрации.";
+            return "400:error.register.missing_args";
         }
 
         String login = (String) args[0].getValue();
         String password = (String) args[1].getValue();
         if (login.trim().isEmpty() || password.trim().isEmpty()) {
-            return "400:Логин и пароль не могут быть пустыми.";
+            return "400:error.register.empty_fields";
         }
 
         DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -41,7 +41,7 @@ public class Register extends Command {
         if (userId != -1) {
             return "200:" + tokenManager.createToken(userId, login, role, 1800000);
         } else {
-            return "409:Пользователь с таким логином уже существует.";
+            return "409:error.register.user_exists";
         }
     }
 }

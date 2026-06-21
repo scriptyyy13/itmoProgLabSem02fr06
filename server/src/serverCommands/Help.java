@@ -6,6 +6,9 @@ import serverTools.CollectionManager;
 
 import java.util.Locale;
 
+/**
+ * Команда для вывода справки по доступным командам.
+ */
 public class Help extends Command {
     private CollectionManager collectionManager;
 
@@ -14,37 +17,31 @@ public class Help extends Command {
     }
 
     /**
-     * Исполнение команды в коллекции
+     * Исполнение команды в коллекции.
      *
-     * @return результат выполнения команды
+     * @return строка с ключами локализации для клиента.
      */
     public String execute() {
-        String helpText = """
-                Доступные команды:
-                
-                help - вывести справку по доступным командам
-                info - вывести информацию о коллекции
-                show - вывести все элементы коллекции
-                add - добавить новый элемент в коллекцию
-                update id - обновить значение элемента, id которого равен заданному
-                remove_by_id id - удалить элемент по id
-                clear - очистить коллекцию
-                execute_script file_name - считать и исполнить скрипт из указанного файла
-                exit - выйти из программы
-                remove_head - вывести первый элемент коллекции и удалить его
-                add_if_max - добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции
-                add_if_min - добавить новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции
-                average_of_age - вывести среднее значение поля age для всех элементов коллекции
-                filter_less_than_age age - вывести элементы, значение поля age которых меньше заданного
-                print_unique_weight - вывести уникальные значения поля weight всех элементов в коллекции
-                """;
+        // Базовые ключи команд, доступные всем пользователям
+        String helpText = "help.cmd.help;" +
+                "help.cmd.info;" +
+                "help.cmd.show;" +
+                "help.cmd.add;" +
+                "help.cmd.update;" +
+                "help.cmd.remove_by_id;" +
+                "help.cmd.clear;" +
+                "help.cmd.execute_script;" +
+                "help.cmd.exit;" +
+                "help.cmd.remove_head;" +
+                "help.cmd.add_if_max;" +
+                "help.cmd.add_if_min;" +
+                "help.cmd.average_of_age;" +
+                "help.cmd.filter_less_than_age;" +
+                "help.cmd.print_unique_weight";
         if (DatabaseManager.getInstance().getUserRoleById(this.getExecutorId()).equalsIgnoreCase("admin")) {
-            helpText += """
-                    \rbalancer_status - получить информацию о балансере и серверах
-                    add_server - добавить сервер в балансер
-                    remove_server - удалить сервер из балансера
-                    """;
-
+            helpText += ";help.cmd.balancer_status;" +
+                    "help.cmd.add_server;" +
+                    "help.cmd.remove_server";
         }
         return helpText;
     }
