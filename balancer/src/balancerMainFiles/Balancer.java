@@ -72,7 +72,7 @@ public class Balancer {
                             }
                         } else {
                             // Ошибка, если вообще ни одного сервера в пуле нет или все лежат
-                            sharedTools.Message noServersMsg = new sharedTools.Message("error.balancer.no_server_was_found");
+                            sharedTools.Message noServersMsg = new sharedTools.Message("404:error.balancer.no_server_was_found");
                             byte[] errBytes = sharedTools.Serializer.serializeToBytes(noServersMsg);
                             channel.send(ByteBuffer.wrap(errBytes), clientAddr);
                         }
