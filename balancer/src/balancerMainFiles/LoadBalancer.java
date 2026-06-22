@@ -98,11 +98,13 @@ public class LoadBalancer {
 
             if ("balancer_status".equalsIgnoreCase(commandName)) {
                 StringBuilder sb = new StringBuilder("200:");
+                int counter = 0;
                 for (InetSocketAddress addr : servers) {
+                    counter++;
                     boolean alive = isAlive(addr);
-                    sb.append(String.format("%s;%s;%d\n", addr, alive ? "ONLINE" : "OFFLINE", requestCounter.getOrDefault(addr, 0)));
+                    sb.append(String.format(counter + ". %d %s %s\n", requestCounter.getOrDefault(addr, 0), addr, alive ? "ON" : "OFF"));
                 }
-                return Serializer.serializeToBytes(new Message(sb.toString().trim()));
+                return Serializer.serializeToBytes(new Message("200:" + sb.toString().trim()));
 
             } else if ("add_server".equalsIgnoreCase(commandName) || "remove_server".equalsIgnoreCase(commandName)) {
                 // Извлекаем строку "айпи:порт" из аргументов

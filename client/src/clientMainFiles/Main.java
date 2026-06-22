@@ -120,13 +120,17 @@ public class Main extends Application {
             //mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
             Stage showStage = new Stage();
             ShowWindow showWindow = new ShowWindow(showStage);
-            if(response.isSuccess()) {
+            if (response.isSuccess()) {
                 showWindow.setTableFromCSV(response.getData());
                 showStage.initModality(Modality.APPLICATION_MODAL);
                 showWindow.show();
-            }else{
+            } else {
                 mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
             }
+        });
+        mw.buttons[10].setOnAction(e -> {
+            Response response = clientCore.executeCommand("balancer_status", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
 
     }
@@ -227,8 +231,10 @@ public class Main extends Application {
             Response response = clientCore.executeCommand("login", loginArgs);
 
             if (response.isSuccess()) {
+                String[] tokenAndRole = response.getData().split(";");
                 ConfigManager.login = aw.username.getText();
-                ConfigManager.token = response.getData();
+                ConfigManager.token = tokenAndRole[0];
+                ConfigManager.role = tokenAndRole[1];
                 aw.setAuthenticatedSuccess();
             } else {
                 String errorText = LocalizationManager.getLocalizedMessage(response.getData());
@@ -243,8 +249,10 @@ public class Main extends Application {
             Response response = clientCore.executeCommand("register", loginArgs);
 
             if (response.isSuccess()) {
+                String[] tokenAndRole = response.getData().split(";");
                 ConfigManager.login = aw.username.getText();
-                ConfigManager.token = response.getData();
+                ConfigManager.token = tokenAndRole[0];
+                ConfigManager.role = tokenAndRole[1];
                 aw.setAuthenticatedSuccess();
             } else {
                 String errorText = LocalizationManager.getLocalizedMessage(response.getData());
