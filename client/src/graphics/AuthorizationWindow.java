@@ -35,9 +35,9 @@ public class AuthorizationWindow {
     }
 
     private Scene createLoginScene(){
-        Font titleFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),90);
-        Font buttonFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),20);
-        Font fieldFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),17);
+        Font titleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),90);
+        Font buttonFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
+        Font fieldFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),17);
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.setStyle("-fx-background-color: " + BG_COLOR + ";");
@@ -91,7 +91,7 @@ public class AuthorizationWindow {
 
         card.getChildren().addAll(row,error);
 
-        Label authors = new Label("by scripty, prikolist667");
+        Label authors = new Label("by scriptyyy, prikolist667");
         authors.setFont(fieldFont);
         authors.setTextFill(Color.WHITE);
         VBox.setMargin(authors, new Insets(100,0,0,0));

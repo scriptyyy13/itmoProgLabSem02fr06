@@ -31,8 +31,8 @@ public class CommandWindow {
     }
 
     public Scene createCommandScene(){
-        Font bigFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),20);
-        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),15);
+        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
+        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),15);
         String[] argsNames;
         Boolean isHavingModel = false;
         switch (commandName){

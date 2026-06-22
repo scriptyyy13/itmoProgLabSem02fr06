@@ -34,8 +34,8 @@ public class EnterDragonWindow {
     }
 
     public Scene createEnterDragonScene(){
-        Font bigFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),20);
-        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),15);
+        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
+        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),15);
         VBox root = new VBox();
         root.setStyle("-fx-background-color: " + BG_COLOR +";");
         Label title = new Label("input Dragon");

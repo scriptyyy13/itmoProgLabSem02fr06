@@ -34,8 +34,8 @@ public class MainWindow {
     }
 
     private Scene createMainScene(){
-        Font bigFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),20);
-        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("fonts/aktifo.ttf"),15);
+        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
+        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),15);
 
 
         BorderPane root = new BorderPane();
@@ -67,7 +67,7 @@ public class MainWindow {
         }
         userButtonsArea.setPadding(new Insets(25,0,0,20));
 
-        //здесь админские команды
+        // здесь админские команды
 
         var vizArea = createVizArea(600,600,0,100,0,100);
         visual = (Canvas) vizArea.getChildren().get(1);
