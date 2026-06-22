@@ -30,12 +30,31 @@ public class EnterPersonWindow {
     private Person value;
     private Location location;
 
+    private TextField nameInput;
+    private TextField birthInput;
+    private TextField passInput;
+    private TextField nationInput;
+
     public EnterPersonWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
 
         stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.person.title"));
         stage.setScene(createEnterPersonScene());
+    }
+
+    public EnterPersonWindow(Stage stage, Person initialPerson) {
+        this(stage);
+        if (initialPerson != null) {
+            this.location = initialPerson.getLocation();
+
+            nameInput.setText(initialPerson.getName());
+            if (initialPerson.getBirthday() != null) {
+                birthInput.setText(new SimpleDateFormat("dd.MM.yyyy").format(initialPerson.getBirthday()));
+            }
+            passInput.setText(initialPerson.getPassportID());
+            nationInput.setText(initialPerson.getNationality() != null ? initialPerson.getNationality().toString() : "");
+        }
     }
 
     public Scene createEnterPersonScene() {
@@ -67,13 +86,13 @@ public class EnterPersonWindow {
         nationLabel.setTextFill(Color.WHITE);
         nameLabel.setTextFill(Color.WHITE);
 
-        TextField nameInput = new TextField();
+        nameInput = new TextField();
         nameInput.setFont(simpleFont);
-        TextField birthInput = new TextField();
+        birthInput = new TextField();
         birthInput.setFont(simpleFont);
-        TextField passInput = new TextField();
+        passInput = new TextField();
         passInput.setFont(simpleFont);
-        TextField nationInput = new TextField();
+        nationInput = new TextField();
         nationInput.setFont(simpleFont);
 
         Button executeBtn = new Button();
@@ -92,7 +111,7 @@ public class EnterPersonWindow {
         locationInput.setOnAction(e -> {
             Stage locationInputStage = new Stage();
             locationInputStage.initModality(Modality.APPLICATION_MODAL);
-            EnterLocationWindow elw = new EnterLocationWindow(locationInputStage);
+            EnterLocationWindow elw = new EnterLocationWindow(locationInputStage, this.location);
             this.location = elw.showAndGetLocation();
         });
 

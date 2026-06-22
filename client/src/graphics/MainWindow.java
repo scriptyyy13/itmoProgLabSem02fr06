@@ -1,5 +1,9 @@
 package graphics;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -9,15 +13,29 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import sharedTools.Arg;
+import sharedTools.DragonTableRow;
+import models.Dragon;
+import network.Response;
 import utils.ConfigManager;
+import clientMainFiles.Main;
+
+import java.util.*;
 
 public class MainWindow extends BaseWindow {
     private final String BG_COLOR = "#2a3950";
     public Canvas visual;
     public TextArea output;
     public Button[] buttons;
+
+    private Pane vizPane; // прозрачный слой для кружков поверх канваса
+    // кружки драконов
+    private final Map<Long, Circle> activeCircles = new HashMap<>();
 
     public static final String[] buttonsNames = {"Add", "AddIfMin", "AddIfMax", "Update", "RemoveById", "Clear", "RemoveHead", "AverageOfAge", "UniqueWeight", "Show"};
     public static final String[] adminButtonsNames = {"balancer_status", "add_server", "remove_server"};
@@ -26,10 +44,11 @@ public class MainWindow extends BaseWindow {
         super(stage);
         this.stage.setResizable(false);
         initScene();
+        startBackgroundUpdate(); // запуск таймера автоматического фонового обновления
     }
 
     @Override
-    protected Region buildUI() { // Переопределяем buildUI
+    protected Region buildUI() {
         Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
         Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 15);
 
@@ -84,7 +103,8 @@ public class MainWindow extends BaseWindow {
         userButtonsArea.setPadding(new Insets(25, 0, 0, 20));
 
         var vizArea = createVizArea(600, 600, 0, 100, 0, 100);
-        visual = (Canvas) vizArea.getChildren().get(1);
+        vizPane = (Pane) vizArea.getChildren().get(1);
+        visual = (Canvas) vizArea.getChildren().get(0);
         vizArea.setAlignment(Pos.TOP_LEFT);
         vizArea.setPadding(new Insets(25, 0, 0, 60));
 
@@ -109,7 +129,7 @@ public class MainWindow extends BaseWindow {
     private StackPane createVizArea(double width, double height, double minx, double maxx, double miny, double maxy) {
         Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.getCanvas().getGraphicsContext2D().setFill(Color.WHITE);
+        gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, width, height);
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.0);
@@ -124,8 +144,120 @@ public class MainWindow extends BaseWindow {
         }
         Pane vizArea = new Pane();
         vizArea.setMaxSize(width, height);
+        vizArea.setPrefSize(width, height);
+
         StackPane gridContainer = new StackPane();
-        gridContainer.getChildren().addAll(vizArea, canvas);
+        gridContainer.getChildren().addAll(canvas, vizArea);
         return gridContainer;
+    }
+
+    /**
+     * Инициализация фонового обновления данных раз в 2 секунды.
+     */
+    private void startBackgroundUpdate() {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), e -> fetchAndRenderDragons()));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void fetchAndRenderDragons() {
+        Platform.runLater(() -> {
+            Response response = Main.getClientCore().executeCommand("show", new Arg[0]);
+            if (response != null && response.isSuccess()) {
+                updateVisualField(response.getData());
+            }
+        });
+    }
+
+    private void updateVisualField(String csvData) {
+        if (csvData == null || csvData.trim().isEmpty()) {
+            activeCircles.values().forEach(c -> vizPane.getChildren().remove(c));
+            activeCircles.clear();
+            return;
+        }
+
+        try {
+            List<Dragon> currentDragons = Dragon.loadDragonsFromCSV(csvData);
+            Set<Long> incomingIds = new HashSet<>();
+
+            for (Dragon d : currentDragons) {
+                DragonTableRow rowData = Dragon.mapToTableRow(d);
+                long id = rowData.getId();
+                incomingIds.add(id);
+
+                double cx = Math.abs(rowData.getX() % 600);
+                double cy = Math.abs(rowData.getY() % 600);
+
+                String tooltipText =
+                        LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.id") + rowData.getId() + "\n" +
+                                LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.name") + rowData.getName() + "\n" +
+                                LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.age") + rowData.getAge() + "\n" +
+                                LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.color") + rowData.getColor() + "\n" +
+                                LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.creator") + rowData.getCreatorId();
+
+                if (!activeCircles.containsKey(id)) {
+                    // анимация появления
+                    Circle circle = new Circle(cx, cy, 12);
+                    Color fillOwnerColor = generateColorFromId(rowData.getCreatorId());
+                    circle.setFill(fillOwnerColor);
+                    circle.setStroke(Color.BLACK);
+                    circle.setStrokeWidth(1.0);
+                    circle.setOpacity(0.0);
+
+                    // редактирование при нажатии
+                    circle.setOnMouseClicked(event -> {
+                        Stage editStage = new Stage();
+                        editStage.initModality(Modality.APPLICATION_MODAL);
+                        EditDragonWindow edw = new EditDragonWindow(editStage, rowData, fillOwnerColor);
+                        edw.showAndWait();
+                    });
+
+                    javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(tooltipText);
+                    tooltip.setFont(Font.font("Arial", 13));
+                    tooltip.setShowDelay(Duration.millis(200));
+                    javafx.scene.control.Tooltip.install(circle, tooltip);
+
+                    vizPane.getChildren().add(circle);
+                    activeCircles.put(id, circle);
+
+                    FadeTransition ft = new FadeTransition(Duration.millis(500), circle);
+                    ft.setToValue(1.0);
+                    ft.play();
+                } else {
+                    // если дракон уже был на карте, обновляем его позицию
+                    Circle c = activeCircles.get(id);
+                    c.setCenterX(cx);
+                    c.setCenterY(cy);
+
+                    javafx.scene.control.Tooltip updatedTooltip = new javafx.scene.control.Tooltip(tooltipText);
+                    updatedTooltip.setFont(Font.font("Arial", 13));
+                    updatedTooltip.setShowDelay(Duration.millis(200));
+                    javafx.scene.control.Tooltip.install(c, updatedTooltip);
+                }
+            }
+
+            // анимация исчезновения
+            Iterator<Map.Entry<Long, Circle>> it = activeCircles.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Long, Circle> entry = it.next();
+                if (!incomingIds.contains(entry.getKey())) {
+                    Circle c = entry.getValue();
+                    FadeTransition ft = new FadeTransition(Duration.millis(500), c);
+                    ft.setToValue(0.0);
+                    ft.setOnFinished(evt -> vizPane.getChildren().remove(c));
+                    ft.play();
+                    it.remove();
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Генерация фиксированного цвета по уникальному ID создателя
+     */
+    private Color generateColorFromId(long creatorId) {
+        Random r = new Random(creatorId);
+        return Color.rgb(r.nextInt(180) + 40, r.nextInt(180) + 40, r.nextInt(180) + 40);
     }
 }

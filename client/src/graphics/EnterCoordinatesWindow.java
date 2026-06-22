@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,12 +23,23 @@ public class EnterCoordinatesWindow {
     private final int HEIGHT = 300;
     private Coordinates value;
 
+    private TextField xInput;
+    private TextField yInput;
+
     public EnterCoordinatesWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
 
         stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.coords.title"));
         stage.setScene(createEnterCoordinatesScene());
+    }
+
+    public EnterCoordinatesWindow(Stage stage, Coordinates initialCords) {
+        this(stage);
+        if (initialCords != null) {
+            xInput.setText(String.valueOf(initialCords.getX()));
+            yInput.setText(String.valueOf(initialCords.getY()));
+        }
     }
 
     public Scene createEnterCoordinatesScene() {
@@ -53,9 +63,9 @@ public class EnterCoordinatesWindow {
         xLabel.setTextFill(Color.WHITE);
         yLabel.setTextFill(Color.WHITE);
 
-        TextField xInput = new TextField();
+        xInput = new TextField();
         xInput.setFont(simpleFont);
-        TextField yInput = new TextField();
+        yInput = new TextField();
         yInput.setFont(simpleFont);
 
         Button executeBtn = new Button();

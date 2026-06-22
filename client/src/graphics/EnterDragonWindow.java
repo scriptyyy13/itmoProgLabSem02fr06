@@ -29,12 +29,32 @@ public class EnterDragonWindow {
     private Coordinates cords;
     private Person killer;
 
+    private TextField nameInput;
+    private TextField ageInput;
+    private TextField weightInput;
+    private TextField speakInput;
+    private TextField colorInput;
+
     public EnterDragonWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
 
         stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.dragon.title"));
         stage.setScene(createEnterDragonScene());
+    }
+
+    public EnterDragonWindow(Stage stage, Dragon initialDragon) {
+        this(stage);
+        if (initialDragon != null) {
+            this.cords = initialDragon.getCoordinates();
+            this.killer = initialDragon.getKiller();
+
+            nameInput.setText(initialDragon.getName());
+            ageInput.setText(String.valueOf(initialDragon.getAge()));
+            weightInput.setText(initialDragon.getWeight() != null ? String.valueOf(initialDragon.getWeight()) : "");
+            speakInput.setText(String.valueOf(initialDragon.getSpeaking()));
+            colorInput.setText(initialDragon.getColor() != null ? initialDragon.getColor().toString() : "");
+        }
     }
 
     public Scene createEnterDragonScene() {
@@ -70,15 +90,15 @@ public class EnterDragonWindow {
         nameLabel.setTextFill(Color.WHITE);
         colorLabel.setTextFill(Color.WHITE);
 
-        TextField nameInput = new TextField();
+        nameInput = new TextField();
         nameInput.setFont(simpleFont);
-        TextField ageInput = new TextField();
+        ageInput = new TextField();
         ageInput.setFont(simpleFont);
-        TextField weightInput = new TextField();
+        weightInput = new TextField();
         weightInput.setFont(simpleFont);
-        TextField speakInput = new TextField();
+        speakInput = new TextField();
         speakInput.setFont(simpleFont);
-        TextField colorInput = new TextField();
+        colorInput = new TextField();
         colorInput.setFont(simpleFont);
 
         Button executeBtn = new Button();
@@ -97,7 +117,7 @@ public class EnterDragonWindow {
         cordsInput.setOnAction(e -> {
             Stage cordsInputStage = new Stage();
             cordsInputStage.initModality(Modality.APPLICATION_MODAL);
-            EnterCoordinatesWindow ecw = new EnterCoordinatesWindow(cordsInputStage);
+            EnterCoordinatesWindow ecw = new EnterCoordinatesWindow(cordsInputStage, this.cords);
             this.cords = ecw.showAndGetCoordinates();
         });
 
@@ -107,7 +127,7 @@ public class EnterDragonWindow {
         killerInput.setOnAction(e -> {
             Stage personInputStage = new Stage();
             personInputStage.initModality(Modality.APPLICATION_MODAL);
-            EnterPersonWindow epw = new EnterPersonWindow(personInputStage);
+            EnterPersonWindow epw = new EnterPersonWindow(personInputStage, this.killer);
             this.killer = epw.showAndGetPerson();
         });
 

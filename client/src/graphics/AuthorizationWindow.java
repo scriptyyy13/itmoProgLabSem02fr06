@@ -31,7 +31,7 @@ public class AuthorizationWindow extends BaseWindow {
     }
 
     @Override
-    protected Region buildUI() { // Переопределяем buildUI
+    protected Region buildUI() {
         Font titleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 90);
         Font buttonFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
         Font fieldFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 17);

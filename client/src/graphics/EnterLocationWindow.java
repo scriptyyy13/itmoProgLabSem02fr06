@@ -11,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import models.Coordinates;
 import models.Location;
 
 /**
@@ -24,12 +23,27 @@ public class EnterLocationWindow {
     private final int HEIGHT = 450;
     private Location value;
 
+    private TextField xInput;
+    private TextField yInput;
+    private TextField zInput;
+    private TextField nameInput;
+
     public EnterLocationWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
 
         stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.location.title"));
         stage.setScene(createEnterLocationScene());
+    }
+
+    public EnterLocationWindow(Stage stage, Location initialLoc) {
+        this(stage);
+        if (initialLoc != null) {
+            xInput.setText(initialLoc.getX() != null ? String.valueOf(initialLoc.getX()) : "");
+            yInput.setText(initialLoc.getY() != null ? String.valueOf(initialLoc.getY()) : "");
+            zInput.setText(initialLoc.getZ() != null ? String.valueOf(initialLoc.getZ()) : "");
+            nameInput.setText(initialLoc.getName() != null ? initialLoc.getName() : "");
+        }
     }
 
     public Scene createEnterLocationScene() {
@@ -61,13 +75,13 @@ public class EnterLocationWindow {
         zLabel.setTextFill(Color.WHITE);
         nameLabel.setTextFill(Color.WHITE);
 
-        TextField xInput = new TextField();
+        xInput = new TextField();
         xInput.setFont(simpleFont);
-        TextField yInput = new TextField();
+        yInput = new TextField();
         yInput.setFont(simpleFont);
-        TextField zInput = new TextField();
+        zInput = new TextField();
         zInput.setFont(simpleFont);
-        TextField nameInput = new TextField();
+        nameInput = new TextField();
         nameInput.setFont(simpleFont);
 
         Button executeBtn = new Button();
