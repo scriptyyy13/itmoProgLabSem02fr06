@@ -123,6 +123,7 @@ public class Dragon implements Comparable<Dragon>, Serializable {
         String locY = loc != null ? String.valueOf(loc.getY()) : "";
         String locZ = loc != null ? String.valueOf(loc.getZ()) : "";
         String locName = (loc != null && loc.getName() != null) ? loc.getName() : "";
+        String creator_id = String.valueOf(this.getCreatorId());
 
         return String.join(",",
                 String.valueOf(id),
@@ -141,7 +142,8 @@ public class Dragon implements Comparable<Dragon>, Serializable {
                 locX,
                 locY,
                 locZ,
-                locName
+                locName,
+                creator_id
         );
     }
 

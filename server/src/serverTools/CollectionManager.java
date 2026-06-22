@@ -29,7 +29,7 @@ public class CollectionManager {
     /**
      * Колонки csv таблицы драконов.
      */
-    private static final String CSV_HEADER = "id,name,coordinate_x,coordinate_y,creationDate,age,weight,speaking,color,killer_name,killer_birthday,killer_passportID,killer_nationality,location_x,location_y,location_z,location_name";
+    private static final String CSV_HEADER = "id,name,coordinate_x,coordinate_y,creationDate,age,weight,speaking,color,killer_name,killer_birthday,killer_passportID,killer_nationality,location_x,location_y,location_z,location_name,creator_id";
 
     public CollectionManager(ConcurrentLinkedDeque<Dragon> collection) {
         this.creationTime = new Date();
