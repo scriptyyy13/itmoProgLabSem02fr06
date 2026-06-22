@@ -21,9 +21,16 @@ public class MainWindow {
     private final String BG_COLOR = "#2a3950";
     private final int WIDTH = 1280;
     private final int HEIGHT = 720;
+    public Canvas visual;
+    public TextArea output;
+    public Button[] buttons;
+    public final String[] buttonsNames = {"Add","AddIfMin", "AddIfMax", "Update","RemoveById","Clear", "RemoveHead", "AverageOfAge", "UniqueWeight", "Show"};
 
     public MainWindow(Stage stage){
+
         this.stage = stage;
+        this.stage.setScene(createMainScene());
+        this.stage.setResizable(false);
     }
 
     private Scene createMainScene(){
@@ -50,24 +57,26 @@ public class MainWindow {
 
 
         VBox userButtonsArea = new VBox(15);
-        Button[] userButtons = new Button[10];
-        String[] buttonsNames = {"Добавить","Добавить если максимальное", "Добавить если минимальное", "Обновить элемент","Удалить элемент","Очистить", "Удалить первый элемент", "Средний возраст", "Уникальный вес", "Показать коллекцию"};
+        buttons = new Button[10];
+
         for(int i=0;i<10;i++){
-            userButtons[i] = new Button(buttonsNames[i]);
-            userButtonsArea.getChildren().add(userButtons[i]);
-            userButtons[i].setPrefWidth(250);
-            userButtons[i].setFont(simpleFont);
+            buttons[i] = new Button(buttonsNames[i]);
+            userButtonsArea.getChildren().add(buttons[i]);
+            buttons[i].setPrefWidth(250);
+            buttons[i].setFont(simpleFont);
         }
         userButtonsArea.setPadding(new Insets(25,0,0,20));
 
         //здесь админские команды
 
         var vizArea = createVizArea(600,600,0,100,0,100);
+        visual = (Canvas) vizArea.getChildren().get(1);
         vizArea.setAlignment(Pos.TOP_LEFT);
         vizArea.setPadding(new Insets(25,0,0,60));
 
         HBox center = new HBox();
         TextArea textArea = new TextArea();
+        output = textArea;
         center.getChildren().addAll(vizArea,textArea);
         HBox.setMargin(textArea, new Insets(25,0,0,25));
         textArea.setMaxWidth(275);
@@ -117,8 +126,7 @@ public class MainWindow {
 
 
     public void show(){
-        stage.setScene(createMainScene());
-        stage.setResizable(false);
         stage.show();
     }
+
 }

@@ -28,7 +28,10 @@ public class AuthorizationWindow {
     public Label error;
 
     public AuthorizationWindow(Stage stage){
+
         this.stage = stage;
+        this.stage.setResizable(false);
+        this.stage.setScene(createLoginScene());
     }
 
     private Scene createLoginScene(){
@@ -96,10 +99,13 @@ public class AuthorizationWindow {
         return new Scene(root,WIDTH,HEIGHT);
     }
 
-    public void show(){
-        stage.setScene(createLoginScene());
+    public void showAndWait(){
+        stage.showAndWait();
+    }
+
+    public void createScene(){
         stage.setResizable(false);
-        stage.show();
+        stage.setScene(createLoginScene());
     }
 
     public void close(){
