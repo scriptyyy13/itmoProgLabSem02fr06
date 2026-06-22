@@ -24,7 +24,7 @@ public class MainWindow {
     public Canvas visual;
     public TextArea output;
     public Button[] buttons;
-    public final String[] buttonsNames = {"Add","AddIfMin", "AddIfMax", "Update","RemoveById","Clear", "RemoveHead", "AverageOfAge", "UniqueWeight", "Show"};
+    public static final String[] buttonsNames = {"Add","AddIfMin", "AddIfMax", "Update","RemoveById","Clear", "RemoveHead", "AverageOfAge", "UniqueWeight", "Show"};
 
     public MainWindow(Stage stage){
 

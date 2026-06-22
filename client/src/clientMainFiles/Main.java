@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import models.Dragon;
 import network.Response;
 import network.UDPClient;
 import sharedTools.Arg;
@@ -72,17 +73,13 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Java & Drakonchiki®");
 
-        Stage stg = new Stage();
-        EnterDragonWindow epw = new EnterDragonWindow(stg);
-        var val = epw.showAndGetDragon();
-        System.out.println(val);
-        /*Stage authStage = new Stage();
+        Stage authStage = new Stage();
         AuthorizationWindow authorizationWindow = new AuthorizationWindow(authStage);
         startLogin(authorizationWindow);
 
         MainWindow mainWindow = new MainWindow(stage);
         setMainButtonsActions(mainWindow);
-        mainWindow.show();*/
+        mainWindow.show();
 
     }
 
@@ -92,6 +89,7 @@ public class Main extends Application {
             mw.buttons[i].setOnAction(e -> {
                 Stage commandStage = new Stage();
                 CommandWindow commandWindow = new CommandWindow(commandStage,mw.buttonsNames[finalI]);
+                setCommandWindowButtons(commandWindow,mw);
                 commandStage.initModality(Modality.APPLICATION_MODAL);
                 commandWindow.show();
             });
@@ -123,8 +121,97 @@ public class Main extends Application {
         });
     }
 
-    private void setCommandWindow(int i){
+    private void setCommandWindowButtons(CommandWindow cw,MainWindow mw){
+        Dragon[] inputtedDragon = new Dragon[1];
+        switch (cw.commandName){
+            case "Add":
 
+                cw.enterModel.setOnAction(e->{
+                    Stage inputStage = new Stage();
+                    EnterDragonWindow edw = new EnterDragonWindow(inputStage);
+                    inputStage.initModality(Modality.APPLICATION_MODAL);
+                    inputtedDragon[0] = edw.showAndGetDragon();
+                });
+                cw.executeButton.setOnAction(e ->{
+                    if(inputtedDragon[0] ==null) return;
+                    Response response = clientCore.executeCommand("add",new Arg[]{new Arg(inputtedDragon[0])});
+                    if(response.isSuccess()){
+                        mw.output.appendText(response.getData());
+                        cw.close();
+                    }else{
+                        cw.errorLabel.setText(response.getData());
+                    }
+                });
+                break;
+            case "AddIfMax":
+                cw.enterModel.setOnAction(e->{
+                    Stage inputStage = new Stage();
+                    EnterDragonWindow edw = new EnterDragonWindow(inputStage);
+                    inputStage.initModality(Modality.APPLICATION_MODAL);
+                    inputtedDragon[0] = edw.showAndGetDragon();
+                });
+                cw.executeButton.setOnAction(e ->{
+                    if(inputtedDragon[0] ==null) return;
+                    Response response = clientCore.executeCommand("add_if_max",new Arg[]{new Arg(inputtedDragon[0])});
+                    if(response.isSuccess()){
+                        mw.output.appendText(response.getData());
+                        cw.close();
+                    }else{
+                        cw.errorLabel.setText(response.getData());
+                    }
+                });
+                break;
+            case "AddIfMin":
+                cw.enterModel.setOnAction(e->{
+                    Stage inputStage = new Stage();
+                    EnterDragonWindow edw = new EnterDragonWindow(inputStage);
+                    inputStage.initModality(Modality.APPLICATION_MODAL);
+                    inputtedDragon[0] = edw.showAndGetDragon();
+                });
+                cw.executeButton.setOnAction(e ->{
+                    if(inputtedDragon[0] ==null) return;
+                    Response response = clientCore.executeCommand("add_if_min",new Arg[]{new Arg(inputtedDragon[0])});
+                    if(response.isSuccess()){
+                        mw.output.appendText(response.getData());
+                        cw.close();
+                    }else{
+                        cw.errorLabel.setText(response.getData());
+                    }
+                });
+                break;
+            case "Update":
+                cw.enterModel.setOnAction(e->{
+                    Stage inputStage = new Stage();
+                    EnterDragonWindow edw = new EnterDragonWindow(inputStage);
+                    inputStage.initModality(Modality.APPLICATION_MODAL);
+                    inputtedDragon[0] = edw.showAndGetDragon();
+                });
+                cw.executeButton.setOnAction(e ->{
+                    if(inputtedDragon[0] ==null) return;
+                    Response response = clientCore.executeCommand("update",new Arg[]{new Arg(cw.argsWindows[0].getText()),new Arg(inputtedDragon[0])});
+                    if(response.isSuccess()){
+                        mw.output.appendText(response.getData());
+                        cw.close();
+                    }else{
+                        cw.errorLabel.setText(response.getData());
+                    }
+                });
+                break;
+            case "RemoveById":
+
+                cw.executeButton.setOnAction(e ->{
+                    Response response = clientCore.executeCommand("remove_by_id",new Arg[]{new Arg(cw.argsWindows[0].getText())});
+                    if(response.isSuccess()){
+                        mw.output.appendText(response.getData());
+                        cw.close();
+                    }else{
+                        cw.errorLabel.setText(response.getData());
+                    }
+                });
+                break;
+
+
+        }
     }
 
     private void startLogin(AuthorizationWindow aw){
