@@ -117,8 +117,18 @@ public class Main extends Application {
         });
         mw.buttons[9].setOnAction(e -> {
             Response response = clientCore.executeCommand("show", new Arg[0]);
-            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
+            //mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
+            Stage showStage = new Stage();
+            ShowWindow showWindow = new ShowWindow(showStage);
+            if(response.isSuccess()) {
+                showWindow.setTableFromCSV(response.getData());
+                showStage.initModality(Modality.APPLICATION_MODAL);
+                showWindow.show();
+            }else{
+                mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
+            }
         });
+
     }
 
     private void setCommandWindowButtons(CommandWindow cw, MainWindow mw) {

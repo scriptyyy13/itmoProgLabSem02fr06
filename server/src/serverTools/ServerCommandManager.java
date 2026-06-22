@@ -175,6 +175,7 @@ public class ServerCommandManager {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Ошибка при десериализации или обработке входящего пакета: " + e.getMessage());
         }
     }
