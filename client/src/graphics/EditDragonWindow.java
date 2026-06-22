@@ -1,5 +1,6 @@
 package graphics;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -41,14 +42,21 @@ public class EditDragonWindow {
     private Person killer;
 
     private final Color ownerColor;
+    private final DragonTableRow initialRow;
 
     private Label nameVal, ageVal, weightVal, speakVal, colorVal, killerVal, coordsVal;
 
     public EditDragonWindow(Stage stage, DragonTableRow initialRow, Color ownerColor) {
         this.stage = stage;
+        this.initialRow = initialRow;
         this.ownerColor = ownerColor;
         stage.setResizable(false);
 
+        stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.edit.title"));
+        stage.setScene(createEditScene());
+    }
+
+    private void loadDataFromRow() {
         this.id = initialRow.getId();
         this.creatorId = initialRow.getCreatorId();
         this.name = initialRow.getName();
@@ -81,9 +89,6 @@ public class EditDragonWindow {
         } else {
             this.killer = null;
         }
-
-        stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.edit.title"));
-        stage.setScene(createEditScene());
     }
 
     public Scene createEditScene() {
@@ -111,7 +116,7 @@ public class EditDragonWindow {
         colorCircle.setStroke(Color.BLACK);
         colorCircle.setStrokeWidth(1);
 
-        Label idLabel = new Label("ID: " + id);
+        Label idLabel = new Label();
         idLabel.setFont(idFont);
         idLabel.setTextFill(Color.WHITE);
 
@@ -128,9 +133,6 @@ public class EditDragonWindow {
         speakVal = createValueLabel("", simpleFont);
         colorVal = createValueLabel("", simpleFont);
         killerVal = createValueLabel("", simpleFont);
-
-        // Первичное заполнение текстовых меток с учетом текущей локали
-        refreshLabelsText();
 
         HBox rowName = createFormRow(nameVal, "gui.edit.btn.modify", simpleFont, this::editBaseFields);
         HBox rowCoords = createFormRow(coordsVal, "gui.edit.btn.modify", simpleFont, this::editCoordinates);
@@ -156,18 +158,21 @@ public class EditDragonWindow {
         });
         bottomBar.getChildren().add(deleteBtn);
 
-        // Проверка прав доступа
-        boolean hasAccess = String.valueOf(creatorId).equals(ConfigManager.login) || "admin".equals(ConfigManager.role);
-        if (!hasAccess) {
-            deleteBtn.setDisable(true);
+        stage.setOnShowing(windowEvent -> {
+            loadDataFromRow();
+            idLabel.setText("ID: " + id);
+            refreshLabelsText();
+
+            boolean hasAccess = String.valueOf(creatorId).equals(ConfigManager.login) || "admin".equals(ConfigManager.role);
+            deleteBtn.setDisable(!hasAccess);
             mainContent.getChildren().forEach(node -> {
                 if (node instanceof HBox) {
                     ((HBox) node).getChildren().stream()
                             .filter(child -> child instanceof Button)
-                            .forEach(btn -> btn.setDisable(true));
+                            .forEach(btn -> btn.setDisable(!hasAccess));
                 }
             });
-        }
+        });
 
         root.getChildren().addAll(topHeader, mainContent, bottomBar);
         return new Scene(root, WIDTH, HEIGHT);

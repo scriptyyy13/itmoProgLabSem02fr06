@@ -195,10 +195,11 @@ public class MainWindow extends BaseWindow {
                                 LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.color") + rowData.getColor() + "\n" +
                                 LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.creator") + rowData.getCreatorId();
 
+                Color fillOwnerColor = generateColorFromId(rowData.getCreatorId());
+
                 if (!activeCircles.containsKey(id)) {
                     // анимация появления
                     Circle circle = new Circle(cx, cy, 12);
-                    Color fillOwnerColor = generateColorFromId(rowData.getCreatorId());
                     circle.setFill(fillOwnerColor);
                     circle.setStroke(Color.BLACK);
                     circle.setStrokeWidth(1.0);
@@ -228,6 +229,14 @@ public class MainWindow extends BaseWindow {
                     Circle c = activeCircles.get(id);
                     c.setCenterX(cx);
                     c.setCenterY(cy);
+
+                    // перезначение слушателя
+                    c.setOnMouseClicked(event -> {
+                        Stage editStage = new Stage();
+                        editStage.initModality(Modality.APPLICATION_MODAL);
+                        EditDragonWindow edw = new EditDragonWindow(editStage, rowData, fillOwnerColor);
+                        edw.showAndWait();
+                    });
 
                     javafx.scene.control.Tooltip updatedTooltip = new javafx.scene.control.Tooltip(tooltipText);
                     updatedTooltip.setFont(Font.font("Arial", 13));
