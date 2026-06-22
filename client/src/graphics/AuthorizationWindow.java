@@ -1,53 +1,46 @@
 package graphics;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.text.NumberFormat;
-
-/**
- * Окно авторизации и регистрации пользователя.
- */
-public class AuthorizationWindow {
-    private Stage stage;
+public class AuthorizationWindow extends BaseWindow {
     private final String BG_COLOR = "#2a3950";
     private final String CARD_COLOR = "#43506C";
-    private final int WIDTH = 1280;
-    private final int HEIGHT = 720;
+
     public Button loginBtn;
     public Button regBtn;
     public TextField username;
     public TextField password;
     public Label error;
 
-    /**
-     * Флаг, определяющий, прошел ли пользователь авторизацию.
-     */
     private boolean authenticated = false;
 
     public AuthorizationWindow(Stage stage) {
-        this.stage = stage;
+        super(stage);
         this.stage.setResizable(false);
-        this.stage.setScene(createLoginScene());
+        initScene();
     }
 
-    private Scene createLoginScene() {
+    @Override
+    protected Region buildUI() { // Переопределяем buildUI
         Font titleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 90);
         Font buttonFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
         Font fieldFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 17);
+
         VBox root = new VBox();
+        root.setPrefSize(WIDTH, HEIGHT - 25);
         root.setAlignment(Pos.TOP_CENTER);
         root.setStyle("-fx-background-color: " + BG_COLOR + ";");
+
         Label title = new Label("Java & Drakonchiki");
         title.setFont(titleFont);
         title.setTextFill(Color.WHITE);
@@ -99,7 +92,6 @@ public class AuthorizationWindow {
 
         fields.getChildren().addAll(username, password);
         row.getChildren().addAll(buttons, fields);
-
         card.getChildren().addAll(row, error);
 
         Label authors = new Label("by scriptyyy, prikolist667");
@@ -107,31 +99,16 @@ public class AuthorizationWindow {
         authors.setTextFill(Color.WHITE);
         VBox.setMargin(authors, new Insets(100, 0, 0, 0));
         root.getChildren().addAll(title, card, authors);
-        return new Scene(root, WIDTH, HEIGHT);
+
+        return root;
     }
 
-    /**
-     * Возвращает статус успешности авторизации.
-     * * @return {@code true}, если пользователь вошел, иначе {@code false}.
-     */
     public boolean isAuthenticated() {
         return authenticated;
     }
 
-    /**
-     * Переводит окно в статус успешной авторизации и закрывает его.
-     * Этот метод нужно вызвать, когда сервер прислал успешный ответ на вход/регистрацию.
-     */
     public void setAuthenticatedSuccess() {
         this.authenticated = true;
         close();
-    }
-
-    public void showAndWait() {
-        stage.showAndWait();
-    }
-
-    public void close() {
-        stage.close();
     }
 }

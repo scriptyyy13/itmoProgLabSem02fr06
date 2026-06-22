@@ -13,54 +13,31 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
-/**
- * Менеджер для динамической смены локали без перезапуска приложения.
- */
 public class LocalizationManager {
-    /**
-     * Относительный путь к папке с файлами локализации от корня проекта.
-     */
     private static final String TRANSLATIONS_PATH = "client/src/graphics/resources/translations/";
-
-    /**
-     * Свойство, хранящее текущий пакет ресурсов.
-     */
     private static final ObjectProperty<ResourceBundle> bundle = new SimpleObjectProperty<>();
 
     static {
-        // По умолчанию ставим русскую локаль
         setLocale(new Locale("ru"));
     }
 
-    /**
-     * Возвращает текущий пакет ресурсов.
-     *
-     * @return текущий {@code ResourceBundle}.
-     */
-    public static ResourceBundle getBundle() {
-        return bundle.get();
-    }
+    public static ResourceBundle getBundle() { return bundle.get(); }
+    public static ObjectProperty<ResourceBundle> bundleProperty() { return bundle; }
 
-    /**
-     * Возвращает свойство пакета ресурсов для связывания (binding).
-     *
-     * @return свойство {@code ObjectProperty<ResourceBundle>}.
-     */
-    public static ObjectProperty<ResourceBundle> bundleProperty() {
-        return bundle;
-    }
-
-    /**
-     * Смена языка на лету. Читает файлы напрямую из файловой системы по пути {@link #TRANSLATIONS_PATH}.
-     *
-     * @param locale новая локаль для установки.
-     */
     public static void setLocale(Locale locale) {
         Locale.setDefault(locale);
         try {
-            File file = new File(TRANSLATIONS_PATH + "messages_" + locale.getLanguage() + ".properties");
+            String suffix = locale.getCountry().isEmpty() ? locale.getLanguage() : locale.getLanguage() + "_" + locale.getCountry();
+            File file = new File(TRANSLATIONS_PATH + "messages_" + suffix + ".properties");
 
+            if (!file.exists()) {
+                file = new File(TRANSLATIONS_PATH + "messages_" + locale.getLanguage() + ".properties");
+            }
             if (!file.exists()) {
                 file = new File(TRANSLATIONS_PATH + "messages.properties");
             }
@@ -68,63 +45,95 @@ public class LocalizationManager {
             if (file.exists()) {
                 try (FileInputStream fis = new FileInputStream(file);
                      InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
-
                     ResourceBundle rb = new PropertyResourceBundle(isr);
                     bundle.set(rb);
                 }
-            } else {
-                System.err.println("Файл локализации не найден по пути: " + file.getAbsolutePath());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Создает привязку для простых строк без аргументов.
-     *
-     * @param key ключ локализации из файла свойств.
-     * @return строковая привязка {@code StringBinding}.
-     */
     public static StringBinding createStringBinding(String key) {
         return Bindings.createStringBinding(() -> {
-            try {
-                return bundle.get().getString(key.trim());
-            } catch (Exception e) {
-                return key; // Если ключ не найден, возвращаем сам ключ
-            }
+            try { return bundle.get().getString(key.trim()); }
+            catch (Exception e) { return key; }
         }, bundle);
     }
 
-    /**
-     * Метод для форматирования строк.
-     *
-     * @param serverResponse сырой ответ от сервера, содержащий код и ключ с аргументами.
-     * @return локализованная строка.
-     */
     public static String getLocalizedMessage(String serverResponse) {
-        if (serverResponse == null) {
-            return "";
-        }
-
+        if (serverResponse == null) return "";
         String cleanResponse = serverResponse.trim();
         if (cleanResponse.contains(":")) {
             cleanResponse = cleanResponse.substring(cleanResponse.indexOf(":") + 1);
         }
-
         try {
             if (cleanResponse.contains(";")) {
                 String[] parts = cleanResponse.split(";");
                 String key = parts[0].trim();
                 Object[] args = java.util.Arrays.copyOfRange(parts, 1, parts.length);
-
-                String rawMessage = bundle.get().getString(key);
-                return MessageFormat.format(rawMessage, args);
+                return MessageFormat.format(bundle.get().getString(key), args);
             } else {
                 return bundle.get().getString(cleanResponse);
             }
         } catch (Exception e) {
             return cleanResponse;
         }
+    }
+
+    /**
+     * Создает MenuBar. Вызывается автоматически базовым классом окон.
+     */
+    public static MenuBar createGlobalMenuBar() {
+        MenuBar menuBar = new MenuBar();
+
+        Menu mainMenu = new Menu();
+        mainMenu.textProperty().bind(createStringBinding("gui.menu.main"));
+
+        MenuItem helpItem = new MenuItem();
+        helpItem.textProperty().bind(createStringBinding("gui.menu.help"));
+        helpItem.setOnAction(e -> showHelpAlert());
+
+        MenuItem infoItem = new MenuItem();
+        infoItem.textProperty().bind(createStringBinding("gui.menu.info"));
+        infoItem.setOnAction(e -> showInfoAlert());
+
+        mainMenu.getItems().addAll(helpItem, infoItem);
+
+        Menu langMenu = new Menu();
+        langMenu.textProperty().bind(createStringBinding("gui.menu.language"));
+
+        MenuItem ruLang = new MenuItem("Русский");
+        ruLang.setOnAction(e -> setLocale(new Locale("ru")));
+
+        MenuItem fiLang = new MenuItem("Suomi");
+        fiLang.setOnAction(e -> setLocale(new Locale("fi")));
+
+        MenuItem ltLang = new MenuItem("Lietuvių");
+        ltLang.setOnAction(e -> setLocale(new Locale("lt")));
+
+        MenuItem ieLang = new MenuItem("English (Ireland)");
+        ieLang.setOnAction(e -> setLocale(new Locale("en", "IE")));
+
+        langMenu.getItems().addAll(ruLang, fiLang, ltLang, ieLang);
+        menuBar.getMenus().addAll(mainMenu, langMenu);
+
+        return menuBar;
+    }
+
+    private static void showHelpAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.titleProperty().bind(createStringBinding("gui.help.title"));
+        alert.headerTextProperty().bind(createStringBinding("gui.help.header"));
+        alert.contentTextProperty().bind(createStringBinding("gui.help.content"));
+        alert.showAndWait();
+    }
+
+    private static void showInfoAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.titleProperty().bind(createStringBinding("gui.info.title"));
+        alert.headerTextProperty().bind(createStringBinding("gui.info.header"));
+        alert.contentTextProperty().bind(createStringBinding("gui.info.content"));
+        alert.showAndWait();
     }
 }

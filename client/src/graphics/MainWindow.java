@@ -2,7 +2,6 @@ package graphics;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -14,32 +13,28 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import utils.ConfigManager;
 
-/**
- * Главное окно приложения с визуализацией коллекции и панелью управления.
- */
-public class MainWindow {
-    private Stage stage;
+public class MainWindow extends BaseWindow {
     private final String BG_COLOR = "#2a3950";
-    private final int WIDTH = 1280;
-    private final int HEIGHT = 720;
     public Canvas visual;
     public TextArea output;
     public Button[] buttons;
 
     public static final String[] buttonsNames = {"Add", "AddIfMin", "AddIfMax", "Update", "RemoveById", "Clear", "RemoveHead", "AverageOfAge", "UniqueWeight", "Show"};
+    public static final String[] adminButtonsNames = {"balancer_status", "add_server", "remove_server"};
 
     public MainWindow(Stage stage) {
-        this.stage = stage;
-        this.stage.setScene(createMainScene());
+        super(stage);
         this.stage.setResizable(false);
+        initScene();
     }
 
-    private Scene createMainScene() {
+    @Override
+    protected Region buildUI() { // Переопределяем buildUI
         Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
         Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 15);
 
         BorderPane root = new BorderPane();
-        root.setPrefSize(WIDTH, HEIGHT);
+        root.setPrefSize(WIDTH, HEIGHT - 25);
         root.setStyle("-fx-background-color: " + BG_COLOR + ";");
         HBox topbar = new HBox();
 
@@ -52,7 +47,7 @@ public class MainWindow {
         textAreaLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.main.output_label"));
 
         HBox.setMargin(welcome, new Insets(15, 0, 0, 15));
-        HBox.setMargin(textAreaLabel, new Insets(15, 0, 0, 625));
+        HBox.setMargin(textAreaLabel, new Insets(15, 0, 0, 730));
         topbar.getChildren().addAll(welcome, textAreaLabel);
         welcome.setAlignment(Pos.TOP_LEFT);
         textAreaLabel.setAlignment(Pos.TOP_RIGHT);
@@ -62,7 +57,7 @@ public class MainWindow {
         textAreaLabel.setTextFill(Color.WHITE);
 
         VBox userButtonsArea = new VBox(15);
-        buttons = new Button[10];
+        buttons = new Button[13];
 
         for (int i = 0; i < 10; i++) {
             buttons[i] = new Button();
@@ -73,6 +68,19 @@ public class MainWindow {
             buttons[i].setPrefWidth(250);
             buttons[i].setFont(simpleFont);
         }
+
+        if ("admin".equals(ConfigManager.role)) {
+            for (int i = 10; i < 13; i++) {
+                buttons[i] = new Button();
+                String localizationKey = "gui.main.btn." + adminButtonsNames[i - 10].toLowerCase();
+                buttons[i].textProperty().bind(LocalizationManager.createStringBinding(localizationKey));
+
+                userButtonsArea.getChildren().add(buttons[i]);
+                buttons[i].setPrefWidth(250);
+                buttons[i].setFont(simpleFont);
+            }
+        }
+
         userButtonsArea.setPadding(new Insets(25, 0, 0, 20));
 
         var vizArea = createVizArea(600, 600, 0, 100, 0, 100);
@@ -95,16 +103,14 @@ public class MainWindow {
         root.setTop(topbar);
         root.setCenter(center);
 
-        return new Scene(root);
+        return root;
     }
 
     private StackPane createVizArea(double width, double height, double minx, double maxx, double miny, double maxy) {
         Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.WHITE);
+        gc.getCanvas().getGraphicsContext2D().setFill(Color.WHITE);
         gc.fillRect(0, 0, width, height);
-
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1.0);
 
@@ -118,14 +124,8 @@ public class MainWindow {
         }
         Pane vizArea = new Pane();
         vizArea.setMaxSize(width, height);
-
         StackPane gridContainer = new StackPane();
         gridContainer.getChildren().addAll(vizArea, canvas);
-
         return gridContainer;
-    }
-
-    public void show() {
-        stage.show();
     }
 }
