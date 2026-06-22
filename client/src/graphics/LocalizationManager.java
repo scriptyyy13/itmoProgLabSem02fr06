@@ -13,7 +13,7 @@ import javafx.beans.property.SimpleObjectProperty;
  * Менеджер для динамической смены локали без перезапуска приложения.
  */
 public class LocalizationManager {
-    private static final String BUNDLE_NAME = "translations/messages_ru.properties";
+    private static final String BUNDLE_NAME = "translations";
 
     // Свойство, хранящее текущий пакет ресурсов
     private static final ObjectProperty<ResourceBundle> bundle = new SimpleObjectProperty<>();
