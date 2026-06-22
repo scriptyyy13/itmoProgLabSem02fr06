@@ -75,180 +75,174 @@ public class Main extends Application {
 
         Stage authStage = new Stage();
         AuthorizationWindow authorizationWindow = new AuthorizationWindow(authStage);
+
         startLogin(authorizationWindow);
 
-        MainWindow mainWindow = new MainWindow(stage);
-        setMainButtonsActions(mainWindow);
-        mainWindow.show();
-
+        if (authorizationWindow.isAuthenticated()) {
+            MainWindow mainWindow = new MainWindow(stage);
+            setMainButtonsActions(mainWindow);
+            mainWindow.show();
+        } else {
+            Platform.exit();
+        }
     }
 
     private void setMainButtonsActions(MainWindow mw) {
-        for(int i =0;i<5;i++){
+        for (int i = 0; i < 5; i++) {
             int finalI = i;
             mw.buttons[i].setOnAction(e -> {
                 Stage commandStage = new Stage();
-                CommandWindow commandWindow = new CommandWindow(commandStage,mw.buttonsNames[finalI]);
-                setCommandWindowButtons(commandWindow,mw);
+                CommandWindow commandWindow = new CommandWindow(commandStage, mw.buttonsNames[finalI]);
+                setCommandWindowButtons(commandWindow, mw);
                 commandStage.initModality(Modality.APPLICATION_MODAL);
                 commandWindow.show();
             });
 
         }
-        mw.buttons[5].setOnAction(e ->{
-            Response response = clientCore.executeCommand("clear",new Arg[0]);
-            mw.output.appendText(response.getData() +'\n');
+        mw.buttons[5].setOnAction(e -> {
+            Response response = clientCore.executeCommand("clear", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
-        mw.buttons[6].setOnAction(e ->{
-            Response response = clientCore.executeCommand("remove_head",new Arg[0]);
-            mw.output.appendText(response.getData() +'\n');
+        mw.buttons[6].setOnAction(e -> {
+            Response response = clientCore.executeCommand("remove_head", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
-        mw.buttons[7].setOnAction(e ->{
-            Response response = clientCore.executeCommand("average_of_age",new Arg[0]);
-            mw.output.appendText(response.getData() +'\n');
+        mw.buttons[7].setOnAction(e -> {
+            Response response = clientCore.executeCommand("average_of_age", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
-        mw.buttons[8].setOnAction(e ->{
-            Response response = clientCore.executeCommand("print_unique_weight",new Arg[0]);
-            //System.out.println(response.getData());
-            //System.out.println(22);
-            mw.output.appendText(response.getData() +'\n');
+        mw.buttons[8].setOnAction(e -> {
+            Response response = clientCore.executeCommand("print_unique_weight", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
-        mw.buttons[9].setOnAction(e ->{
-            Response response = clientCore.executeCommand("show",new Arg[0]);
-            //System.out.println(response.getData());
-            //System.out.println(22);
-            mw.output.appendText(response.getData() +'\n');
+        mw.buttons[9].setOnAction(e -> {
+            Response response = clientCore.executeCommand("show", new Arg[0]);
+            mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
         });
     }
 
-    private void setCommandWindowButtons(CommandWindow cw,MainWindow mw){
+    private void setCommandWindowButtons(CommandWindow cw, MainWindow mw) {
         Dragon[] inputtedDragon = new Dragon[1];
-        switch (cw.commandName){
+        switch (cw.commandName) {
             case "Add":
-
-                cw.enterModel.setOnAction(e->{
+                cw.enterModel.setOnAction(e -> {
                     Stage inputStage = new Stage();
                     EnterDragonWindow edw = new EnterDragonWindow(inputStage);
                     inputStage.initModality(Modality.APPLICATION_MODAL);
                     inputtedDragon[0] = edw.showAndGetDragon();
                 });
-                cw.executeButton.setOnAction(e ->{
-                    if(inputtedDragon[0] ==null) return;
-                    Response response = clientCore.executeCommand("add",new Arg[]{new Arg(inputtedDragon[0])});
-                    if(response.isSuccess()){
-                        mw.output.appendText(response.getData());
+                cw.executeButton.setOnAction(e -> {
+                    if (inputtedDragon[0] == null) return;
+                    Response response = clientCore.executeCommand("add", new Arg[]{new Arg(inputtedDragon[0])});
+                    if (response.isSuccess()) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
                         cw.close();
-                    }else{
-                        cw.errorLabel.setText(response.getData());
+                    } else {
+                        cw.errorLabel.setText(LocalizationManager.getLocalizedMessage(response.getData()));
                     }
                 });
                 break;
             case "AddIfMax":
-                cw.enterModel.setOnAction(e->{
+                cw.enterModel.setOnAction(e -> {
                     Stage inputStage = new Stage();
                     EnterDragonWindow edw = new EnterDragonWindow(inputStage);
                     inputStage.initModality(Modality.APPLICATION_MODAL);
                     inputtedDragon[0] = edw.showAndGetDragon();
                 });
-                cw.executeButton.setOnAction(e ->{
-                    if(inputtedDragon[0] ==null) return;
-                    Response response = clientCore.executeCommand("add_if_max",new Arg[]{new Arg(inputtedDragon[0])});
-                    if(response.isSuccess()){
-                        mw.output.appendText(response.getData());
+                cw.executeButton.setOnAction(e -> {
+                    if (inputtedDragon[0] == null) return;
+                    Response response = clientCore.executeCommand("add_if_max", new Arg[]{new Arg(inputtedDragon[0])});
+                    if (response.isSuccess()) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
                         cw.close();
-                    }else{
-                        cw.errorLabel.setText(response.getData());
+                    } else {
+                        cw.errorLabel.setText(LocalizationManager.getLocalizedMessage(response.getData()));
                     }
                 });
                 break;
             case "AddIfMin":
-                cw.enterModel.setOnAction(e->{
+                cw.enterModel.setOnAction(e -> {
                     Stage inputStage = new Stage();
                     EnterDragonWindow edw = new EnterDragonWindow(inputStage);
                     inputStage.initModality(Modality.APPLICATION_MODAL);
                     inputtedDragon[0] = edw.showAndGetDragon();
                 });
-                cw.executeButton.setOnAction(e ->{
-                    if(inputtedDragon[0] ==null) return;
-                    Response response = clientCore.executeCommand("add_if_min",new Arg[]{new Arg(inputtedDragon[0])});
-                    if(response.isSuccess()){
-                        mw.output.appendText(response.getData());
+                cw.executeButton.setOnAction(e -> {
+                    if (inputtedDragon[0] == null) return;
+                    Response response = clientCore.executeCommand("add_if_min", new Arg[]{new Arg(inputtedDragon[0])});
+                    if (response.isSuccess()) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
                         cw.close();
-                    }else{
-                        cw.errorLabel.setText(response.getData());
+                    } else {
+                        cw.errorLabel.setText(LocalizationManager.getLocalizedMessage(response.getData()));
                     }
                 });
                 break;
             case "Update":
-                cw.enterModel.setOnAction(e->{
+                cw.enterModel.setOnAction(e -> {
                     Stage inputStage = new Stage();
                     EnterDragonWindow edw = new EnterDragonWindow(inputStage);
                     inputStage.initModality(Modality.APPLICATION_MODAL);
                     inputtedDragon[0] = edw.showAndGetDragon();
                 });
-                cw.executeButton.setOnAction(e ->{
-                    if(inputtedDragon[0] ==null) return;
-                    Response response = clientCore.executeCommand("update",new Arg[]{new Arg(cw.argsWindows[0].getText()),new Arg(inputtedDragon[0])});
-                    if(response.isSuccess()){
-                        mw.output.appendText(response.getData());
+                cw.executeButton.setOnAction(e -> {
+                    if (inputtedDragon[0] == null) return;
+                    Response response = clientCore.executeCommand("update", new Arg[]{new Arg(cw.argsWindows[0].getText()), new Arg(inputtedDragon[0])});
+                    if (response.isSuccess()) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
                         cw.close();
-                    }else{
-                        cw.errorLabel.setText(response.getData());
+                    } else {
+                        cw.errorLabel.setText(LocalizationManager.getLocalizedMessage(response.getData()));
                     }
                 });
                 break;
             case "RemoveById":
-
-                cw.executeButton.setOnAction(e ->{
-                    Response response = clientCore.executeCommand("remove_by_id",new Arg[]{new Arg(cw.argsWindows[0].getText())});
-                    if(response.isSuccess()){
-                        mw.output.appendText(response.getData());
+                cw.executeButton.setOnAction(e -> {
+                    Response response = clientCore.executeCommand("remove_by_id", new Arg[]{new Arg(cw.argsWindows[0].getText())});
+                    if (response.isSuccess()) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
                         cw.close();
-                    }else{
-                        cw.errorLabel.setText(response.getData());
+                    } else {
+                        cw.errorLabel.setText(LocalizationManager.getLocalizedMessage(response.getData()));
                     }
                 });
                 break;
-
-
         }
     }
 
-    private void startLogin(AuthorizationWindow aw){
-        aw.createScene();
-        aw.loginBtn.setOnAction(e ->{
+    private void startLogin(AuthorizationWindow aw) {
+        aw.loginBtn.setOnAction(e -> {
             aw.loginBtn.setDisable(true);
-            Arg[] loginArgs = {new Arg(aw.username.getText()),new  Arg(aw.password.getText())};
-            Response response = clientCore.executeCommand("login",loginArgs);
+            Arg[] loginArgs = {new Arg(aw.username.getText()), new Arg(aw.password.getText())};
+            Response response = clientCore.executeCommand("login", loginArgs);
 
-                        if (response.isSuccess()) {
-                            ConfigManager.login = aw.username.getText();
-                            ConfigManager.token = response.getData();
-                            aw.close();
-                        } else {
-                            aw.error.setText(response.getData());
-                        }
-                        aw.loginBtn.setDisable(false);
-
-
+            if (response.isSuccess()) {
+                ConfigManager.login = aw.username.getText();
+                ConfigManager.token = response.getData();
+                aw.setAuthenticatedSuccess();
+            } else {
+                String errorText = LocalizationManager.getLocalizedMessage(response.getData());
+                aw.error.setText(errorText);
+            }
+            aw.loginBtn.setDisable(false);
         });
-        aw.regBtn.setOnAction(e ->{
+
+        aw.regBtn.setOnAction(e -> {
             aw.regBtn.setDisable(true);
-            Arg[] loginArgs = {new Arg(aw.username.getText()),new  Arg(aw.password.getText())};
-            Response response = clientCore.executeCommand("register",loginArgs);
+            Arg[] loginArgs = {new Arg(aw.username.getText()), new Arg(aw.password.getText())};
+            Response response = clientCore.executeCommand("register", loginArgs);
 
-                        if (response.isSuccess()) {
-                            ConfigManager.login = aw.username.getText();
-                            ConfigManager.token = response.getData();
-                            aw.close();
-
-                        } else {
-                            aw.error.setText(response.getData());
-                        }
-                        aw.regBtn.setDisable(false);
-
-
+            if (response.isSuccess()) {
+                ConfigManager.login = aw.username.getText();
+                ConfigManager.token = response.getData();
+                aw.setAuthenticatedSuccess();
+            } else {
+                String errorText = LocalizationManager.getLocalizedMessage(response.getData());
+                aw.error.setText(errorText);
+            }
+            aw.regBtn.setDisable(false);
         });
+
         aw.showAndWait();
     }
 

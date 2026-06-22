@@ -17,6 +17,9 @@ import models.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Окно создания и ввода параметров модели Дракона.
+ */
 public class EnterDragonWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
@@ -26,24 +29,34 @@ public class EnterDragonWindow {
     private Coordinates cords;
     private Person killer;
 
-    public EnterDragonWindow(Stage stage){
+    public EnterDragonWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
-        stage.setTitle("input Dragon");
+
+        stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.dragon.title"));
         stage.setScene(createEnterDragonScene());
     }
 
-    public Scene createEnterDragonScene(){
-        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
-        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),15);
+    public Scene createEnterDragonScene() {
+        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
+        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 15);
         VBox root = new VBox();
-        root.setStyle("-fx-background-color: " + BG_COLOR +";");
-        Label title = new Label("input Dragon");
-        Label nameLabel = new Label("input name");
-        Label ageLabel = new Label("input age");
-        Label weightLabel = new Label("input weight");
-        Label speakLabel = new Label("input speaking");
-        Label colorLabel = new Label("input color");
+        root.setStyle("-fx-background-color: " + BG_COLOR + ";");
+
+        Label title = new Label();
+        Label nameLabel = new Label();
+        Label ageLabel = new Label();
+        Label weightLabel = new Label();
+        Label speakLabel = new Label();
+        Label colorLabel = new Label();
+
+        title.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.title"));
+        nameLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.name"));
+        ageLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.age"));
+        weightLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.weight"));
+        speakLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.speaking"));
+        colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color"));
+
         title.setFont(bigFont);
         ageLabel.setFont(simpleFont);
         weightLabel.setFont(simpleFont);
@@ -67,34 +80,38 @@ public class EnterDragonWindow {
         speakInput.setFont(simpleFont);
         TextField colorInput = new TextField();
         colorInput.setFont(simpleFont);
-        Button executeBtn = new Button("enter");
+
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.enter"));
         executeBtn.setFont(simpleFont);
+
         Label errorLabel = new Label("");
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(simpleFont);
         HBox errorBox = new HBox(errorLabel);
         errorBox.setAlignment(Pos.CENTER);
 
-        Button cordsInput = new Button("enter Coordinates");
+        Button cordsInput = new Button();
+        cordsInput.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.coordinates"));
         cordsInput.setFont(simpleFont);
-        cordsInput.setOnAction(e ->{
+        cordsInput.setOnAction(e -> {
             Stage cordsInputStage = new Stage();
             cordsInputStage.initModality(Modality.APPLICATION_MODAL);
             EnterCoordinatesWindow ecw = new EnterCoordinatesWindow(cordsInputStage);
             this.cords = ecw.showAndGetCoordinates();
         });
 
-        Button killerInput = new Button("enter Killer");
+        Button killerInput = new Button();
+        killerInput.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.killer"));
         killerInput.setFont(simpleFont);
-        killerInput.setOnAction(e ->{
+        killerInput.setOnAction(e -> {
             Stage personInputStage = new Stage();
             personInputStage.initModality(Modality.APPLICATION_MODAL);
             EnterPersonWindow epw = new EnterPersonWindow(personInputStage);
             this.killer = epw.showAndGetPerson();
         });
 
-        root.getChildren().addAll(title,nameLabel,nameInput,cordsInput,ageLabel,ageInput,weightLabel,weightInput,speakLabel,speakInput, colorLabel,colorInput,killerInput,errorBox,executeBtn);
-
+        root.getChildren().addAll(title, nameLabel, nameInput, cordsInput, ageLabel, ageInput, weightLabel, weightInput, speakLabel, speakInput, colorLabel, colorInput, killerInput, errorBox, executeBtn);
 
         nameInput.setMaxWidth(125);
         ageInput.setMaxWidth(125);
@@ -102,28 +119,27 @@ public class EnterDragonWindow {
         speakInput.setMaxWidth(125);
         colorInput.setMaxWidth(125);
 
-        errorBox.setPadding(new Insets(20,0,0,0));
-        VBox.setMargin(title,new Insets(20,0,0,20));
-        VBox.setMargin(ageLabel,new Insets(20,0,0,20));
-        VBox.setMargin(weightLabel,new Insets(20,0,0,20));
-        VBox.setMargin(speakLabel,new Insets(20,0,0,20));
-        VBox.setMargin(nameLabel,new Insets(20,0,0,20));
-        VBox.setMargin(colorLabel,new Insets(20,0,0,20));
+        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        VBox.setMargin(title, new Insets(20, 0, 0, 20));
+        VBox.setMargin(ageLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(weightLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(speakLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(colorLabel, new Insets(20, 0, 0, 20));
 
-        VBox.setMargin(nameInput,new Insets(5,0,0,20));
-        VBox.setMargin(ageInput,new Insets(5,0,0,20));
-        VBox.setMargin(weightInput,new Insets(5,0,0,20));
-        VBox.setMargin(speakInput,new Insets(5,0,0,20));
-        VBox.setMargin(colorInput,new Insets(5,0,0,20));
+        VBox.setMargin(nameInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(ageInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(weightInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(speakInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(colorInput, new Insets(5, 0, 0, 20));
 
-        VBox.setMargin(cordsInput,new Insets(20,0,0,20));
-        VBox.setMargin(killerInput,new Insets(20,0,0,20));
+        VBox.setMargin(cordsInput, new Insets(20, 0, 0, 20));
+        VBox.setMargin(killerInput, new Insets(20, 0, 0, 20));
 
-        VBox.setMargin(executeBtn,new Insets(20,0,0,250));
+        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 250));
 
-
-        executeBtn.setOnAction(e ->{
-            try{
+        executeBtn.setOnAction(e -> {
+            try {
                 String name = nameInput.getText().trim();
                 Coordinates coordinates = cords;
                 Long age = Long.parseLong(ageInput.getText());
@@ -131,20 +147,19 @@ public class EnterDragonWindow {
                 Boolean speaking = Boolean.parseBoolean(speakInput.getText());
                 models.Color color = models.Color.valueOf(colorInput.getText().trim().toUpperCase());
                 Person killer = this.killer;
-                Dragon dragon = new Dragon(-1, name,coordinates,new Date(),age,weight,speaking,color,killer);
+                Dragon dragon = new Dragon(-1, name, coordinates, new Date(), age, weight, speaking, color, killer);
                 dragon.validate();
                 value = dragon;
                 stage.close();
             } catch (Exception ex) {
-                errorLabel.setText("error.incorrect_format");
+                errorLabel.setText(LocalizationManager.getLocalizedMessage("error.incorrect_format"));
             }
         });
-        return new Scene(root,WIDTH,HEIGHT);
+        return new Scene(root, WIDTH, HEIGHT);
     }
 
-    public Dragon showAndGetDragon(){
+    public Dragon showAndGetDragon() {
         stage.showAndWait();
         return value;
     }
-
 }

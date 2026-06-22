@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 
+/**
+ * Окно авторизации и регистрации пользователя.
+ */
 public class AuthorizationWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
@@ -27,38 +30,45 @@ public class AuthorizationWindow {
     public TextField password;
     public Label error;
 
-    public AuthorizationWindow(Stage stage){
+    /**
+     * Флаг, определяющий, прошел ли пользователь авторизацию.
+     */
+    private boolean authenticated = false;
 
+    public AuthorizationWindow(Stage stage) {
         this.stage = stage;
         this.stage.setResizable(false);
         this.stage.setScene(createLoginScene());
     }
 
-    private Scene createLoginScene(){
-        Font titleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),90);
-        Font buttonFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
-        Font fieldFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),17);
+    private Scene createLoginScene() {
+        Font titleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 90);
+        Font buttonFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
+        Font fieldFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 17);
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.setStyle("-fx-background-color: " + BG_COLOR + ";");
         Label title = new Label("Java & Drakonchiki");
         title.setFont(titleFont);
         title.setTextFill(Color.WHITE);
-        VBox.setMargin(title, new Insets(70,0,100,0));
-
+        VBox.setMargin(title, new Insets(70, 0, 100, 0));
 
         VBox card = new VBox(40);
         card.setAlignment(Pos.CENTER);
-        card.setStyle("-fx-background-color: " + CARD_COLOR+ "; -fx-background-radius: 20;");
+        card.setStyle("-fx-background-color: " + CARD_COLOR + "; -fx-background-radius: 20;");
         card.setMaxWidth(600);
         card.setPrefHeight(300);
 
         HBox row = new HBox(50);
         row.setAlignment(Pos.CENTER);
         VBox buttons = new VBox(15);
-        loginBtn = new Button("Вход");
-        regBtn = new Button("Регистрация");
-        buttons.getChildren().addAll(loginBtn,regBtn);
+        loginBtn = new Button();
+        regBtn = new Button();
+
+        loginBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.auth.login_btn"));
+        regBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.auth.register_btn"));
+
+        buttons.getChildren().addAll(loginBtn, regBtn);
         buttons.setAlignment(Pos.CENTER);
 
         error = new Label("");
@@ -78,38 +88,50 @@ public class AuthorizationWindow {
         VBox fields = new VBox(35);
         username = new TextField();
         password = new TextField();
-        username.setPromptText("Имя пользователя");
-        password.setPromptText("Пароль");
+
+        username.promptTextProperty().bind(LocalizationManager.createStringBinding("gui.auth.username_prompt"));
+        password.promptTextProperty().bind(LocalizationManager.createStringBinding("gui.auth.password_prompt"));
+
         username.setFont(fieldFont);
         password.setFont(fieldFont);
         username.setPrefHeight(40);
         password.setPrefHeight(40);
 
-        fields.getChildren().addAll(username,password);
-        row.getChildren().addAll(buttons,fields);
+        fields.getChildren().addAll(username, password);
+        row.getChildren().addAll(buttons, fields);
 
-
-        card.getChildren().addAll(row,error);
+        card.getChildren().addAll(row, error);
 
         Label authors = new Label("by scriptyyy, prikolist667");
         authors.setFont(fieldFont);
         authors.setTextFill(Color.WHITE);
-        VBox.setMargin(authors, new Insets(100,0,0,0));
-        root.getChildren().addAll(title,card,authors);
-        return new Scene(root,WIDTH,HEIGHT);
+        VBox.setMargin(authors, new Insets(100, 0, 0, 0));
+        root.getChildren().addAll(title, card, authors);
+        return new Scene(root, WIDTH, HEIGHT);
     }
 
-    public void showAndWait(){
+    /**
+     * Возвращает статус успешности авторизации.
+     * * @return {@code true}, если пользователь вошел, иначе {@code false}.
+     */
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    /**
+     * Переводит окно в статус успешной авторизации и закрывает его.
+     * Этот метод нужно вызвать, когда сервер прислал успешный ответ на вход/регистрацию.
+     */
+    public void setAuthenticatedSuccess() {
+        this.authenticated = true;
+        close();
+    }
+
+    public void showAndWait() {
         stage.showAndWait();
     }
 
-    public void createScene(){
-        stage.setResizable(false);
-        stage.setScene(createLoginScene());
-    }
-
-    public void close(){
+    public void close() {
         stage.close();
     }
-
 }

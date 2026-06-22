@@ -19,6 +19,9 @@ import models.Person;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Окно ввода параметров создателя/убийцы дракона (Person).
+ */
 public class EnterPersonWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
@@ -27,23 +30,32 @@ public class EnterPersonWindow {
     private Person value;
     private Location location;
 
-    public EnterPersonWindow(Stage stage){
+    public EnterPersonWindow(Stage stage) {
         this.stage = stage;
         stage.setResizable(false);
-        stage.setTitle("input Person");
+
+        stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.person.title"));
         stage.setScene(createEnterPersonScene());
     }
 
-    public Scene createEnterPersonScene(){
-        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),20);
-        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"),15);
+    public Scene createEnterPersonScene() {
+        Font bigFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 20);
+        Font simpleFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/aktifo.ttf"), 15);
         VBox root = new VBox();
-        root.setStyle("-fx-background-color: " + BG_COLOR +";");
-        Label title = new Label("input Person");
-        Label nameLabel = new Label("input name");
-        Label birthLabel = new Label("input birthday");
-        Label passLabel = new Label("input passportID");
-        Label nationLabel = new Label("input nationality");
+        root.setStyle("-fx-background-color: " + BG_COLOR + ";");
+
+        Label title = new Label();
+        Label nameLabel = new Label();
+        Label birthLabel = new Label();
+        Label passLabel = new Label();
+        Label nationLabel = new Label();
+
+        title.textProperty().bind(LocalizationManager.createStringBinding("gui.person.title"));
+        nameLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.person.input_name"));
+        birthLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.person.input_birthday"));
+        passLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.person.input_passport"));
+        nationLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.person.input_nationality"));
+
         title.setFont(bigFont);
         birthLabel.setFont(simpleFont);
         passLabel.setFont(simpleFont);
@@ -54,6 +66,7 @@ public class EnterPersonWindow {
         passLabel.setTextFill(Color.WHITE);
         nationLabel.setTextFill(Color.WHITE);
         nameLabel.setTextFill(Color.WHITE);
+
         TextField nameInput = new TextField();
         nameInput.setFont(simpleFont);
         TextField birthInput = new TextField();
@@ -62,67 +75,68 @@ public class EnterPersonWindow {
         passInput.setFont(simpleFont);
         TextField nationInput = new TextField();
         nationInput.setFont(simpleFont);
-        Button executeBtn = new Button("enter");
+
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.person.btn.enter"));
         executeBtn.setFont(simpleFont);
+
         Label errorLabel = new Label("");
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(simpleFont);
         HBox errorBox = new HBox(errorLabel);
         errorBox.setAlignment(Pos.CENTER);
 
-        Button locationInput = new Button("enter Location");
+        Button locationInput = new Button();
+        locationInput.textProperty().bind(LocalizationManager.createStringBinding("gui.person.btn.location"));
         locationInput.setFont(simpleFont);
-        locationInput.setOnAction(e ->{
+        locationInput.setOnAction(e -> {
             Stage locationInputStage = new Stage();
             locationInputStage.initModality(Modality.APPLICATION_MODAL);
             EnterLocationWindow elw = new EnterLocationWindow(locationInputStage);
             this.location = elw.showAndGetLocation();
         });
 
-        root.getChildren().addAll(title,nameLabel,nameInput,birthLabel,birthInput,passLabel,passInput,nationLabel,nationInput, locationInput,errorBox,executeBtn);
-
+        root.getChildren().addAll(title, nameLabel, nameInput, birthLabel, birthInput, passLabel, passInput, nationLabel, nationInput, locationInput, errorBox, executeBtn);
 
         nameInput.setMaxWidth(125);
         birthInput.setMaxWidth(125);
         passInput.setMaxWidth(125);
         nationInput.setMaxWidth(125);
 
-        errorBox.setPadding(new Insets(20,0,0,0));
-        VBox.setMargin(title,new Insets(20,0,0,20));
-        VBox.setMargin(birthLabel,new Insets(20,0,0,20));
-        VBox.setMargin(passLabel,new Insets(20,0,0,20));
-        VBox.setMargin(nationLabel,new Insets(20,0,0,20));
-        VBox.setMargin(nameLabel,new Insets(20,0,0,20));
+        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        VBox.setMargin(title, new Insets(20, 0, 0, 20));
+        VBox.setMargin(birthLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(passLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(nationLabel, new Insets(20, 0, 0, 20));
+        VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
 
-        VBox.setMargin(nameInput,new Insets(5,0,0,20));
-        VBox.setMargin(birthInput,new Insets(5,0,0,20));
-        VBox.setMargin(passInput,new Insets(5,0,0,20));
-        VBox.setMargin(nationInput,new Insets(5,0,0,20));
+        VBox.setMargin(nameInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(birthInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(passInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(nationInput, new Insets(5, 0, 0, 20));
 
-        VBox.setMargin(locationInput,new Insets(20,0,0,20));
+        VBox.setMargin(locationInput, new Insets(20, 0, 0, 20));
+        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 250));
 
-        VBox.setMargin(executeBtn,new Insets(20,0,0,250));
-
-
-        executeBtn.setOnAction(e ->{
-            try{
+        executeBtn.setOnAction(e -> {
+            try {
                 String name = nameInput.getText().trim();
                 Date birthday = new SimpleDateFormat("dd.MM.yyyy").parse(birthInput.getText().trim());
                 String passportID = passInput.getText().trim();
                 Country nationality = Country.valueOf(nationInput.getText().trim().toUpperCase());
                 Location location = this.location;
-                Person pers = new Person(name,birthday,passportID,nationality,location);
+                Person pers = new Person(name, birthday, passportID, nationality, location);
                 pers.validate();
                 value = pers;
                 stage.close();
             } catch (Exception ex) {
-                errorLabel.setText("error.incorrect_format");
+                errorLabel.setText(LocalizationManager.getLocalizedMessage("error.incorrect_format"));
             }
         });
-        return new Scene(root,WIDTH,HEIGHT);
+        return new Scene(root, WIDTH, HEIGHT);
     }
 
-    public Person showAndGetPerson(){
+    public Person showAndGetPerson() {
         stage.showAndWait();
         return value;
     }
