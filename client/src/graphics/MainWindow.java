@@ -161,7 +161,7 @@ public class MainWindow extends BaseWindow {
         timeline.play();
     }
 
-    private void fetchAndRenderDragons() {
+    public void fetchAndRenderDragons() {
         Platform.runLater(() -> {
             Response response = Main.getClientCore().executeCommand("show", new Arg[0]);
             if (response != null && response.isSuccess()) {
@@ -231,6 +231,7 @@ public class MainWindow extends BaseWindow {
                     Circle c = activeCircles.get(id);
                     c.setCenterX(cx);
                     c.setCenterY(cy);
+                    c.setRadius(Math.min(50, rowData.getWeight()));
 
                     // перезначение слушателя
                     c.setOnMouseClicked(event -> {
