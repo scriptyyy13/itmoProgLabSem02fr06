@@ -91,7 +91,7 @@ public class ClientCore {
      * @param filePath путь к файлу скрипта.
      * @return Ответ со статус-кодом 200 и списком результатов всех команд, склеенных в одну строку.
      */
-    private Response handleScriptExecution(String filePath) {
+    public Response handleScriptExecution(String filePath) {
         try {
             List<CommandRequest> scriptCommands = scriptManager.processScript(filePath);
             if (scriptCommands == null || scriptCommands.isEmpty()) {

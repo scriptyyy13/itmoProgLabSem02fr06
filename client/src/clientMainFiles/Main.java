@@ -16,12 +16,11 @@ import network.Response;
 import network.UDPClient;
 import sharedTools.Arg;
 import utils.ConfigManager;
+import utils.ScriptManager;
 
 import java.io.File;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.util.concurrent.CountDownLatch;
 
 import static graphics.LocalizationManager.createStringBinding;
 
@@ -106,22 +105,22 @@ public class Main extends Application {
         scriptItem.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(LocalizationManager.getLocalizedMessage("gui.script.select"));
-
-            // фильтр расширений
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Script Files (*.txt, *.script)", "*.txt", "*.script", "*.*"));
             File selectedFile = fileChooser.showOpenDialog(stage);
 
             if (selectedFile != null) {
                 try {
-                    // считываем весь текст из скрипта
-                    String scriptContent = Files.readString(selectedFile.toPath());
+                    mw.output.appendText(">>>" + selectedFile.getName() + "\n");
 
-                    // отправляем
-                    Response response = clientCore.executeCommand("execute_script", new Arg[]{new Arg(scriptContent)});
+                    Response response = clientCore.handleScriptExecution(selectedFile.getAbsolutePath());
 
                     if (response != null) {
-                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
+                        String resultText = LocalizationManager.getLocalizedMessage(response.getData());
+                        mw.output.appendText(resultText + "\n");
                     }
+
+                    mw.output.appendText(">>> !\n");
+
                 } catch (Exception ex) {
                     mw.output.appendText(LocalizationManager.getLocalizedMessage("error.file_read_failed") + "\n");
                 }
@@ -325,11 +324,6 @@ public class Main extends Application {
         aw.showAndWait();
     }
 
-    /**
-     * Возвращает экземпляр ядра клиента для использования в графических окнах.
-     *
-     * @return Объект ClientCore.
-     */
     public static ClientCore getClientCore() {
         return clientCore;
     }
