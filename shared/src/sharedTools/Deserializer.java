@@ -15,6 +15,7 @@ public class Deserializer {
         try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             return ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             throw new DeserializeException("error.deserialize.failed");
         }
     }

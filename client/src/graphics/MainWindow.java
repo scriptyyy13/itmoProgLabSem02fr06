@@ -266,7 +266,7 @@ public class MainWindow extends BaseWindow {
     /**
      * Генерация фиксированного цвета по уникальному ID создателя
      */
-    private Color generateColorFromId(long creatorId) {
+    public static Color generateColorFromId(long creatorId) {
         Random r = new Random(creatorId);
         return Color.rgb(r.nextInt(180) + 40, r.nextInt(180) + 40, r.nextInt(180) + 40);
     }
