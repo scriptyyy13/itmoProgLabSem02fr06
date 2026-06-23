@@ -256,6 +256,7 @@ public class Main extends Application {
                 ConfigManager.login = aw.username.getText();
                 ConfigManager.token = tokenAndRole[0];
                 ConfigManager.role = tokenAndRole[1];
+                ConfigManager.userId = tokenAndRole[2];
                 aw.setAuthenticatedSuccess();
             } else {
                 String errorText = LocalizationManager.getLocalizedMessage(response.getData());
@@ -274,6 +275,7 @@ public class Main extends Application {
                 ConfigManager.login = aw.username.getText();
                 ConfigManager.token = tokenAndRole[0];
                 ConfigManager.role = tokenAndRole[1];
+                ConfigManager.userId = tokenAndRole[2];
                 aw.setAuthenticatedSuccess();
             } else {
                 String errorText = LocalizationManager.getLocalizedMessage(response.getData());

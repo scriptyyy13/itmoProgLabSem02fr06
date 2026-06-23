@@ -163,7 +163,7 @@ public class EditDragonWindow {
             idLabel.setText("ID: " + id);
             refreshLabelsText();
 
-            boolean hasAccess = String.valueOf(creatorId).equals(ConfigManager.login) || "admin".equals(ConfigManager.role);
+            boolean hasAccess = String.valueOf(creatorId).equals(ConfigManager.userId) || "admin".equals(ConfigManager.role);
             deleteBtn.setDisable(!hasAccess);
             mainContent.getChildren().forEach(node -> {
                 if (node instanceof HBox) {

@@ -36,7 +36,7 @@ public class Login extends Command {
         long userId = dbManager.validateUser(login, password);
         String role = dbManager.getUserRoleById(userId);
         if (userId != -1) {
-            return "200:" + tokenManager.createToken(userId, login, role, 1800000) + ";" + role;
+            return "200:" + tokenManager.createToken(userId, login, role, 1800000) + ";" + role + ";" + userId;
         } else {
             return "400:error.login.invalid_credentials";
         }

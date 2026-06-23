@@ -39,7 +39,7 @@ public class Register extends Command {
         long userId = dbManager.registerUser(login, password);
         String role = dbManager.getUserRoleById(userId);
         if (userId != -1) {
-            return "200:" + tokenManager.createToken(userId, login, role, 1800000) + ";" + role;
+            return "200:" + tokenManager.createToken(userId, login, role, 1800000) + ";" + role + ";" + userId;
         } else {
             return "409:error.register.user_exists";
         }
