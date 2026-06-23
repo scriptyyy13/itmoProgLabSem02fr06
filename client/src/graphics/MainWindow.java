@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -268,5 +269,23 @@ public class MainWindow extends BaseWindow {
     private Color generateColorFromId(long creatorId) {
         Random r = new Random(creatorId);
         return Color.rgb(r.nextInt(180) + 40, r.nextInt(180) + 40, r.nextInt(180) + 40);
+    }
+
+    /**
+     * Находит и возвращает глобальный MenuBar окна для динамической модификации в Main.
+     * Ищет компонент MenuBar внутри корневого контейнера сцены.
+     *
+     * @return Объект MenuBar или null, если компонент не найден.
+     */
+    public MenuBar getGlobalMenuBar() {
+        if (stage.getScene() != null && stage.getScene().getRoot() instanceof Pane) {
+            Pane rootPane = (Pane) stage.getScene().getRoot();
+            for (var node : rootPane.getChildren()) {
+                if (node instanceof MenuBar) {
+                    return (MenuBar) node;
+                }
+            }
+        }
+        return null;
     }
 }

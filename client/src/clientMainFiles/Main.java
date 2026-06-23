@@ -6,6 +6,9 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Dragon;
@@ -14,8 +17,10 @@ import network.UDPClient;
 import sharedTools.Arg;
 import utils.ConfigManager;
 
+import java.io.File;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.concurrent.CountDownLatch;
 
 import static graphics.LocalizationManager.createStringBinding;
@@ -84,10 +89,44 @@ public class Main extends Application {
         if (authorizationWindow.isAuthenticated()) {
             MainWindow mainWindow = new MainWindow(stage);
             setMainButtonsActions(mainWindow);
+
+            MenuBar globalBar = mainWindow.getGlobalMenuBar();
+            if (globalBar != null) {
+                MenuItem scriptItem = LocalizationManager.addFileMenuToMenuBar(globalBar);
+                setScriptMenuAction(scriptItem, mainWindow, stage);
+            }
+
             mainWindow.show();
         } else {
             Platform.exit();
         }
+    }
+
+    private void setScriptMenuAction(MenuItem scriptItem, MainWindow mw, Stage stage) {
+        scriptItem.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(LocalizationManager.getLocalizedMessage("gui.script.select"));
+
+            // фильтр расширений
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Script Files (*.txt, *.script)", "*.txt", "*.script", "*.*"));
+            File selectedFile = fileChooser.showOpenDialog(stage);
+
+            if (selectedFile != null) {
+                try {
+                    // считываем весь текст из скрипта
+                    String scriptContent = Files.readString(selectedFile.toPath());
+
+                    // отправляем
+                    Response response = clientCore.executeCommand("execute_script", new Arg[]{new Arg(scriptContent)});
+
+                    if (response != null) {
+                        mw.output.appendText(LocalizationManager.getLocalizedMessage(response.getData()) + '\n');
+                    }
+                } catch (Exception ex) {
+                    mw.output.appendText(LocalizationManager.getLocalizedMessage("error.file_read_failed") + "\n");
+                }
+            }
+        });
     }
 
     private void setMainButtonsActions(MainWindow mw) {
@@ -225,7 +264,6 @@ public class Main extends Application {
         });
     }
 
-    // обработка ответов
     private void handleResponse(Response response, CommandWindow cw, MainWindow mw) {
         if (response != null) {
             if (response.isSuccess()) {

@@ -121,6 +121,26 @@ public class LocalizationManager {
         return menuBar;
     }
 
+    /**
+     * Добавляет вкладку "Файл" в существующий MenuBar главного окна после авторизации.
+     *
+     * @param menuBar глобальный MenuBar окна
+     * @return созданный пункт подменю для привязки событий выполнения скрипта
+     */
+    public static MenuItem addFileMenuToMenuBar(MenuBar menuBar) {
+        Menu fileMenu = new Menu();
+        fileMenu.textProperty().bind(createStringBinding("gui.menu.file"));
+
+        MenuItem executeScriptItem = new MenuItem();
+        executeScriptItem.textProperty().bind(createStringBinding("gui.menu.execute_script"));
+
+        fileMenu.getItems().add(executeScriptItem);
+
+        menuBar.getMenus().add(0, fileMenu);
+
+        return executeScriptItem;
+    }
+
     private static void showHelpAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.titleProperty().bind(createStringBinding("gui.help.title"));
