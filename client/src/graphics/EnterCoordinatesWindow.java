@@ -19,7 +19,7 @@ import models.Coordinates;
 public class EnterCoordinatesWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
-    private final int WIDTH = 250;
+    private final int WIDTH = 650;
     private final int HEIGHT = 300;
     private Coordinates value;
 
@@ -57,38 +57,44 @@ public class EnterCoordinatesWindow {
         yLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.input_y"));
 
         title.setFont(bigFont);
-        xLabel.setFont(simpleFont);
-        yLabel.setFont(simpleFont);
         title.setTextFill(Color.WHITE);
+        xLabel.setFont(simpleFont);
         xLabel.setTextFill(Color.WHITE);
+        yLabel.setFont(simpleFont);
         yLabel.setTextFill(Color.WHITE);
 
         xInput = new TextField();
         xInput.setFont(simpleFont);
+        xInput.setMaxWidth(300);
+
         yInput = new TextField();
         yInput.setFont(simpleFont);
-
-        Button executeBtn = new Button();
-        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.btn.enter"));
-        executeBtn.setFont(simpleFont);
+        yInput.setMaxWidth(300);
 
         Label errorLabel = new Label("");
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(simpleFont);
         HBox errorBox = new HBox(errorLabel);
         errorBox.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(title, xLabel, xInput, yLabel, yInput, errorBox, executeBtn);
 
-        xInput.setMaxWidth(125);
-        yInput.setMaxWidth(125);
+        // Кнопка в правом нижнем углу
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.btn.enter"));
+        executeBtn.setFont(simpleFont);
 
-        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox bottomBox = new HBox(spacer, executeBtn);
+        bottomBox.setPadding(new Insets(20, 20, 20, 20));
+
+        root.getChildren().addAll(title, xLabel, xInput, yLabel, yInput, errorBox, bottomBox);
+
         VBox.setMargin(title, new Insets(20, 0, 0, 20));
         VBox.setMargin(xLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(yLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(xInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(yLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(yInput, new Insets(5, 0, 0, 20));
-        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 150));
+        VBox.setMargin(errorBox, new Insets(20, 0, 0, 0));
 
         executeBtn.setOnAction(e -> {
             try {

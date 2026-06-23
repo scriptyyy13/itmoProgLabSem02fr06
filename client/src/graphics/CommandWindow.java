@@ -19,7 +19,7 @@ public class CommandWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
     private final int HEIGHT = 275;
-    private final int WIDTH = 200;
+    private final int WIDTH = 650;
     public Button enterModel;
     public Button executeButton;
     public TextField[] argsWindows;
@@ -62,6 +62,14 @@ public class CommandWindow {
             case "RemoveById":
                 stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.command.title.remove_by_id"));
                 argsNames = new String[]{"id_dragon"};
+                break;
+            case "add_server":
+                stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.command.title.add_server"));
+                argsNames = new String[]{"server_address"};
+                break;
+            case "remove_server":
+                stage.titleProperty().bind(LocalizationManager.createStringBinding("gui.command.title.remove_server"));
+                argsNames = new String[]{"server_address"};
                 break;
             default:
                 stage.setTitle(commandName);

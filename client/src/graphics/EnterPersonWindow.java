@@ -25,7 +25,7 @@ import java.util.Date;
 public class EnterPersonWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
-    private final int WIDTH = 350;
+    private final int WIDTH = 650;
     private final int HEIGHT = 500;
     private Person value;
     private Location location;
@@ -76,34 +76,31 @@ public class EnterPersonWindow {
         nationLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.person.input_nationality"));
 
         title.setFont(bigFont);
-        birthLabel.setFont(simpleFont);
-        passLabel.setFont(simpleFont);
-        nationLabel.setFont(simpleFont);
-        nameLabel.setFont(simpleFont);
         title.setTextFill(Color.WHITE);
-        birthLabel.setTextFill(Color.WHITE);
-        passLabel.setTextFill(Color.WHITE);
-        nationLabel.setTextFill(Color.WHITE);
+        nameLabel.setFont(simpleFont);
         nameLabel.setTextFill(Color.WHITE);
+        birthLabel.setFont(simpleFont);
+        birthLabel.setTextFill(Color.WHITE);
+        passLabel.setFont(simpleFont);
+        passLabel.setTextFill(Color.WHITE);
+        nationLabel.setFont(simpleFont);
+        nationLabel.setTextFill(Color.WHITE);
 
         nameInput = new TextField();
         nameInput.setFont(simpleFont);
+        nameInput.setMaxWidth(300);
+
         birthInput = new TextField();
         birthInput.setFont(simpleFont);
+        birthInput.setMaxWidth(300);
+
         passInput = new TextField();
         passInput.setFont(simpleFont);
+        passInput.setMaxWidth(300);
+
         nationInput = new TextField();
         nationInput.setFont(simpleFont);
-
-        Button executeBtn = new Button();
-        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.person.btn.enter"));
-        executeBtn.setFont(simpleFont);
-
-        Label errorLabel = new Label("");
-        errorLabel.setTextFill(Color.RED);
-        errorLabel.setFont(simpleFont);
-        HBox errorBox = new HBox(errorLabel);
-        errorBox.setAlignment(Pos.CENTER);
+        nationInput.setMaxWidth(300);
 
         Button locationInput = new Button();
         locationInput.textProperty().bind(LocalizationManager.createStringBinding("gui.person.btn.location"));
@@ -115,27 +112,35 @@ public class EnterPersonWindow {
             this.location = elw.showAndGetLocation();
         });
 
-        root.getChildren().addAll(title, nameLabel, nameInput, birthLabel, birthInput, passLabel, passInput, nationLabel, nationInput, locationInput, errorBox, executeBtn);
+        Label errorLabel = new Label("");
+        errorLabel.setTextFill(Color.RED);
+        errorLabel.setFont(simpleFont);
+        HBox errorBox = new HBox(errorLabel);
+        errorBox.setAlignment(Pos.CENTER);
 
-        nameInput.setMaxWidth(125);
-        birthInput.setMaxWidth(125);
-        passInput.setMaxWidth(125);
-        nationInput.setMaxWidth(125);
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.person.btn.enter"));
+        executeBtn.setFont(simpleFont);
 
-        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox bottomBox = new HBox(spacer, executeBtn);
+        bottomBox.setPadding(new Insets(20, 20, 20, 20));
+
+        root.getChildren().addAll(title, nameLabel, nameInput, birthLabel, birthInput,
+                passLabel, passInput, nationLabel, nationInput,
+                locationInput, errorBox, bottomBox);
+
         VBox.setMargin(title, new Insets(20, 0, 0, 20));
-        VBox.setMargin(birthLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(passLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(nationLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
-
         VBox.setMargin(nameInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(birthLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(birthInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(passLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(passInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(nationLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(nationInput, new Insets(5, 0, 0, 20));
-
         VBox.setMargin(locationInput, new Insets(20, 0, 0, 20));
-        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 250));
 
         executeBtn.setOnAction(e -> {
             try {
@@ -143,8 +148,7 @@ public class EnterPersonWindow {
                 Date birthday = new SimpleDateFormat("dd.MM.yyyy").parse(birthInput.getText().trim());
                 String passportID = passInput.getText().trim();
                 Country nationality = Country.valueOf(nationInput.getText().trim().toUpperCase());
-                Location location = this.location;
-                Person pers = new Person(name, birthday, passportID, nationality, location);
+                Person pers = new Person(name, birthday, passportID, nationality, this.location);
                 pers.validate();
                 value = pers;
                 stage.close();
@@ -152,6 +156,7 @@ public class EnterPersonWindow {
                 errorLabel.setText(LocalizationManager.getLocalizedMessage("error.incorrect_format"));
             }
         });
+
         return new Scene(root, WIDTH, HEIGHT);
     }
 

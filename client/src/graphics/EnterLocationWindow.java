@@ -19,7 +19,7 @@ import models.Location;
 public class EnterLocationWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
-    private final int WIDTH = 350;
+    private final int WIDTH = 650;
     private final int HEIGHT = 450;
     private Location value;
 
@@ -65,54 +65,51 @@ public class EnterLocationWindow {
         nameLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.location.input_name"));
 
         title.setFont(bigFont);
-        xLabel.setFont(simpleFont);
-        yLabel.setFont(simpleFont);
-        zLabel.setFont(simpleFont);
-        nameLabel.setFont(simpleFont);
         title.setTextFill(Color.WHITE);
-        xLabel.setTextFill(Color.WHITE);
-        yLabel.setTextFill(Color.WHITE);
-        zLabel.setTextFill(Color.WHITE);
-        nameLabel.setTextFill(Color.WHITE);
+
+        Label[] labels = {xLabel, yLabel, zLabel, nameLabel};
+        for (Label l : labels) {
+            l.setFont(simpleFont);
+            l.setTextFill(Color.WHITE);
+        }
 
         xInput = new TextField();
-        xInput.setFont(simpleFont);
         yInput = new TextField();
-        yInput.setFont(simpleFont);
         zInput = new TextField();
-        zInput.setFont(simpleFont);
         nameInput = new TextField();
-        nameInput.setFont(simpleFont);
 
-        Button executeBtn = new Button();
-        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.location.btn.enter"));
-        executeBtn.setFont(simpleFont);
+        TextField[] inputs = {xInput, yInput, zInput, nameInput};
+        for (TextField tf : inputs) {
+            tf.setFont(simpleFont);
+            tf.setMaxWidth(300);
+        }
 
         Label errorLabel = new Label("");
         errorLabel.setTextFill(Color.RED);
         errorLabel.setFont(simpleFont);
         HBox errorBox = new HBox(errorLabel);
         errorBox.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(title, xLabel, xInput, yLabel, yInput, zLabel, zInput, nameLabel, nameInput, errorBox, executeBtn);
 
-        xInput.setMaxWidth(125);
-        yInput.setMaxWidth(125);
-        zInput.setMaxWidth(125);
-        nameInput.setMaxWidth(125);
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.location.btn.enter"));
+        executeBtn.setFont(simpleFont);
 
-        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox bottomBox = new HBox(spacer, executeBtn);
+        bottomBox.setPadding(new Insets(20, 20, 20, 20));
+
+        root.getChildren().addAll(title, xLabel, xInput, yLabel, yInput, zLabel, zInput, nameLabel, nameInput, errorBox, bottomBox);
+
         VBox.setMargin(title, new Insets(20, 0, 0, 20));
         VBox.setMargin(xLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(yLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(zLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
-
         VBox.setMargin(xInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(yLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(yInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(zLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(zInput, new Insets(5, 0, 0, 20));
+        VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
         VBox.setMargin(nameInput, new Insets(5, 0, 0, 20));
-
-        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 250));
 
         executeBtn.setOnAction(e -> {
             try {

@@ -23,7 +23,7 @@ import java.util.Date;
 public class EnterDragonWindow {
     private Stage stage;
     private final String BG_COLOR = "#2a3950";
-    private final int WIDTH = 350;
+    private final int WIDTH = 650;
     private final int HEIGHT = 600;
     private Dragon value;
     private Coordinates cords;
@@ -78,38 +78,25 @@ public class EnterDragonWindow {
         colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color"));
 
         title.setFont(bigFont);
-        ageLabel.setFont(simpleFont);
-        weightLabel.setFont(simpleFont);
-        speakLabel.setFont(simpleFont);
-        nameLabel.setFont(simpleFont);
-        colorLabel.setFont(simpleFont);
         title.setTextFill(Color.WHITE);
-        ageLabel.setTextFill(Color.WHITE);
-        weightLabel.setTextFill(Color.WHITE);
-        speakLabel.setTextFill(Color.WHITE);
-        nameLabel.setTextFill(Color.WHITE);
-        colorLabel.setTextFill(Color.WHITE);
+
+        Label[] labels = {nameLabel, ageLabel, weightLabel, speakLabel, colorLabel};
+        for (Label l : labels) {
+            l.setFont(simpleFont);
+            l.setTextFill(Color.WHITE);
+        }
 
         nameInput = new TextField();
-        nameInput.setFont(simpleFont);
         ageInput = new TextField();
-        ageInput.setFont(simpleFont);
         weightInput = new TextField();
-        weightInput.setFont(simpleFont);
         speakInput = new TextField();
-        speakInput.setFont(simpleFont);
         colorInput = new TextField();
-        colorInput.setFont(simpleFont);
 
-        Button executeBtn = new Button();
-        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.enter"));
-        executeBtn.setFont(simpleFont);
-
-        Label errorLabel = new Label("");
-        errorLabel.setTextFill(Color.RED);
-        errorLabel.setFont(simpleFont);
-        HBox errorBox = new HBox(errorLabel);
-        errorBox.setAlignment(Pos.CENTER);
+        TextField[] inputs = {nameInput, ageInput, weightInput, speakInput, colorInput};
+        for (TextField tf : inputs) {
+            tf.setFont(simpleFont);
+            tf.setMaxWidth(300);
+        }
 
         Button cordsInput = new Button();
         cordsInput.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.coordinates"));
@@ -131,43 +118,42 @@ public class EnterDragonWindow {
             this.killer = epw.showAndGetPerson();
         });
 
-        root.getChildren().addAll(title, nameLabel, nameInput, cordsInput, ageLabel, ageInput, weightLabel, weightInput, speakLabel, speakInput, colorLabel, colorInput, killerInput, errorBox, executeBtn);
+        Label errorLabel = new Label("");
+        errorLabel.setTextFill(Color.RED);
+        errorLabel.setFont(simpleFont);
+        HBox errorBox = new HBox(errorLabel);
+        errorBox.setAlignment(Pos.CENTER);
 
-        nameInput.setMaxWidth(125);
-        ageInput.setMaxWidth(125);
-        weightInput.setMaxWidth(125);
-        speakInput.setMaxWidth(125);
-        colorInput.setMaxWidth(125);
+        Button executeBtn = new Button();
+        executeBtn.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.btn.enter"));
+        executeBtn.setFont(simpleFont);
 
-        errorBox.setPadding(new Insets(20, 0, 0, 0));
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox bottomBox = new HBox(spacer, executeBtn);
+        bottomBox.setPadding(new Insets(20, 20, 20, 20));
+
+        root.getChildren().addAll(title, nameLabel, nameInput, cordsInput, ageLabel, ageInput,
+                weightLabel, weightInput, speakLabel, speakInput,
+                colorLabel, colorInput, killerInput, errorBox, bottomBox);
+
         VBox.setMargin(title, new Insets(20, 0, 0, 20));
-        VBox.setMargin(ageLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(weightLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(speakLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(nameLabel, new Insets(20, 0, 0, 20));
-        VBox.setMargin(colorLabel, new Insets(20, 0, 0, 20));
-
-        VBox.setMargin(nameInput, new Insets(5, 0, 0, 20));
-        VBox.setMargin(ageInput, new Insets(5, 0, 0, 20));
-        VBox.setMargin(weightInput, new Insets(5, 0, 0, 20));
-        VBox.setMargin(speakInput, new Insets(5, 0, 0, 20));
-        VBox.setMargin(colorInput, new Insets(5, 0, 0, 20));
-
         VBox.setMargin(cordsInput, new Insets(20, 0, 0, 20));
         VBox.setMargin(killerInput, new Insets(20, 0, 0, 20));
 
-        VBox.setMargin(executeBtn, new Insets(20, 0, 0, 250));
+        for (int i = 0; i < inputs.length; i++) {
+            VBox.setMargin(labels[i], new Insets(20, 0, 0, 20));
+            VBox.setMargin(inputs[i], new Insets(5, 0, 0, 20));
+        }
 
         executeBtn.setOnAction(e -> {
             try {
                 String name = nameInput.getText().trim();
-                Coordinates coordinates = cords;
                 Long age = Long.parseLong(ageInput.getText());
                 Integer weight = Integer.parseInt(weightInput.getText());
                 Boolean speaking = Boolean.parseBoolean(speakInput.getText());
                 models.Color color = models.Color.valueOf(colorInput.getText().trim().toUpperCase());
-                Person killer = this.killer;
-                Dragon dragon = new Dragon(-1, name, coordinates, new Date(), age, weight, speaking, color, killer);
+                Dragon dragon = new Dragon(-1, name, this.cords, new Date(), age, weight, speaking, color, this.killer);
                 dragon.validate();
                 value = dragon;
                 stage.close();
