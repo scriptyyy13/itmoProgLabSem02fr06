@@ -12,6 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.*;
 import sharedTools.DragonTableRow;
@@ -58,6 +59,9 @@ public class ShowWindow {
         TableColumn<DragonTableRow,Integer> locZCol = new TableColumn<>("z");
         TableColumn<DragonTableRow,String> locNameCol = new TableColumn<>("name");
 
+        TableColumn<DragonTableRow,Void> buttonsCol = new TableColumn<>("");
+
+
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         creatorIdCol.setCellValueFactory(new PropertyValueFactory<>("creatorId"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -84,9 +88,43 @@ public class ShowWindow {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         root.getChildren().add(table);
+        VBox.setMargin(table,new Insets(20,0,0,20));
+        table.setMaxSize(1240,500);
 
-        table.setMaxSize(1000,500);
-        //table.setStyle("-fx-font: " + simpleFont.getFamily() + " " + simpleFont.getSize() + "px;");
+        buttonsCol.setCellFactory(param -> new TableCell<>() {
+            private final Button detailsBtn = new Button("More");
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                if (empty) {
+
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    DragonTableRow currentRow = getTableView().getItems().get(getIndex());
+
+
+                    detailsBtn.setOnAction(e -> {
+                        Stage infoStage = new Stage();
+                        EditDragonWindow edw = new EditDragonWindow(
+                                infoStage,
+                                currentRow,
+                                MainWindow.generateColorFromId(currentRow.getCreatorId())
+                        );
+                        infoStage.initModality(Modality.APPLICATION_MODAL);
+                        edw.showAndWait();
+                    });
+
+
+                    setGraphic(detailsBtn);
+                    setText(null);
+                }
+
+            }
+
+        });
+        table.getColumns().add(buttonsCol);
+
         return new Scene(root,WIDTH, HEIGHT);
     }
 

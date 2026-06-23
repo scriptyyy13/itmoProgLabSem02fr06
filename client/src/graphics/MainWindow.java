@@ -200,7 +200,7 @@ public class MainWindow extends BaseWindow {
 
                 if (!activeCircles.containsKey(id)) {
                     // анимация появления
-                    Circle circle = new Circle(cx, cy, 12);
+                    Circle circle = new Circle(cx, cy, rowData.getWeight());
                     circle.setFill(fillOwnerColor);
                     circle.setStroke(Color.BLACK);
                     circle.setStrokeWidth(1.0);
@@ -266,7 +266,7 @@ public class MainWindow extends BaseWindow {
     /**
      * Генерация фиксированного цвета по уникальному ID создателя
      */
-    private Color generateColorFromId(long creatorId) {
+    public static Color generateColorFromId(long creatorId) {
         Random r = new Random(creatorId);
         return Color.rgb(r.nextInt(180) + 40, r.nextInt(180) + 40, r.nextInt(180) + 40);
     }
