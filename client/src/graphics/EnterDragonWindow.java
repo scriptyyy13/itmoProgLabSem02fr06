@@ -1,9 +1,11 @@
 package graphics;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -33,7 +35,7 @@ public class EnterDragonWindow {
     private TextField ageInput;
     private TextField weightInput;
     private TextField speakInput;
-    private TextField colorInput;
+    private ComboBox<String> colorInput;
 
     public EnterDragonWindow(Stage stage) {
         this.stage = stage;
@@ -53,7 +55,7 @@ public class EnterDragonWindow {
             ageInput.setText(String.valueOf(initialDragon.getAge()));
             weightInput.setText(initialDragon.getWeight() != null ? String.valueOf(initialDragon.getWeight()) : "");
             speakInput.setText(String.valueOf(initialDragon.getSpeaking()));
-            colorInput.setText(initialDragon.getColor() != null ? initialDragon.getColor().toString() : "");
+            colorInput.setValue(initialDragon.getColor() != null ? initialDragon.getColor().toString() : "");
         }
     }
 
@@ -72,10 +74,10 @@ public class EnterDragonWindow {
 
         title.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.title"));
         nameLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.name"));
-        ageLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.age"));
-        weightLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.weight"));
+        ageLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.age").concat(Bindings.createStringBinding(() -> "(age > 0)")));
+        weightLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.weight").concat(Bindings.createStringBinding(() -> "(0 < w < 30)")));
         speakLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.speaking"));
-        colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color"));
+        colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color").concat(Bindings.createStringBinding(() -> "(0 < w < 30)")));
 
         title.setFont(bigFont);
         title.setTextFill(Color.WHITE);
@@ -90,9 +92,10 @@ public class EnterDragonWindow {
         ageInput = new TextField();
         weightInput = new TextField();
         speakInput = new TextField();
-        colorInput = new TextField();
+        colorInput = new ComboBox<>();
+        colorInput.getItems().addAll("RED","BLUE","GREEN","YELLOW","BLACK");
 
-        TextField[] inputs = {nameInput, ageInput, weightInput, speakInput, colorInput};
+        TextField[] inputs = {nameInput, ageInput, weightInput, speakInput};
         for (TextField tf : inputs) {
             tf.setFont(simpleFont);
             tf.setMaxWidth(300);
@@ -152,7 +155,7 @@ public class EnterDragonWindow {
                 Long age = Long.parseLong(ageInput.getText());
                 Integer weight = Integer.parseInt(weightInput.getText());
                 Boolean speaking = Boolean.parseBoolean(speakInput.getText());
-                models.Color color = models.Color.valueOf(colorInput.getText().trim().toUpperCase());
+                models.Color color = models.Color.valueOf(colorInput.getValue().trim().toUpperCase());
                 Dragon dragon = new Dragon(-1, name, this.cords, new Date(), age, weight, speaking, color, this.killer);
                 dragon.validate();
                 value = dragon;

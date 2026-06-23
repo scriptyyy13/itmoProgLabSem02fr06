@@ -186,8 +186,8 @@ public class MainWindow extends BaseWindow {
                 long id = rowData.getId();
                 incomingIds.add(id);
 
-                double cx = Math.abs(rowData.getX() % 600);
-                double cy = Math.abs(rowData.getY() % 600);
+                double cx = Math.min(rowData.getX(), 600);
+                double cy = Math.min(rowData.getY(), 600);
 
                 String tooltipText =
                         LocalizationManager.getLocalizedMessage("gui.dragon.tooltip.id") + rowData.getId() + "\n" +

@@ -1,5 +1,8 @@
 package graphics;
 
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -53,8 +56,8 @@ public class EnterCoordinatesWindow {
         Label yLabel = new Label();
 
         title.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.title"));
-        xLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.input_x"));
-        yLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.input_y"));
+        xLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.input_x").concat(Bindings.createStringBinding(() -> "(0 < x < 600)")));
+        yLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.coords.input_y").concat(Bindings.createStringBinding(() -> "(0 < y < 600)")));
 
         title.setFont(bigFont);
         title.setTextFill(Color.WHITE);
