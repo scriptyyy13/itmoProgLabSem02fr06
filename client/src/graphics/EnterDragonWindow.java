@@ -77,7 +77,7 @@ public class EnterDragonWindow {
         ageLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.age").concat(Bindings.createStringBinding(() -> "(age > 0)")));
         weightLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.weight").concat(Bindings.createStringBinding(() -> "(0 < w < 30)")));
         speakLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.speaking"));
-        colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color").concat(Bindings.createStringBinding(() -> "(0 < w < 30)")));
+        colorLabel.textProperty().bind(LocalizationManager.createStringBinding("gui.dragon.color"));
 
         title.setFont(bigFont);
         title.setTextFill(Color.WHITE);
