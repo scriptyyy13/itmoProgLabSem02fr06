@@ -200,7 +200,8 @@ public class MainWindow extends BaseWindow {
 
                 if (!activeCircles.containsKey(id)) {
                     // анимация появления
-                    Circle circle = new Circle(cx, cy, rowData.getWeight());
+                    double weightCircle = Math.min(50, rowData.getWeight());
+                    Circle circle = new Circle(cx, cy, weightCircle);
                     circle.setFill(fillOwnerColor);
                     circle.setStroke(Color.BLACK);
                     circle.setStrokeWidth(1.0);
